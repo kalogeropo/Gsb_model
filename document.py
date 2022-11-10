@@ -12,7 +12,11 @@ class Document():
             self.doc_id = 696969
             self.tf = {}
 
-
+    # Split documents in smaller ""Lists"" according to window size.
+    # If window size is equal to zero the function calculates
+    # the window by taking into account the total length of the
+    # file. (minimum window = 8)
+    
     def create_tf(self):
         # open document file
         with open(self.path, 'r', encoding='UTF-8') as d:

@@ -21,8 +21,8 @@ def splitFileConstantWindow(file, window, per_window):
         # print(per_window)
         window = int(num_of_words * per_window) + 1
         # print("Window Size: ", window)
-        if window < 14:
-            window = 14
+        if window < 8:
+            window = 8
 
     # Join words according to window
     for i in range(0, num_of_words, window):
