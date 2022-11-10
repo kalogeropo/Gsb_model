@@ -1,11 +1,9 @@
-import os
-from os import listdir
+from os import listdir, getcwd
 from os.path import expanduser, join
 from time import time
-from graphs import GraphDoc, UnionGraph, draw
+from graphs import GraphDoc, UnionGraph
 from matplotlib.pyplot import show
 from networkx import to_numpy_matrix
-from document import Document
 
 #TO DO: 1. calculate Node weights from union graph
 #TO DO: 2. ADD the weights to inverted index
@@ -15,26 +13,26 @@ from document import Document
 
 def main():
     # define path
-    current_dir = os.getcwd()
-    test_path = "".join([current_dir, "\\data\\test_docs"])
+    current_dir = getcwd()
+    test_path = "".join([current_dir, "/data/test_docs"])
     print(test_path)
 
-    test_doc_path = "".join([test_path, "\\01"])
-    doc = GraphDoc(test_doc_path,10,False)
-    print(doc.create_adj_matrix_with_windows(5))
+    test_doc_path = "".join([test_path, "/01"])
+    doc = GraphDoc(test_doc_path, window=10)
+    print(doc.create_adj_matrix_with_window())
 
     # list files
     filenames = [join(test_path, f) for f in listdir(test_path)]
     graph_documents = []
     for filename in filenames:
-        graph_doc = GraphDoc(filename, 10,True)
+        graph_doc = GraphDoc(filename, window=10)
         print(graph_doc.create_graph_from_adjmatrix())
         graph_doc.graph = graph_doc.create_graph_from_adjmatrix()
         graph_doc.draw_graph(graph_doc.graph)
         graph_documents += [graph_doc]
 
     # takes as input list of graph document objects
-    ug = UnionGraph(graph_documents,10,False)
+    ug = UnionGraph(graph_documents, window=10)
     print(ug.union_graph())
     # ug.save_inverted_index()
     union_graph = ug.union_graph()

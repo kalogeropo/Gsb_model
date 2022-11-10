@@ -1,24 +1,27 @@
-import numpy
 from networkx import Graph, draw, disjoint_union_all, from_numpy_array, to_numpy_matrix
 from document import Document
-from numpy import array, transpose, dot, diagonal, fill_diagonal
+from numpy import array, transpose, dot, diagonal, fill_diagonal, zeros
 from matplotlib.pyplot import show
 from json import dumps
 
 
 class GraphDoc(Document):
-    def __init__(self, path,window,window_flag):
+    def __init__(self, path, window=0):
         super().__init__(path)
-        print(window)
-        if window_flag:
-            if isinstance(window,int):
-                self.adj_matrix= self.create_adj_matrix_with_windows(window)
-            elif isinstance(window,float):
-                num_of_words = len(self.terms)
-                self.adj_matrix = self.create_adj_matrix_with_windows(int(num_of_words * window) + 1)
+        self.window = window
+
+        if window > 0: # boolean flag is already taken into consideration to be true
+            if isinstance(window, int):
+                self.adj_matrix = self.create_adj_matrix_with_window()
+            elif isinstance(window, float):
+                num_of_words = len(self.tf)
+                self.window = int(num_of_words * window) + 1
+                self.adj_matrix = self.create_adj_matrix_with_window()
         else:
             self.adj_matrix = self.create_adj_matrix()
+            
         self.graph = None
+
 
     ##############################################
     ## Creating a complete graph TFi*TFj = Wout ##
@@ -42,30 +45,28 @@ class GraphDoc(Document):
                         adj_matrix[i][j] = rows[i] * (rows[i] + 1) * 0.5  # Win
 
             return adj_matrix
-    def create_adj_matrix_with_windows(self,windows_size):
-        terms = set(self.terms)
-        doc_len = len(terms)
-        windowed_doc = self.split_documents(windows_size)
-        #print(windowed_doc)
-        adj_matrix = numpy.zeros(shape=(len(terms), len(terms)))
-        #print(adj_matrix)
+
+
+    def create_adj_matrix_with_window(self):
+
+        terms = list(self.tf.keys())
+        windowed_doc = self.split_document(self.window)
+        adj_matrix = zeros(shape=(len(terms), len(terms)))
+
         for segment in windowed_doc:
-            print(segment.split())
             doc = Document(5)
-            doc.terms = segment.split()
-            #print(doc.terms)
-            tf = doc.create_tf()
-            print(tf)
-            for i in range(len(adj_matrix)):
-                for j in range(len(adj_matrix)):
-                    term_i = list(terms)[i]
-                    term_j = list(terms)[j]
+            tf = doc.get_tf(segment)
+            for i in range(adj_matrix.shape[0]):
+                for j in range(adj_matrix.shape[1]):
+                    term_i = terms[i]
+                    term_j = terms[j]
                     if term_i in tf.keys() and term_j in tf.keys():
                         if i == j:
-                            adj_matrix[i][j]+=tf[term_i]*(tf[term_i]+1)/2
+                            adj_matrix[i][j] += tf[term_i] * (tf[term_i] + 1)/2
                         else:
-                            adj_matrix[i][j] += tf[term_i]*tf[term_j]
+                            adj_matrix[i][j] += tf[term_i] * tf[term_j]
         return adj_matrix
+
 
     def create_graph_from_adjmatrix(self):
 
@@ -83,6 +84,7 @@ class GraphDoc(Document):
 
         return graph
 
+
     def draw_graph(self, graph=None):
         if self.graph is None:
             self.graph = graph
@@ -95,10 +97,11 @@ class GraphDoc(Document):
 
 
 class UnionGraph(GraphDoc):
-    def __init__(self, graph_docs,window,window_flag,path=None):
-        super().__init__(path,window,window_flag)
+    def __init__(self, graph_docs, window, path=None):
+        super().__init__(path, window)
         self.graph_docs = graph_docs
         self.inverted_index = {}
+
 
     # creates and updates an inverted_index
     def get_inverted_index(self):
@@ -111,14 +114,17 @@ class UnionGraph(GraphDoc):
                     inverted_index[key] = [[graph_doc.doc_id, value]]
         return inverted_index
 
+
     def create_inverted_index(self):
         self.inverted_index = self.get_inverted_index()
+
 
     def save_inverted_index(self):
         with open(f'inverted_index{self.doc_id}.txt', 'w', encoding='UTF-8') as inv_ind:
             if not self.inverted_index:
                 self.create_inverted_index()
             inv_ind.write(dumps(self.inverted_index))
+
 
     def union_graph(self, kcore=[], kcore_bool=False):
         union = Graph()
