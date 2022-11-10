@@ -5,40 +5,6 @@ import numpy
 ##############################################################################################################################
 ### PART 1: NIKOLAOS SKAMNELOS usefull graph functions:
 
-def CreateAdjMatrixFromInvIndexWithWindow(terms, file, window_size, per_window, dot_split):
-    # print("Adj_Matrix = %d * %d " % (len(terms), len(tf)))
-    # print(terms)
-    adj_matrix = numpy.zeros(shape=(len(terms), len(terms)))
-    tfi = 0
-    if dot_split:
-        inputFile = open(file, 'r').read()
-        split_file = nltk.tokenize.sent_tokenize(inputFile, language='english')
-    else:
-        split_file = splitFileConstantWindow(file, window_size, per_window)
-    for subfile in split_file:
-        window_terms = subfile.split()
-        for term in window_terms:
-            # print("\n")
-            # print(term)
-            row_index = terms.index(term)
-            # print("TERM:",row_index)
-            for x in range(0, len(window_terms)):
-                col_index = terms.index(window_terms[x])
-                # print("Y TERM:",col_index)
-                if col_index == row_index:
-                    tfi += 1
-                else:
-                    adj_matrix[row_index][col_index] += 1
-            adj_matrix[row_index][row_index] += tfi * (tfi + 1) / 2
-            tfi = 0
-
-    # pen_adj_mat = applyStopwordPenalty(adj_matrix, terms)
-    # print(adj_matrix)
-    # fullsize = rows.size + row.size + col.size + adj_matrix.size
-    # print(fullsize / 1024 / 1024)
-    return (adj_matrix)
-
-
 # The idea behind this function is to get two adjacency matrices(one for sentences and one for paragraphs)
 # using CreateAdjMatrixFromInvIndexWithWindow and then combine them into a single matrix using two weight
 # coefficients a and b, which will determine the importance of each matrix.
