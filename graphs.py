@@ -94,9 +94,9 @@ class GraphDoc(Document):
             return
 
 
-class UnionGraph():
-    def __init__(self, graph_docs, path=None):
-        #super().__init__(path,window,window_flag)
+class UnionGraph(GraphDoc):
+    def __init__(self, graph_docs,window,window_flag,path=None):
+        super().__init__(path,window,window_flag)
         self.graph_docs = graph_docs
         self.inverted_index = {}
 

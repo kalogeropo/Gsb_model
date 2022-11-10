@@ -27,12 +27,12 @@ def main():
         graph_documents += [graph_doc]
 
     # takes as input list of graph document objects
-    ug = UnionGraph(graph_documents)
+    ug = UnionGraph(graph_documents,10,False)
     print(ug.union_graph())
     # ug.save_inverted_index()
-    #union_graph = ug.union_graph()
-    # ug.draw_graph(union_graph)
-    #print(to_numpy_matrix(union_graph))
+    union_graph = ug.union_graph()
+    ug.draw_graph(union_graph)
+    print(to_numpy_matrix(union_graph))
 
 
 main()
