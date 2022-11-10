@@ -7,6 +7,11 @@ from matplotlib.pyplot import show
 from networkx import to_numpy_matrix
 from document import Document
 
+#TO DO: 1. calculate Node weights from union graph
+#TO DO: 2. ADD the weights to inverted index
+#TO DO: 3. CREATE the retrieval process (Classes: indexing, retrival->set-based->metrics)
+#TO DO:    3.a. Index Class -> import an inv index
+#TO DO:    3.b. Query document parsing -> graphs-weights -> apriori -> set based -> metrics
 
 def main():
     # define path
@@ -24,6 +29,8 @@ def main():
     for filename in filenames:
         graph_doc = GraphDoc(filename, 10,True)
         print(graph_doc.create_graph_from_adjmatrix())
+        graph_doc.graph = graph_doc.create_graph_from_adjmatrix()
+        graph_doc.draw_graph(graph_doc.graph)
         graph_documents += [graph_doc]
 
     # takes as input list of graph document objects
