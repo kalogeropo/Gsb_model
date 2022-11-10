@@ -5,34 +5,6 @@ import numpy
 ##############################################################################################################################
 ### PART 1: NIKOLAOS SKAMNELOS usefull graph functions:
 
-#CREATES a graph using a fixed sized window, by spliting the original textfile into sub-textfiles
-# Split File in smaller files according to window size.
-# If window size is equal to zero the function calculates
-# the window by taking into account the total length of the
-# file. (minimum window = 5)
-def splitFileConstantWindow(file, window, per_window):
-    # Open the file and split it into words
-    inputFile = open(file, 'r').read().split()
-    num_of_words = len(inputFile)
-    outputFile = []
-
-    # If window is equal to zero get window according to length or if percentage window flag is true
-    if window == 0:
-        # print(per_window)
-        window = int(num_of_words * per_window) + 1
-        # print("Window Size: ", window)
-        if window < 8:
-            window = 8
-
-    # Join words according to window
-    for i in range(0, num_of_words, window):
-        outputFile.append(' '.join(inputFile[i:i + window]))
-
-    # print(outputData)
-    return outputFile
-
-
-
 def CreateAdjMatrixFromInvIndexWithWindow(terms, file, window_size, per_window, dot_split):
     # print("Adj_Matrix = %d * %d " % (len(terms), len(tf)))
     # print(terms)
