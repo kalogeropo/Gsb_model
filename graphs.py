@@ -69,6 +69,7 @@ class UnionGraph(GraphDoc):
         self.inverted_index = {}
 
 
+    #creates and updates an inverted_index
     def get_inverted_index(self):
         inverted_index = {}
         for graph_doc in self.graph_docs:
@@ -109,37 +110,4 @@ class UnionGraph(GraphDoc):
                             union.add_edge(terms[i], terms[j], weight=gd.adj_matrix[i][j] * h)
         return union
 
-
-    def union(self, kcore=[], kcorebool=False):
-        # empty union at first
-        union_graph = Graph()
-
-        for gd in self.graph_docs:
-            adj_matrix = gd.adj_matrix
-            terms = list(gd.tf.keys())
-
-            for i in range(adj_matrix.shape[0]):
-                h = 0.06 if i in kcore and kcorebool == True else 1
-                
-                # Win of each node
-                w_in = gd.tf[terms[i]] * (gd.tf[terms[i]] + 1) * 0.5 * h
-                if not union_graph.has_node(terms[i]):
-                    union_graph.add_node(terms[i], weight=w_in)
-                    # print(f'Created node {terms[i]} with weight {w_in}')
-                # else re-weight
-                else:
-                    union_graph.nodes[terms[i]]['weight'] += w_in
-                    # print(f'Updated node {terms[i]} new weight {union_graph.nodes[terms[i]]}')
-                # visit only lower diagonal
-                for j in range(adj_matrix.shape[1]):
-                    if i > j:
-                        if not union_graph.has_edge(terms[i], terms[j]):
-                            # assign Wout weight
-                            union_graph.add_edge(terms[i], terms[j], weight=adj_matrix[i][j] * h)
-                            # print(f'({terms[i], terms[j]}) edge weight: {adj_matrix[i][j] * h}')
-                        else:
-                            union_graph[terms[i]][terms[j]]['weight'] += adj_matrix[i][j] * h
-                            # print(f'({terms[i], terms[j]}) Wout edge weight updated')
-
-        return union_graph
 
