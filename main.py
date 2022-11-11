@@ -14,7 +14,7 @@ from networkx import to_numpy_matrix, to_numpy_array
 def main():
     # define path
     current_dir = getcwd()
-    test_path = "".join([current_dir, "/data/test_docs"])
+    test_path = "".join([current_dir, "\\data\\test_docs"])
 
     # list files
     filenames = [join(test_path, f) for f in listdir(test_path)]
@@ -22,22 +22,24 @@ def main():
     graph_documents = []
     for filename in filenames:
         print(filename)
-        graph_doc = GraphDoc(filename, window=10)
+        graph_doc = GraphDoc(filename, window=8)
         print(graph_doc.adj_matrix)
         graph_doc.graph = graph_doc.create_graph_from_adjmatrix()
-        print(graph_doc.graph)
-        # graph_doc.draw_graph()
+        #graph_doc.draw_graph()
         graph_documents += [graph_doc]
 
 
-    ug = UnionGraph(graph_documents, window=10)
+    ug = UnionGraph(graph_documents, window=8)
 
     # takes as input list of graph document ob
-    union_graph = ug.union_graph()
-    print(union_graph)
-
-    adj = to_numpy_array(union_graph)
-    print(adj)
+    ug.graph,Win = ug.union_graph()
+    print(Win)
+    Wout = ug.calculate_Wout()
+    Nbrs = ug.number_of_nbrs()
+    print(Wout)
+    print(Nbrs)
+    #adj = to_numpy_array(union_graph)
+    #print(adj)
     """
     print(ug.union_graph().degree(weight='weight'))
     print(ug.union_graph().degree())

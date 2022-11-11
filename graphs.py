@@ -147,6 +147,7 @@ class UnionGraph(GraphDoc):
 
     def union_graph(self, kcore=[], kcore_bool=False):
         union = Graph()
+        terms_Win = {}
         # for every graph document object
         for gd in self.graph_docs:
             terms = list(gd.tf.keys())
@@ -161,12 +162,21 @@ class UnionGraph(GraphDoc):
                             union[terms[i]][terms[j]]['weight'] += (gd.adj_matrix[i][j] * h) # += Wout
                         else:
                             union.add_edge(terms[i], terms[j], weight=gd.adj_matrix[i][j] * h)
-        return union
+                    #create a dict of Wins[terms]
+                    elif i==j:
+                        if terms[i] in terms_Win:
+                            terms_Win[terms[i]] += gd.adj_matrix[i][j] * h
+                        else:
+                            terms_Win[terms[i]] = gd.adj_matrix[i][j] * h
+
+        return union,terms_Win
 
 
-    def calculate_Wout(self, node):
-        pass
-    def calculate_Win(self, node):
-        pass
-    def number_of_nbrs(self, node):
-        pass
+    def calculate_Wout(self):
+        return { node: val for (node, val) in self.graph.degree(weight='weight')}
+
+    def number_of_nbrs(self):
+         return { node: val for (node, val) in self.graph.degree()}
+# {'TERM5': 4.0, 'TERM20': 20.0, 'TERM1': 3.0, 'TERM2': 7.0, 'TERM3': 2.0, 'TERM4': 5.0, 'TERM10': 10.0, 'TERM30': 3.0, 'TERM40': 3.0, 'TERM50': 2.0, 'TERM11': 4.0, 'TERM22': 3.0, 'TERM21': 4.0, 'TERM31': 1.0, 'TERM41': 1.0, 'TERM51': 3.0}
+# [('TERM20', 46.0), ('TERM5', 15.0), ('TERM1', 21.0), ('TERM2', 36.0), ('TERM3', 14.0), ('TERM4', 26.0), ('TERM10', 36.0), ('TERM30', 12.0), ('TERM40', 17.0), ('TERM50', 14.0), ('TERM11', 19.0), ('TERM22', 12.0), ('TERM21', 12.0), ('TERM31', 7.0), ('TERM41', 7.0), ('TERM51', 12.0)]
+# [('TERM20', 10), ('TERM5', 9), ('TERM1', 10), ('TERM2', 10), ('TERM3', 7), ('TERM4', 7), ('TERM10', 11), ('TERM30', 4), ('TERM40', 8), ('TERM50', 8), ('TERM11', 9), ('TERM22', 7), ('TERM21', 4), ('TERM31', 4), ('TERM41', 4), ('TERM51', 4)]
