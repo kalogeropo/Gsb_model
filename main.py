@@ -3,7 +3,7 @@ from os.path import expanduser, join
 from time import time
 from graphs import GraphDoc, UnionGraph
 from matplotlib.pyplot import show
-from networkx import to_numpy_matrix
+from networkx import to_numpy_matrix, to_numpy_array
 
 #TO DO: 1. calculate Node weights from union graph
 #TO DO: 2. ADD the weights to inverted index
@@ -34,13 +34,16 @@ def main():
     # ug.save_inverted_index()
     union_graph = ug.union_graph()
     #ug.draw_graph(union_graph)
-    adj = to_numpy_matrix(union_graph)
+    adj = to_numpy_array(union_graph)
+    print(adj)
     print(ug.union_graph().degree(weight='weight'))
     print(ug.union_graph().degree())
     wins = []
     i=0
-    for nd in ug.union_graph():
-       wins.append((nd,adj[i][i]))
+    for nd in list(ug.union_graph().nodes):
+       wins.append(tuple((nd,adj[i][i])))
        i+=1
+       print(nd)
+
     print(wins)
 main()
