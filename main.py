@@ -17,18 +17,15 @@ def main():
     test_path = "".join([current_dir, "/data/test_docs"])
     print(test_path)
 
-    test_doc_path = "".join([test_path, "/01"])
-    doc = GraphDoc(test_doc_path, window=10)
-    print(doc.create_adj_matrix_with_window())
-
     # list files
     filenames = [join(test_path, f) for f in listdir(test_path)]
     graph_documents = []
     for filename in filenames:
-        graph_doc = GraphDoc(filename, window=10)
+        graph_doc = GraphDoc(filename, window=0)
+        print(graph_doc.adj_matrix)
         print(graph_doc.create_graph_from_adjmatrix())
         graph_doc.graph = graph_doc.create_graph_from_adjmatrix()
-        graph_doc.draw_graph(graph_doc.graph)
+        #graph_doc.graphToPng()
         graph_documents += [graph_doc]
 
     # takes as input list of graph document objects
@@ -36,8 +33,14 @@ def main():
     print(ug.union_graph())
     # ug.save_inverted_index()
     union_graph = ug.union_graph()
-    ug.draw_graph(union_graph)
-    print(to_numpy_matrix(union_graph))
-
-
+    #ug.draw_graph(union_graph)
+    adj = to_numpy_matrix(union_graph)
+    print(ug.union_graph().degree(weight='weight'))
+    print(ug.union_graph().degree())
+    wins = []
+    i=0
+    for nd in ug.union_graph():
+       wins.append((nd,adj[i][i]))
+       i+=1
+    print(wins)
 main()

@@ -1,4 +1,7 @@
-from networkx import Graph, draw, get_edge_attributes, from_numpy_array, to_numpy_matrix, spring_layout, draw_networkx_edge_labels
+import networkx as nx
+from matplotlib import pyplot as plt
+
+from networkx import Graph, draw, disjoint_union_all, from_numpy_array, to_numpy_matrix
 from document import Document
 from numpy import array, transpose, dot, diagonal, fill_diagonal, zeros
 from matplotlib.pyplot import show
@@ -45,7 +48,6 @@ class GraphDoc(Document):
                         adj_matrix[i][j] = rows[i] * (rows[i] + 1) * 0.5  # Win
 
             return adj_matrix
-        else: return []
 
 
     def create_adj_matrix_with_window(self):
@@ -53,18 +55,19 @@ class GraphDoc(Document):
         terms = list(self.tf.keys())
         windowed_doc = self.split_document(self.window)
         adj_matrix = zeros(shape=(len(terms), len(terms)))
-        
+
         for segment in windowed_doc:
-            tf = self.get_tf(segment)
+            doc = Document(5)
+            tf = doc.get_tf(segment)
             for i in range(adj_matrix.shape[0]):
                 for j in range(adj_matrix.shape[1]):
                     term_i = terms[i]
                     term_j = terms[j]
                     if term_i in tf.keys() and term_j in tf.keys():
                         if i == j:
-                            adj_matrix[i][j] += tf[term_i] * (tf[term_i] + 1) / 2 #Win
+                            adj_matrix[i][j] += tf[term_i] * (tf[term_i] + 1)/2
                         else:
-                            adj_matrix[i][j] += tf[term_i] * tf[term_j] # Wout
+                            adj_matrix[i][j] += tf[term_i] * tf[term_j]
         return adj_matrix
 
 
@@ -75,33 +78,55 @@ class GraphDoc(Document):
             self.adj_matrix = self.create_adj_matrix()
 
         graph = Graph()
-        terms = list(self.tf.keys())
+        termlist = list(self.tf.keys())
         for i in range(self.adj_matrix.shape[0]):
+            graph.add_node(i, term=termlist[i])
             for j in range(self.adj_matrix.shape[1]):
-                if i >= j:
-                    graph.add_edge(terms[i], terms[j], weight=self.adj_matrix[i][j])
+                if i > j:
+                    graph.add_edge(i, j, weight=self.adj_matrix[i][j])
 
         return graph
-        
 
+    def graphToPng(self, *args, **kwargs):
+        graph = self.graph
+        options = {
+            'node_color': 'yellow',
+            'node_size': 50,
+            'linewidths': 0,
+            'width': 0.1,
+            'font_size': 8,
+        }
+        filename = kwargs.get('filename', None)
+        if not filename:
+            filename = 'Union graph'
+        plt.figure(filename, figsize=(17, 8))
+        plt.suptitle(filename)
+        pos_nodes = nx.circular_layout(graph)
+        nx.draw(graph, pos_nodes, with_labels=True, **options)
+        pos_atrs = {}
+        for node, coords in pos_nodes.items():
+            pos_atrs[node] = (coords[0], coords[1] + 0.01)
+
+        node_attrs = nx.get_node_attributes(graph, 'term')
+        cus_node_att = {}
+        for node, attr in node_attrs.items():
+            cus_node_att[node] = attr
+        nx.draw_networkx_labels(graph, pos_atrs, labels=cus_node_att, font_color='red', font_size=8)
+
+        labels = nx.get_edge_attributes(graph, 'weight')
+        nx.draw_networkx_edge_labels(graph, pos_nodes, edge_labels=labels)
+        plt.show()
 
     def draw_graph(self, graph=None):
-        if graph is not None:
+        if self.graph is None:
             self.graph = graph
-
-        elif self.graph is None:
-            self.graph = self.create_graph_from_adjmatrix()
-
-        # draw
-        # draw(self.graph, with_labels=True, labels=labels, node_colors=colors)
-        pos = spring_layout(self.graph)
-        labels = get_edge_attributes(self.graph, 'weight')
-        node_labels = {n: self.graph[n][n]['weight'] for n in self.graph.nodes}
-
-        draw(self.graph, pos, with_labels=True, labels=node_labels)
-        draw_networkx_edge_labels(self.graph, pos, edge_labels=labels)
-        show()
-        return
+            labels = {n: self.graph[n][n]['weight'] for n in self.graph.nodes}
+            colors = [self.graph[n][n]['weight'] for n in self.graph.nodes]
+            draw(self.graph, with_labels=True, labels=labels, node_color=colors)
+            show()
+        else:
+            print(self.graph)
+            return
 
 
 class UnionGraph(GraphDoc):
@@ -150,5 +175,11 @@ class UnionGraph(GraphDoc):
                             union[terms[i]][terms[j]]['weight'] += (gd.adj_matrix[i][j] * h)
                         else:
                             union.add_edge(terms[i], terms[j], weight=gd.adj_matrix[i][j] * h)
-
         return union
+
+    def calculate_Wout(self, node):
+        pass
+    def calculate_Win(self, node):
+        pass
+    def number_of_nbrs(self, node):
+        pass
