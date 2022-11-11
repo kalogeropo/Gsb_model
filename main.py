@@ -21,7 +21,8 @@ def main():
     filenames = [join(test_path, f) for f in listdir(test_path)]
     graph_documents = []
     for filename in filenames:
-        graph_doc = GraphDoc(filename, window=0)
+        print(filename)
+        graph_doc = GraphDoc(filename, window=10)
         print(graph_doc.adj_matrix)
         print(graph_doc.create_graph_from_adjmatrix())
         graph_doc.graph = graph_doc.create_graph_from_adjmatrix()

@@ -1,4 +1,5 @@
 import networkx as nx
+import numpy
 from matplotlib import pyplot as plt
 
 from networkx import Graph, draw, disjoint_union_all, from_numpy_array, to_numpy_matrix
@@ -49,23 +50,27 @@ class GraphDoc(Document):
 
             return adj_matrix
 
-
     def create_adj_matrix_with_window(self):
-
-        terms = list(self.tf.keys())
-        windowed_doc = self.split_document(self.window)
-        adj_matrix = zeros(shape=(len(terms), len(terms)))
-
+        windows_size = self.window
+        terms = set(self.terms)
+        windowed_doc = self.split_documents(windows_size)
+        # print(windowed_doc)
+        adj_matrix = numpy.zeros(shape=(len(terms), len(terms)))
+        # print(adj_matrix)
         for segment in windowed_doc:
+            print(segment.split())
             doc = Document(5)
-            tf = doc.get_tf(segment)
-            for i in range(adj_matrix.shape[0]):
-                for j in range(adj_matrix.shape[1]):
-                    term_i = terms[i]
-                    term_j = terms[j]
+            doc.terms = segment.split()
+            # print(doc.terms)
+            tf = doc.create_tf()
+            print(tf)
+            for i in range(len(adj_matrix)):
+                for j in range(len(adj_matrix)):
+                    term_i = list(terms)[i]
+                    term_j = list(terms)[j]
                     if term_i in tf.keys() and term_j in tf.keys():
                         if i == j:
-                            adj_matrix[i][j] += tf[term_i] * (tf[term_i] + 1)/2
+                            adj_matrix[i][j] += tf[term_i] * (tf[term_i] + 1) / 2
                         else:
                             adj_matrix[i][j] += tf[term_i] * tf[term_j]
         return adj_matrix
