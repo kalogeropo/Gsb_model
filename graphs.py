@@ -1,8 +1,7 @@
 import networkx as nx
 import numpy
 from matplotlib import pyplot as plt
-
-from networkx import Graph, draw, disjoint_union_all, from_numpy_array, to_numpy_matrix
+from networkx import Graph, draw, circular_layout, get_node_attributes, draw_networkx_labels, get_edge_attributes, draw_networkx_edge_labels
 from document import Document
 from numpy import array, transpose, dot, diagonal, fill_diagonal, zeros
 from matplotlib.pyplot import show
@@ -92,7 +91,8 @@ class GraphDoc(Document):
 
         return graph
 
-    def graphToPng(self, *args, **kwargs):
+
+    def draw_graph(self, **kwargs):
         graph = self.graph
         options = {
             'node_color': 'yellow',
@@ -106,32 +106,13 @@ class GraphDoc(Document):
             filename = 'Union graph'
         plt.figure(filename, figsize=(17, 8))
         plt.suptitle(filename)
-        pos_nodes = nx.circular_layout(graph)
-        nx.draw(graph, pos_nodes, with_labels=True, **options)
-        pos_atrs = {}
-        for node, coords in pos_nodes.items():
-            pos_atrs[node] = (coords[0], coords[1] + 0.01)
 
-        node_attrs = nx.get_node_attributes(graph, 'term')
-        cus_node_att = {}
-        for node, attr in node_attrs.items():
-            cus_node_att[node] = attr
-        nx.draw_networkx_labels(graph, pos_atrs, labels=cus_node_att, font_color='red', font_size=8)
+        pos_nodes = circular_layout(graph)
+        draw(graph, pos_nodes, with_labels=True, **options)
 
-        labels = nx.get_edge_attributes(graph, 'weight')
-        nx.draw_networkx_edge_labels(graph, pos_nodes, edge_labels=labels)
+        labels = get_edge_attributes(graph, 'weight')
+        draw_networkx_edge_labels(graph, pos_nodes, edge_labels=labels)
         plt.show()
-
-    def draw_graph(self, graph=None):
-        if self.graph is None:
-            self.graph = graph
-            labels = {n: self.graph[n][n]['weight'] for n in self.graph.nodes}
-            colors = [self.graph[n][n]['weight'] for n in self.graph.nodes]
-            draw(self.graph, with_labels=True, labels=labels, node_color=colors)
-            show()
-        else:
-            print(self.graph)
-            return
 
 
 class UnionGraph(GraphDoc):
@@ -174,13 +155,14 @@ class UnionGraph(GraphDoc):
                 # gain value of importance
                 h = 0.06 if terms[i] in kcore and kcore_bool else 1
                 for j in range(gd.adj_matrix.shape[1]):
-                    if i >= j:
-                        # 
+                    # calculate only Wout
+                    if i > j:
                         if union.has_edge(terms[i], terms[j]):
-                            union[terms[i]][terms[j]]['weight'] += (gd.adj_matrix[i][j] * h)
+                            union[terms[i]][terms[j]]['weight'] += (gd.adj_matrix[i][j] * h) # += Wout
                         else:
                             union.add_edge(terms[i], terms[j], weight=gd.adj_matrix[i][j] * h)
         return union
+
 
     def calculate_Wout(self, node):
         pass
