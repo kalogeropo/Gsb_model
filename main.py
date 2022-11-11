@@ -15,35 +15,40 @@ def main():
     # define path
     current_dir = getcwd()
     test_path = "".join([current_dir, "/data/test_docs"])
-    print(test_path)
 
     # list files
     filenames = [join(test_path, f) for f in listdir(test_path)]
+
     graph_documents = []
     for filename in filenames:
         graph_doc = GraphDoc(filename, window=0)
         print(graph_doc.adj_matrix)
-        print(graph_doc.create_graph_from_adjmatrix())
         graph_doc.graph = graph_doc.create_graph_from_adjmatrix()
-        #graph_doc.graphToPng()
+        print(graph_doc.graph)
+        # graph_doc.draw_graph()
         graph_documents += [graph_doc]
 
-    # takes as input list of graph document objects
+
     ug = UnionGraph(graph_documents, window=10)
-    print(ug.union_graph())
-    # ug.save_inverted_index()
+
+    # takes as input list of graph document ob
     union_graph = ug.union_graph()
-    #ug.draw_graph(union_graph)
+    print(union_graph)
+
     adj = to_numpy_array(union_graph)
     print(adj)
+    """
     print(ug.union_graph().degree(weight='weight'))
     print(ug.union_graph().degree())
     wins = []
     i=0
     for nd in list(ug.union_graph().nodes):
-       wins.append(tuple((nd,adj[i][i])))
+       wins.append(tuple((nd, adj[i][i])))
        i+=1
        print(nd)
 
     print(wins)
+    """
+
+
 main()
