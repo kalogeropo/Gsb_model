@@ -4,6 +4,7 @@ from time import time
 from graphs import GraphDoc, UnionGraph
 from matplotlib.pyplot import show
 from networkx import to_numpy_matrix, to_numpy_array
+from numpy import fill_diagonal
 
 #TO DO: 1. calculate Node weights from union graph
 #TO DO: 2. ADD the weights to inverted index
@@ -24,25 +25,30 @@ def main():
         graph_doc = GraphDoc(filename, window=8)
         print(graph_doc.adj_matrix)
         graph_doc.graph = graph_doc.create_graph_from_adjmatrix()
-        #graph_doc.draw_graph()
+        print(graph_doc.get_win_terms())
+        # graph_doc.draw_graph()
         graph_documents += [graph_doc]
 
     
-    ug = UnionGraph(graph_documents, window=8)
-
+    ug = UnionGraph(graph_documents)
+   
     # takes as input list of graph document ob
-    ug.graph, Win = ug.union_graph()
-    print(Win)
-    """
-    Wout = ug.calculate_Wout()
-    Nbrs = ug.number_of_nbrs()
-    print(Wout)
-    print(Nbrs)
+    ug.graph = ug.union_graph()
+    #print(Win)
     adj = to_numpy_array(ug.graph)
+    adj_diagonal = list(ug.get_win_terms().values())
+    print(adj_diagonal)
+    
+    fill_diagonal(adj, adj_diagonal)
     print(adj)
 
-    print(ug.union_graph().degree(weight='weight'))
-    print(ug.union_graph().degree())
+    Wout = ug.calculate_Wout()
+    Nbrs = ug.number_of_nbrs()
+    print(f'Wout: {Wout}')
+    print(f'Neigbors: {Nbrs}')
+    """
+    #print(ug.union_graph().degree(weight='weight'))
+    #print(ug.union_graph().degree())
     wins = []
     i=0
     for nd in list(ug.union_graph().nodes):

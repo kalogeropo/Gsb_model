@@ -1,5 +1,5 @@
 from matplotlib import pyplot as plt
-from networkx import Graph, draw, circular_layout, get_node_attributes, draw_networkx_labels, get_edge_attributes, draw_networkx_edge_labels
+from networkx import Graph, draw, circular_layout, get_node_attributes, set_node_attributes, get_edge_attributes, draw_networkx_edge_labels
 from document import Document
 from numpy import array, transpose, dot, fill_diagonal, zeros
 from matplotlib.pyplot import show
@@ -80,14 +80,19 @@ class GraphDoc(Document):
             self.adj_matrix = self.create_adj_matrix()
 
         graph = Graph()
-        termlist = list(self.tf.keys())
+        terms = list(self.tf.keys())
         for i in range(self.adj_matrix.shape[0]):
-            graph.add_node(i, term=termlist[i])
             for j in range(self.adj_matrix.shape[1]):
-                if i > j:
-                    graph.add_edge(i, j, weight=self.adj_matrix[i][j])
+                if i == j:
+                    graph.add_node(terms[i], weight=self.adj_matrix[i][j])
+                elif i > j:
+                    graph.add_edge(terms[i], terms[j], weight=self.adj_matrix[i][j])
 
         return graph
+
+    
+    def get_win_terms(self):
+        return get_node_attributes(self.graph, 'weight')
 
 
     def draw_graph(self, **kwargs):
@@ -145,7 +150,7 @@ class UnionGraph(GraphDoc):
 
     def union_graph(self, kcore=[], kcore_bool=False):
         union = Graph()
-        terms_Win = {}
+        terms_win = {}
         # for every graph document object
         for gd in self.graph_docs:
             terms = list(gd.tf.keys())
@@ -154,7 +159,6 @@ class UnionGraph(GraphDoc):
                 # gain value of importance
                 h = 0.06 if terms[i] in kcore and kcore_bool else 1
                 for j in range(gd.adj_matrix.shape[1]):
-                    # calculate only Wout
                     if i > j:
                         if union.has_edge(terms[i], terms[j]):
                             union[terms[i]][terms[j]]['weight'] += (gd.adj_matrix[i][j] * h) # += Wout
@@ -162,12 +166,14 @@ class UnionGraph(GraphDoc):
                             union.add_edge(terms[i], terms[j], weight=gd.adj_matrix[i][j] * h)
                     #create a dict of Wins[terms]
                     elif i==j:
-                        if terms[i] in terms_Win:
-                            terms_Win[terms[i]] += gd.adj_matrix[i][j] * h
+                        if terms[i] in terms_win:
+                            terms_win[terms[i]] += gd.adj_matrix[i][j] * h
                         else:
-                            terms_Win[terms[i]] = gd.adj_matrix[i][j] * h
+                            terms_win[terms[i]] = gd.adj_matrix[i][j] * h
 
-        return union, terms_Win
+        set_node_attributes(union, terms_win, 'weight')        
+
+        return union
 
 
     def calculate_Wout(self):
