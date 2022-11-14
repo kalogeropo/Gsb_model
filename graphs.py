@@ -50,6 +50,24 @@ class GraphDoc(Document):
             return adj_matrix
 
 
+    def create_graph_from_adjmatrix(self):
+
+        # check if adj matrix not built yet
+        if self.adj_matrix is None:
+            self.adj_matrix = self.create_adj_matrix()
+
+        graph = Graph()
+        terms = list(self.tf.keys())
+        w_in = self.adj_matrix.diagonal()
+        for i in range(self.adj_matrix.shape[0]):
+            graph.add_node(terms[i], weight=w_in[i])
+            for j in range(self.adj_matrix.shape[1]):
+                if i > j:
+                    graph.add_edge(terms[i], terms[j], weight=self.adj_matrix[i][j])
+
+        return graph
+        
+
     def create_adj_matrix_with_window(self):
         windows_size = self.window
         # unique terms from whole document
@@ -71,24 +89,6 @@ class GraphDoc(Document):
                         else:
                             adj_matrix[i][j] += tf[term_i] * tf[term_j]
         return adj_matrix
-
-
-    def create_graph_from_adjmatrix(self):
-
-        # check if adj matrix not built yet
-        if self.adj_matrix is None:
-            self.adj_matrix = self.create_adj_matrix()
-
-        graph = Graph()
-        terms = list(self.tf.keys())
-        for i in range(self.adj_matrix.shape[0]):
-            for j in range(self.adj_matrix.shape[1]):
-                if i == j:
-                    graph.add_node(terms[i], weight=self.adj_matrix[i][j])
-                elif i > j:
-                    graph.add_edge(terms[i], terms[j], weight=self.adj_matrix[i][j])
-
-        return graph
 
     
     def get_win_terms(self):
@@ -165,7 +165,7 @@ class UnionGraph(GraphDoc):
                         else:
                             union.add_edge(terms[i], terms[j], weight=gd.adj_matrix[i][j] * h)
                     #create a dict of Wins[terms]
-                    elif i==j:
+                    elif i == j:
                         if terms[i] in terms_win:
                             terms_win[terms[i]] += gd.adj_matrix[i][j] * h
                         else:

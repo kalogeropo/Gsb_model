@@ -26,7 +26,7 @@ def main():
         print(graph_doc.adj_matrix)
         graph_doc.graph = graph_doc.create_graph_from_adjmatrix()
         print(graph_doc.get_win_terms())
-        # graph_doc.draw_graph()
+        graph_doc.draw_graph()
         graph_documents += [graph_doc]
 
     
