@@ -28,18 +28,18 @@ def main():
         #graph_doc.draw_graph()
         graph_documents += [graph_doc]
 
-
+    
     ug = UnionGraph(graph_documents, window=8)
 
     # takes as input list of graph document ob
-    ug.graph,Win = ug.union_graph()
+    ug.graph, Win = ug.union_graph()
     print(Win)
     Wout = ug.calculate_Wout()
     Nbrs = ug.number_of_nbrs()
     print(Wout)
     print(Nbrs)
-    #adj = to_numpy_array(union_graph)
-    #print(adj)
+    adj = to_numpy_array(ug.graph)
+    print(adj)
     """
     print(ug.union_graph().degree(weight='weight'))
     print(ug.union_graph().degree())

@@ -1,5 +1,3 @@
-import networkx as nx
-import numpy
 from matplotlib import pyplot as plt
 from networkx import Graph, draw, circular_layout, get_node_attributes, draw_networkx_labels, get_edge_attributes, draw_networkx_edge_labels
 from document import Document
@@ -49,24 +47,22 @@ class GraphDoc(Document):
 
             return adj_matrix
 
+
     def create_adj_matrix_with_window(self):
         windows_size = self.window
-        terms = set(self.terms)
-        windowed_doc = self.split_documents(windows_size)
-        # print(windowed_doc)
-        adj_matrix = numpy.zeros(shape=(len(terms), len(terms)))
-        # print(adj_matrix)
+        # unique terms from whole document
+        terms = list(self.tf.keys())
+        # create windowed document
+        windowed_doc = self.split_document(windows_size)
+        print(windowed_doc)
+        adj_matrix = zeros(shape=(len(terms), len(terms)))
         for segment in windowed_doc:
-            print(segment.split())
-            doc = Document(5)
-            doc.terms = segment.split()
-            # print(doc.terms)
-            tf = doc.create_tf()
+            tf = Document().set_terms(segment).create_tf()
             print(tf)
-            for i in range(len(adj_matrix)):
-                for j in range(len(adj_matrix)):
-                    term_i = list(terms)[i]
-                    term_j = list(terms)[j]
+            for i in range(adj_matrix.shape[0]):
+                for j in range(adj_matrix.shape[1]):
+                    term_i = terms[i]
+                    term_j = terms[j]
                     if term_i in tf.keys() and term_j in tf.keys():
                         if i == j:
                             adj_matrix[i][j] += tf[term_i] * (tf[term_i] + 1) / 2
@@ -116,7 +112,7 @@ class GraphDoc(Document):
 
 
 class UnionGraph(GraphDoc):
-    def __init__(self, graph_docs, window, path=None):
+    def __init__(self, graph_docs, window=0, path=''):
         super().__init__(path, window)
         self.graph_docs = graph_docs
         self.inverted_index = {}
@@ -169,11 +165,12 @@ class UnionGraph(GraphDoc):
                         else:
                             terms_Win[terms[i]] = gd.adj_matrix[i][j] * h
 
-        return union,terms_Win
+        return union, terms_Win
 
 
     def calculate_Wout(self):
         return { node: val for (node, val) in self.graph.degree(weight='weight')}
+
 
     def number_of_nbrs(self):
          return { node: val for (node, val) in self.graph.degree()}
