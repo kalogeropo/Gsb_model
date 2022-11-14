@@ -18,10 +18,9 @@ def main():
 
     # list files
     filenames = [join(test_path, f) for f in listdir(test_path)]
-
     graph_documents = []
     for filename in filenames:
-        print(filename)
+        # print(filename)
         graph_doc = GraphDoc(filename, window=8)
         print(graph_doc.adj_matrix)
         graph_doc.graph = graph_doc.create_graph_from_adjmatrix()
@@ -34,13 +33,14 @@ def main():
     # takes as input list of graph document ob
     ug.graph, Win = ug.union_graph()
     print(Win)
+    """
     Wout = ug.calculate_Wout()
     Nbrs = ug.number_of_nbrs()
     print(Wout)
     print(Nbrs)
     adj = to_numpy_array(ug.graph)
     print(adj)
-    """
+
     print(ug.union_graph().degree(weight='weight'))
     print(ug.union_graph().degree())
     wins = []

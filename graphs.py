@@ -1,7 +1,7 @@
 from matplotlib import pyplot as plt
 from networkx import Graph, draw, circular_layout, get_node_attributes, draw_networkx_labels, get_edge_attributes, draw_networkx_edge_labels
 from document import Document
-from numpy import array, transpose, dot, diagonal, fill_diagonal, zeros
+from numpy import array, transpose, dot, fill_diagonal, zeros
 from matplotlib.pyplot import show
 from json import dumps
 
@@ -40,10 +40,12 @@ class GraphDoc(Document):
             adj_matrix = dot(row, col)
 
             # calculate Win weights (diagonal terms)
-            for i in range(adj_matrix.shape[0]):
-                for j in range(adj_matrix.shape[1]):
-                    if i == j:
-                        adj_matrix[i][j] = rows[i] * (rows[i] + 1) * 0.5  # Win
+            win = [(w * (w + 1) * 0.5) for w in rows]
+            fill_diagonal(adj_matrix, win)
+            # for i in range(adj_matrix.shape[0]):
+            #    for j in range(adj_matrix.shape[1]):
+            #        if i == j:
+            #            adj_matrix[i][j] = rows[i] * (rows[i] + 1) * 0.5  # Win
 
             return adj_matrix
 
@@ -54,11 +56,11 @@ class GraphDoc(Document):
         terms = list(self.tf.keys())
         # create windowed document
         windowed_doc = self.split_document(windows_size)
-        print(windowed_doc)
-        adj_matrix = zeros(shape=(len(terms), len(terms)))
+        # print(windowed_doc)
+        adj_matrix = zeros(shape=(len(terms), len(terms)), dtype=int)
         for segment in windowed_doc:
             tf = Document().set_terms(segment).create_tf()
-            print(tf)
+            # print(tf)
             for i in range(adj_matrix.shape[0]):
                 for j in range(adj_matrix.shape[1]):
                     term_i = terms[i]
@@ -169,11 +171,11 @@ class UnionGraph(GraphDoc):
 
 
     def calculate_Wout(self):
-        return { node: val for (node, val) in self.graph.degree(weight='weight')}
+        return {node: val for (node, val) in self.graph.degree(weight='weight')}
 
 
     def number_of_nbrs(self):
-         return { node: val for (node, val) in self.graph.degree()}
+         return {node: val for (node, val) in self.graph.degree()}
 # {'TERM5': 4.0, 'TERM20': 20.0, 'TERM1': 3.0, 'TERM2': 7.0, 'TERM3': 2.0, 'TERM4': 5.0, 'TERM10': 10.0, 'TERM30': 3.0, 'TERM40': 3.0, 'TERM50': 2.0, 'TERM11': 4.0, 'TERM22': 3.0, 'TERM21': 4.0, 'TERM31': 1.0, 'TERM41': 1.0, 'TERM51': 3.0}
 # [('TERM20', 46.0), ('TERM5', 15.0), ('TERM1', 21.0), ('TERM2', 36.0), ('TERM3', 14.0), ('TERM4', 26.0), ('TERM10', 36.0), ('TERM30', 12.0), ('TERM40', 17.0), ('TERM50', 14.0), ('TERM11', 19.0), ('TERM22', 12.0), ('TERM21', 12.0), ('TERM31', 7.0), ('TERM41', 7.0), ('TERM51', 12.0)]
 # [('TERM20', 10), ('TERM5', 9), ('TERM1', 10), ('TERM2', 10), ('TERM3', 7), ('TERM4', 7), ('TERM10', 11), ('TERM30', 4), ('TERM40', 8), ('TERM50', 8), ('TERM11', 9), ('TERM22', 7), ('TERM21', 4), ('TERM31', 4), ('TERM41', 4), ('TERM51', 4)]
