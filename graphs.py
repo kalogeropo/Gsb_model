@@ -6,6 +6,7 @@ from matplotlib.pyplot import show
 from json import dumps
 
 
+
 class GraphDoc(Document):
     def __init__(self, path, window=0):
         super().__init__(path)
@@ -182,6 +183,3 @@ class UnionGraph(GraphDoc):
 
     def number_of_nbrs(self):
          return {node: val for (node, val) in self.graph.degree()}
-# {'TERM5': 4.0, 'TERM20': 20.0, 'TERM1': 3.0, 'TERM2': 7.0, 'TERM3': 2.0, 'TERM4': 5.0, 'TERM10': 10.0, 'TERM30': 3.0, 'TERM40': 3.0, 'TERM50': 2.0, 'TERM11': 4.0, 'TERM22': 3.0, 'TERM21': 4.0, 'TERM31': 1.0, 'TERM41': 1.0, 'TERM51': 3.0}
-# [('TERM20', 46.0), ('TERM5', 15.0), ('TERM1', 21.0), ('TERM2', 36.0), ('TERM3', 14.0), ('TERM4', 26.0), ('TERM10', 36.0), ('TERM30', 12.0), ('TERM40', 17.0), ('TERM50', 14.0), ('TERM11', 19.0), ('TERM22', 12.0), ('TERM21', 12.0), ('TERM31', 7.0), ('TERM41', 7.0), ('TERM51', 12.0)]
-# [('TERM20', 10), ('TERM5', 9), ('TERM1', 10), ('TERM2', 10), ('TERM3', 7), ('TERM4', 7), ('TERM10', 11), ('TERM30', 4), ('TERM40', 8), ('TERM50', 8), ('TERM11', 9), ('TERM22', 7), ('TERM21', 4), ('TERM31', 4), ('TERM41', 4), ('TERM51', 4)]
