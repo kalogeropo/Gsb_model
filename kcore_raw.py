@@ -209,11 +209,7 @@ def intersection(lst1, lst2):
 
 
 def union(lista, listb):
-    c = []
-    for i in lista + listb:
-        if i not in c:
-            c.append(i)
-    return c
+    return lista + list(set(listb) - set(lista))
 
 
 # generate new k+1 itemsets !!!reference to: Fast Algorithms for Mining Association Rules by Argawal

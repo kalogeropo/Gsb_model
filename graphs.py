@@ -4,6 +4,7 @@ from document import Document
 from numpy import array, transpose, dot, fill_diagonal, zeros
 from matplotlib.pyplot import show
 from json import dumps
+from math import log 
 
 
 
@@ -92,8 +93,16 @@ class GraphDoc(Document):
         return adj_matrix
 
     
-    def get_win_terms(self):
+    def calculate_win(self):
         return get_node_attributes(self.graph, 'weight')
+
+
+    def calculate_wout(self):
+        return {node: val for (node, val) in self.graph.degree(weight='weight')}
+
+
+    def number_of_nbrs(self):
+         return {node: val for (node, val) in self.graph.degree()}
 
 
     def draw_graph(self, **kwargs):
@@ -126,15 +135,39 @@ class UnionGraph(GraphDoc):
         self.inverted_index = {}
 
 
+    def get_inv_index(self):
+
+        nwk = self.calculate_nwk()
+        id = -1
+        for graph_doc in self.graph_docs:
+            for key, value in graph_doc.tf.items():
+                if key not in self.inverted_index.keys():
+                    d = {}
+                    id += 1
+                    d['id'] = id
+                    d['tf'] = value
+                    d['posting_list'] = [[graph_doc.doc_id, value]]
+                    d['nwk'] = nwk[key]
+                    d['term'] = key
+
+                    self.inverted_index[key] = d
+                else:
+                    self.inverted_index[key]['tf'] += value
+                    self.inverted_index[key]['posting_list'] += [[graph_doc.doc_id, value]]
+
+        return self.inverted_index
+
+
     # creates and updates an inverted_index
     def get_inverted_index(self):
         inverted_index = {}
         for graph_doc in self.graph_docs:
             for key, value in graph_doc.tf.items():
-                if key in self.inverted_index:
+                if key in inverted_index:
                     inverted_index[key] += [[graph_doc.doc_id, value]]
                 else:
                     inverted_index[key] = [[graph_doc.doc_id, value]]
+
         return inverted_index
 
 
@@ -177,9 +210,19 @@ class UnionGraph(GraphDoc):
         return union
 
 
-    def calculate_Wout(self):
-        return {node: val for (node, val) in self.graph.degree(weight='weight')}
+    def calculate_nwk(self, a=1, b=1):
+        nwk = {}
+        Win = self.calculate_win()
+        Wout = self.calculate_wout()
+        ngb = self.number_of_nbrs()
+        a, b = a, b
+        # terms = list(Win.keys())
+        for k in list(Win.keys()):
+            f = a * Wout[k] / ((Win[k] + 1) * (ngb[k] + 1))
+            s = b / (ngb[k] + 1)
+            nwk[k] = round(log(1 + f) * log(1 + s), 3)
+            # print(f'log(1 + ({a} * {Wout[k]} / (({Win[k]} + 1) * ({ngb[k]} + 1)) ) ) * log(1 + ({b} / ({ngb[k]} + 1))) = {nwk[k]}')
+        
+        return nwk
+        
 
-
-    def number_of_nbrs(self):
-         return {node: val for (node, val) in self.graph.degree()}
