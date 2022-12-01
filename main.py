@@ -7,6 +7,9 @@ from graphs import GraphDoc, UnionGraph
 from matplotlib.pyplot import show
 from networkx import to_numpy_matrix, to_numpy_array
 from numpy import fill_diagonal
+from itertools import combinations
+
+from apriori import apriori
 
 #TO DO: 1. calculate Node weights from union graph
 #TO DO: 2. ADD the weights to inverted index
@@ -14,6 +17,7 @@ from numpy import fill_diagonal
 #TO DO:    3.a. Index Class -> import an inv index
 #TO DO:    3.b. Query document parsing -> graphs-weights -> apriori -> set based -> metrics
 
+    
 def main():
     # define path
     current_dir = getcwd()
@@ -41,18 +45,24 @@ def main():
     ug.graph = ug.union_graph()
     #print(ug.get_inverted_index())
     #print('\n\n')
-    adj = to_numpy_array(ug.graph)
-    adj_diagonal = list(ug.calculate_win().values())
+    # adj = to_numpy_array(ug.graph)
+    # adj_diagonal = list(ug.calculate_win().values())
     # print(adj_diagonal)
-    fill_diagonal(adj, adj_diagonal)
-    print(adj)
+    # fill_diagonal(adj, adj_diagonal)
+    # print(adj)
     # test = collection()
     # test.add_to_inv_ind("asd",3,["keimeno1",1,"keimeno 2",2],0.00045)
     # test.add_to_inv_ind("asd1",3,["keimeno3",2,"keimeno4",123],0.32215)
 
     print('\n')
-    print(ug.get_inv_index())
+    inv_index = ug.get_inv_index()
+    print(inv_index)
+    print("")
 
+    queries = [['TERM1', 'TERM2', 'TERM3', 'TERM4', 'TERM5']]
+    for query in queries:
+       candidate = apriori(query, inv_index, min_freq=2)
+    print(candidate)
 
 
 main()

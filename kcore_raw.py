@@ -253,9 +253,6 @@ def apriori_prune(termsets_list, min_support):
     prunedlist = []
     for j in termsets_list:
         if len(j[1]) > min_support:
-            # print('-----------')
-            # print(j[0],len(j[1]))
-            # print('-----------')
             prunedlist.append([j[0], j[1]])
 
     return prunedlist
