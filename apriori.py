@@ -64,7 +64,7 @@ def apriori(query, inv_index, min_freq):
     c1 = create_candidate_1(query, inv_index)
     print(f"Initial 1-termsets: {c1}\n")
     freq_termset = create_freq_term(c1, min_freq=min_freq)
-    print(f'Frequent termsets: {freq_termset}\n')
+    # print(f'Frequent termsets: {freq_termset}\n')
     freq_termsets = [freq_termset]
 
     k = 0

@@ -59,10 +59,19 @@ def main():
     print(inv_index)
     print("")
 
-    queries = [['TERM1', 'TERM2', 'TERM3', 'TERM4', 'TERM5']]
+    queries = [['TERM1', 'TERM2', 'TERM3', 'TERM4', 'TERM51']]
+    # queries = [['PSEUDOMONAS', 'AERUGINOSA', 'INFECTION', 'IN']]
     for query in queries:
-       candidate = apriori(query, inv_index, min_freq=2)
-    print(candidate)
+       freq_termsets = apriori(query, inv_index, min_freq=2)
+
+    print(freq_termsets, '\n')
+    final = {}
+    for item in freq_termsets:
+        final = final | item
+
+    print(final, len(final))
+
+
 
 
 main()
