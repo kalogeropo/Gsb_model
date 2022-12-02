@@ -15,7 +15,7 @@ def create_candidate_1(query, inv_index):
         if term in inv_index:
             post_list = inv_index[term]['posting_list']
             doc_ids = [id for id, tf in post_list]
-            one_termsets.append([term, doc_ids])
+            one_termsets.append([frozenset([term]), doc_ids])
         else:
             print('word %s has not required support or it already exists:' % term)
 
@@ -40,10 +40,9 @@ def create_candidate_k(freq_termsets, k):
         for t1, t2 in combinations(freq_termsets.keys(), 2):
             t1_ids = freq_termsets[t1]
             t2_ids = freq_termsets[t2]
-            item = intersection(t1_ids, t2_ids) # union of two sets
-            ck[t1] = t1_ids
-            ck[t2] = t2_ids
-            ck[t1, t2] = item
+
+            # item = intersection(t1_ids, t2_ids) # union of two sets
+            ck[t1 | t2] = intersection(t1_ids, t2_ids)
     else:    
         for t1, t2 in combinations(freq_termsets.keys(), 2):   
             # if the two (k+1)-item sets has
@@ -52,10 +51,10 @@ def create_candidate_k(freq_termsets, k):
             t1_ids = freq_termsets[t1]
             t2_ids = freq_termsets[t2]
             intr = intersection(t1_ids, t2_ids)
-            if len(intr) == k:
-                item = intersection(t1_ids, t2_ids)
-                if (t1, t2) not in ck:
-                    ck[t1,t2] = item
+            if len(intr) >= k:
+                termset = t1 | t2
+                if termset not in ck:
+                    ck[termset] = intr
     return ck
 
 
@@ -65,7 +64,7 @@ def apriori(query, inv_index, min_freq):
     c1 = create_candidate_1(query, inv_index)
     print(f"Initial 1-termsets: {c1}\n")
     freq_termset = create_freq_term(c1, min_freq=min_freq)
-    print(f'Pruned items: {freq_termset}\n')
+    print(f'Frequent termsets: {freq_termset}\n')
     freq_termsets = [freq_termset]
 
     k = 0
@@ -73,11 +72,11 @@ def apriori(query, inv_index, min_freq):
         freq_term = freq_termsets[k]
         ck = create_candidate_k(freq_term, k) 
         print(f"Candidate termsets: {ck}\n")      
+
         freq_term = create_freq_term(ck, min_freq=min_freq)
-        print(f'Pruned items: {freq_term}\n')
+        print(f'Frequent termsets: {freq_term}\n')
+
         freq_termsets.append(freq_term)
-        # item_freq_dict.update(item_support)
         k += 1
         
-    return freq_termsets[-2]
-
+    return freq_termsets
