@@ -62,7 +62,7 @@ def apriori(query, inv_index, min_freq):
     # the candidate sets for the 1-item is different,
     # create them independently from others
     c1 = create_candidate_1(query, inv_index)
-    print(f"Initial 1-termsets: {c1}\n")
+    # print(f"Initial 1-termsets: {c1}\n")
     freq_termset = create_freq_term(c1, min_freq=min_freq)
     # print(f'Frequent termsets: {freq_termset}\n')
     freq_termsets = [freq_termset]
@@ -71,12 +71,15 @@ def apriori(query, inv_index, min_freq):
     while len(freq_termsets[k]) > 0:
         freq_term = freq_termsets[k]
         ck = create_candidate_k(freq_term, k) 
-        print(f"Candidate termsets: {ck}\n")      
+        # print(f"Candidate termsets: {ck}\n")      
 
         freq_term = create_freq_term(ck, min_freq=min_freq)
-        print(f'Frequent termsets: {freq_term}\n')
+        # print(f'Frequent termsets: {freq_term}\n')
 
         freq_termsets.append(freq_term)
         k += 1
-        
-    return freq_termsets
+    
+    ts = {}
+    for item in freq_termsets:
+        ts = ts | item
+    return ts

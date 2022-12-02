@@ -135,7 +135,7 @@ class UnionGraph(GraphDoc):
         self.inverted_index = {}
 
 
-    def get_inv_index(self):
+    def get_inverted_index(self):
 
         nwk = self.calculate_nwk()
         id = -1
@@ -159,7 +159,7 @@ class UnionGraph(GraphDoc):
 
 
     # creates and updates an inverted_index
-    def get_inverted_index(self):
+    def get_posting_lists(self):
         inverted_index = {}
         for graph_doc in self.graph_docs:
             for key, value in graph_doc.tf.items():
@@ -205,12 +205,14 @@ class UnionGraph(GraphDoc):
                         else:
                             terms_win[terms[i]] = gd.adj_matrix[i][j] * h
 
-        set_node_attributes(union, terms_win, 'weight')        
+        set_node_attributes(union, terms_win, 'weight') 
+
+        self.graph = union       
 
         return union
 
 
-    def calculate_nwk(self, a=1, b=1):
+    def calculate_nwk(self, a=4, b=4):
         nwk = {}
         Win = self.calculate_win()
         Wout = self.calculate_wout()

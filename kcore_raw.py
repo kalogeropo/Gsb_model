@@ -83,37 +83,6 @@ def getGraphStats(graph, filename, graphPng, degreePng):
         plot_degree_dist(graph=graph, filename=str(name))
 
 
-def graphToPng(graph, *args, **kwargs):
-    options = {
-        'node_color': 'yellow',
-        'node_size': 50,
-        'linewidths': 0,
-        'width': 0.1,
-        'font_size': 8,
-    }
-    filename = kwargs.get('filename', None)
-    if not filename:
-        filename = 'Union graph'
-    plt.figure(filename, figsize=(17, 8))
-    plt.suptitle(filename)
-    pos_nodes = nx.circular_layout(graph)
-    nx.draw(graph, pos_nodes, with_labels=True, **options)
-    pos_atrs = {}
-    for node, coords in pos_nodes.items():
-        pos_atrs[node] = (coords[0], coords[1] + 0.01)
-
-    node_attrs = nx.get_node_attributes(graph, 'term')
-    cus_node_att = {}
-    for node, attr in node_attrs.items():
-        cus_node_att[node] = attr
-    nx.draw_networkx_labels(graph, pos_atrs, labels=cus_node_att, font_color='red', font_size=8)
-
-    labels = nx.get_edge_attributes(graph, 'weight')
-    nx.draw_networkx_edge_labels(graph, pos_nodes, edge_labels=labels)
-    # plt.show()
-    plt.savefig('figures/allq/' + str(filename) + '.png', format="PNG", dpi=600)
-
-
 def plot_degree_dist(graph, *args, **kwargs):
     filename = kwargs.get('filename', None)
     degree_sequence = sorted([d for n, d in graph.degree()], reverse=True)  # degree sequence
@@ -204,60 +173,6 @@ def w_and_write_to_filev2(wout, collection_terms, union_graph_termlist_id, colle
     return 1
 
 
-def intersection(lst1, lst2):
-    return list(set(lst1) & set(lst2))
-
-
-def union(lista, listb):
-    return lista + list(set(listb) - set(lista))
-
-
-# generate new k+1 itemsets !!!reference to: Fast Algorithms for Mining Association Rules by Argawal
-# a nice change would be the closed sets idea => less sets than frequent termsets
-def apriori(l1, minfreq):
-    final_list = []
-    final_list.append(l1)
-    k = 2
-    l = l1
-    #print('=========Generating frequent sets ============')
-    while (l != []):
-        c = apriori_gen(l)
-        l = apriori_prune(c, minfreq)
-        # print('Frequent  %d-termset is: %s'%(k,l))
-        # print(len(l))
-        final_list.append(l)
-        # print('====for k = %d the l list is' %k )
-        # print(l)
-        k += 1
-    return final_list
-
-
-def apriori_gen(itemset):
-    candidate = []
-    ck = []
-    texts = []
-    length = len(itemset)
-    for i in range(length):
-        #[[leksi,emfanisi],[.... , ...],[... , ....]]
-        ele = itemset[i][0]
-        for j in range(i + 1, length):
-            ele1 = itemset[j][0]
-            # print(ele, ele1)
-            if ele[0:len(ele) - 1] == ele1[0:len(ele1) - 1]:  # and ele1 != ele:
-                texts.append(intersection(itemset[i][1], itemset[j][1]))
-                candidate.append([union(ele, ele1), intersection(itemset[i][1], itemset[j][1])])
-    return candidate
-
-
-def apriori_prune(termsets_list, min_support):
-    prunedlist = []
-    for j in termsets_list:
-        if len(j[1]) > min_support:
-            prunedlist.append([j[0], j[1]])
-
-    return prunedlist
-
-
 def doc_rep(doc_vec, idf_vec, *args, **kwargs):
     args = list(args)
     if not args:
@@ -313,93 +228,6 @@ def load_doc_info(*args):
             if line not in info:
                 info.append(line)
     return info
-
-
-# input the Query Q as a list of words consisting the Query
-def one_termsets(Q, trms, plist, minfreq):
-    termsets = []
-    One_termsets = []
-    for word in Q:
-        if word in trms:
-            i = trms.index(word)
-            doc = plist[(i)]
-            doc = doc[::2]
-            word = [''.join(word)]
-            if len(doc) > minfreq:
-                One_termsets.append([word, doc])
-        else:
-            print('word %s has not required support or it already exists:' % word)
-    return One_termsets
-
-
-def fij_calculation(docinfo, final_list, plist, trms):
-    doc_vectors = []
-    docs = []
-    # counting the number of apperances of each termset in each doc in which the set exists
-
-    for document in docinfo:
-        # print('============doc name =============')
-        #print(document[0])
-        docs.append([document[0]])
-        #print(final_list)# not needed
-        # k = 1
-        # test is a temp list which contains the termfreq of TSets for the current doc, then we append that list to create
-        # a matrix of [Docs X Termsets].
-        test = []
-        for itemsets in final_list:
-            # print('------------------------------%d- termset is:--------------------------------'%k)
-            #print(itemsets)
-            # k+=1
-            # print(len(itemsets))
-            for i in range(len(itemsets)):
-                # calculating termset frequency
-                if document[0] in itemsets[i][1]:
-                    # option 2: na xrisimopoisw ti lista pou exw dimiourgisei apo to inverted file
-                    # print('............')
-                    # print(itemsets[i])
-                    sum = 0
-                    for term in itemsets[i][0]:
-                        if term in trms:
-                            termindx = trms.index(term)
-                            #print(termindx)
-                            #print(ids[termindx])
-                            #print(trms[termindx])
-                            #print(plist[termindx])
-                            if document[0] in plist[termindx]:
-                                docindex = plist[termindx].index(document[0])
-                                #print('edw:%s'%plist[termindx][docindex+1])
-                                sum += int(plist[termindx][
-                                               docindex + 1])  # to amesws epomeno stoixeio antistoixei ston ari8mo emfanisis tou orou TERM(i) sto Document(j)
-                    test.append(sum)
-                else:
-                    test.append(0)
-        #if len(test) == 1213:
-        #    print(len(test))
-        #    print('problem')
-        #    exit(-2)
-        doc_vectors.append(test)
-    with open('debuglog.dat', 'a') as fd:
-        fd.write('doc vectors \n')
-        for doci in doc_vectors:
-            fd.write('%s \n' % str(len(doci)))
-    fd.close()
-    return docs, doc_vectors
-
-
-def calculate_idf(termsetsL, numofdocs):
-    #print('=====calculating idfs============')
-    idf_vector = []
-    for ts in termsetsL:  # iterate based on the number of terms in termset
-        for item in ts:  # iterate all termsets with the same number of terms in set
-            Nt = len(item[1])
-            N = numofdocs
-            if Nt != 0:
-                idf = log(1 + (N / Nt))
-                idf_vector.append(idf)
-            else:
-                idf_vector.append(0)
-                #print(item[1], len(item[1]))
-    return idf_vector
 
 
 # doukas weight
