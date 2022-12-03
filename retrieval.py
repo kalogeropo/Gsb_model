@@ -1,12 +1,13 @@
-from numpy import array, zeros
-from math import log
+from numpy import array, zeros, round
+from math import log, log2
+
 
 def calculate_idf(freq_termsets, N):
     # len(value) => in how many documents each termset appears
-    return array([log(1 + (N / len(value))) for value in freq_termsets.values()])
+    return array([round(log2(1 + (N / len(value))), 3) for value in freq_termsets.values()])
 
 
-def calculate_fij(freq_termsets, inv_index, N):
+def calculate_tf_ij(freq_termsets, inv_index, N):
     #    d1  d2  d3  . . .  di
     # S1 f11 f12 f13 . . . f1i
     # S2     f22            .
@@ -15,7 +16,7 @@ def calculate_fij(freq_termsets, inv_index, N):
     # .                  .  .
     # Sj fj1 fj2 fj3 . . . fij
 
-    f_ij = zeros((len(freq_termsets), N))
+    tf_ij = zeros((len(freq_termsets), N))
     # for each termset
     for i, (termset, docs) in enumerate(freq_termsets.items()):
         # e.x. termset = {'t1', 't2', 't3'}
@@ -35,8 +36,26 @@ def calculate_fij(freq_termsets, inv_index, N):
 
         # assign raw termset frequencies
         for id, tfs in temp.items():
-            f_ij[i, id-1] = min(tfs)
+            tf_ij[i, id-1] = round((1 + log2(min(tfs))), 3)
 
-    return array(f_ij)
+    return array(tf_ij)
 
 
+def calculate_tnw(freq_termsets, inv_index):
+    termset_weight = []
+    for termset in freq_termsets:
+        tnw = 1
+        for term in termset:
+            if term in inv_index:
+                tnw *= inv_index[term]['nwk']
+        termset_weight += [round(tnw, 3)]
+
+    return array(termset_weight)
+
+
+def calculate_doc_weights(tf_ij, idf, tnw=1):
+    ########## each column corresponds to a document #########
+    return round((tf_ij.T * (idf * tnw)).T, 3)
+
+
+    

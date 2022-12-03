@@ -79,6 +79,7 @@ def apriori(query, inv_index, min_freq):
         freq_termsets.append(freq_term)
         k += 1
     
+    # unify into one dictionary
     ts = {}
     for item in freq_termsets:
         ts = ts | item

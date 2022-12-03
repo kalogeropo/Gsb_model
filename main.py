@@ -6,10 +6,11 @@ from document import Collection
 from graphs import GraphDoc, UnionGraph
 from matplotlib.pyplot import show
 from networkx import to_numpy_matrix, to_numpy_array
-from numpy import fill_diagonal
+from numpy import fill_diagonal, dot, matmul
+from sklearn.metrics.pairwise import cosine_similarity
 
 from apriori import apriori
-from retrieval import calculate_idf, calculate_fij
+from retrieval import calculate_idf, calculate_tf_ij, calculate_tnw, calculate_doc_weights
 
 #TO DO: 1. calculate Node weights from union graph
 #TO DO: 2. ADD the weights to inverted index
@@ -21,7 +22,7 @@ from retrieval import calculate_idf, calculate_fij
 def main():
     # define path
     current_dir = getcwd()
-    test_path = "".join([current_dir, "\\data\\test_docs"])
+    test_path = "".join([current_dir, "/data/baeza_docs"])
 
     # list files
     filenames = [join(test_path, f) for f in listdir(test_path)]
@@ -45,19 +46,31 @@ def main():
     print('\n')
     inv_index = ug.get_inverted_index()
 
-    queries = [['TERM1', 'TERM2', 'TERM3', 'TERM20']]
-    # queries = [['PSEUDOMONAS', 'AERUGINOSA', 'INFECTION', 'IN']]
+    # queries = [['TERM1', 'TERM2', 'TERM3', 'TERM51']]
+    # queries = [['IS', 'CF', 'MUCUS', 'ABNORMAL']]
+    queries = [['a', 'b', 'd', 'n']]
     for query in queries:
-        freq_termsets = apriori(query, inv_index, min_freq=2)
+        freq_termsets = apriori(query, inv_index, min_freq=1)
 
-    print(freq_termsets, '\n')
-    print(len(freq_termsets), '\n')
+    print(freq_termsets, len(freq_termsets), '\n')
+
+    # bug for the whole collection!!
     N = len(filenames)
     idf = calculate_idf(freq_termsets, N)
-    tf_ij = calculate_fij(freq_termsets, inv_index, N)
-    print(idf)
-    print(tf_ij)
+    print(idf, '\n')
+    tf_ij = calculate_tf_ij(freq_termsets, inv_index, N)
+    print(tf_ij, '\n')
+    tnw = calculate_tnw(freq_termsets, inv_index)
+    print(tnw, '\n')
+
+    doc_weights = calculate_doc_weights(tf_ij, idf, tnw)
+    print(doc_weights)
+    print('\n')
+
+    q = idf
+    print("Cosine similarities:")
+    sims = cosine_similarity(doc_weights.T, [q])
+    print(sims)
+
     
-
-
 main()

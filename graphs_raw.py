@@ -13,27 +13,6 @@ def graphToIndex(id, terms, calc_term_w, plist, *args, **kwargs):
     return 1
 
 
-
-# calculating the weight and write the inverted index file using graphToIndex method
-# NO USE
-def w_and_write_to_file(listofdeg, Umatrix, collection_terms, union_graph_termlist_id, collection_term_freq):
-    print('here')
-    for i in range(len(listofdeg[0])):
-        Wout = listofdeg[0][i]
-        Win = collection_term_freq[i]
-        nbrs = numpy.count_nonzero(Umatrix[i])
-        VarA = 1
-        VarB = 10
-        Alog = 1 + VarA * ((Wout / (nbrs + 1)) / (Win + 1))
-        Blog = 1 + VarB * (1 / (nbrs + 1))
-        temp = log(Alog) * log(Blog)
-        print(temp)
-
-        indexofw = postinglist.index(collection_terms[i])  # maybe not the best way of implementing the
-        graphToIndex(union_graph_termlist_id[i], collection_terms[i], temp, postinglist[indexofw + 1])
-    return 1
-
-    #plt.savefig('figures/allq/' + str(filename) + '.png', format="PNG", dpi=600)
 ##############################################################################################################################
 ### PART 1: NIKOLAOS SKAMNELOS usefull graph functions:
 

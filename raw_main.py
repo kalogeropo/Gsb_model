@@ -206,16 +206,7 @@ if menu == 2:
         graphextention_set_based_using_main_core = q_D_similarities(query, documentmatrix, docs)
         sorted_graphextention_set_based_using_main_core = sorted(graphextention_set_based_using_main_core,
                                                                  key=itemgetter(1), reverse=True)
-        #print(sorted_graphextention_set_based_using_main_core)
-        documentmatrix = doc_rep(doc_vectors, idf_vec, W_vec2)
-        graphextention_set_based_using_dens = q_D_similarities(query, documentmatrix, docs)
-        sorted_graphextention_set_based_using_dens = sorted(graphextention_set_based_using_dens,
-                                                                 key=itemgetter(1), reverse=True)
 
-        documentmatrix = doc_rep(doc_vectors, idf_vec, W_vec3)
-        graphextention_set_based_using_coreRank = q_D_similarities(query, documentmatrix, docs)
-        sorted_graphextention_set_based_using_coreRank = sorted(graphextention_set_based_using_coreRank,
-                                                            key=itemgetter(1), reverse=True)
                                                             
         ###############TEST####################
         documentmatrix = doc_rep(doc_vectors, idf_vec, W_vec4)

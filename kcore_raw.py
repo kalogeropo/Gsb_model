@@ -41,20 +41,6 @@ def findMaxDistance(gr, adjmatrix):
     return max(maxlist)
 
 
-# computes the cosine similarity of 2 vectors
-def cos_sim(a, b):
-    a = numpy.asarray(a)
-    b = numpy.asarray(b)
-    if numpy.all(a == 0) or numpy.all(b == 0):
-        ret = 0
-    else:
-        dot_p = numpy.dot(a, b)
-        normA = numpy.linalg.norm(a)
-        normB = numpy.linalg.norm(b)
-        ret = dot_p / (normA * normB)
-    return ret
-
-
 # finds the maximum and the minimum similarity between the nodes of the graph
 def node_simi(adjmatrix):
     max = 0
@@ -173,25 +159,6 @@ def w_and_write_to_filev2(wout, collection_terms, union_graph_termlist_id, colle
     return 1
 
 
-def doc_rep(doc_vec, idf_vec, *args, **kwargs):
-    args = list(args)
-    if not args:
-        nw = []
-        for i in range(len(idf_vec)):
-            nw.append(1)
-    else:
-        nw = args[0]
- 
-    test = numpy.zeros((len(doc_vec), len(idf_vec)))
-    for i in range(len(doc_vec)):
-        for j in range(len(idf_vec)):
-            if doc_vec[i][j] > 0:
-                test[i][j] = (1 + log(doc_vec[i][j])) * idf_vec[j] * float(nw[j])
-            else:
-                test[i][j] = 0
-    return test
-
-
 def load_inv_index(*args):
     arg = list(args)
     if not arg:
@@ -228,46 +195,6 @@ def load_doc_info(*args):
             if line not in info:
                 info.append(line)
     return info
-
-
-# doukas weight
-def calculate_termset_W(termsetsL, W, terms):
-    #print("=======Calculating W ======")
-    termset_W_vector = []
-    for ts in termsetsL:  # iterate based on the number of terms in termset
-        for item in ts:  # iterate all termsets with the same number of terms in set
-            product = 1
-            for term in item[0]:
-                if term in terms:
-                    tindx = terms.index(term)
-                    weight = W[tindx]
-                    product *= float(weight)
-            termset_W_vector.append(product)
-
-    return termset_W_vector
-
-
-def q_D_similarities(q, docmatrix, docs):
-    ret_list = []
-    cnt = 0
-    # debug
-    # with open('debuglog.dat', 'a') as fd:
-    #    fd.write('doc matrix \n')
-    #   for doci in docmatrix:
-    #       fd.write('%s \n' %str(len(doci)))
-    # fd.close()
-    for doci in docmatrix:
-        # the 0 array issue is fixed inside the cosine similarity function
-        try:
-            temp = cos_sim(q, doci)
-            ret_list.append([docs[cnt], temp])
-            cnt += 1
-        except ValueError:
-            print(doci)
-            print(len(doci))
-            print(cnt)
-            exit(-1)
-    return ret_list
 
 
 def Woutusinggraph(inputgraph):

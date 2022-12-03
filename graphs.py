@@ -212,7 +212,7 @@ class UnionGraph(GraphDoc):
         return union
 
 
-    def calculate_nwk(self, a=4, b=4):
+    def calculate_nwk(self, a=10, b=10):
         nwk = {}
         Win = self.calculate_win()
         Wout = self.calculate_wout()
