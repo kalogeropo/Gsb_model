@@ -158,16 +158,6 @@ if menu == 2:
         idf_vec = calculate_idf(final_list, len(docinfo))
         W_vec = calculate_termset_W(final_list, W, trms)
 
-        W_vec1 = calculate_termset_W(final_list, W1, trms)
-
-        W_vec2 = calculate_termset_W(final_list, W2, trms)
-
-        W_vec3 = calculate_termset_W(final_list, W3, trms)
-        
-        #####TEST###########
-        W_vec4 = calculate_termset_W(final_list,W4,trms)
-		
-        W_vec5 = calculate_termset_W(final_list,W5,trms)
         ####################
         
         print('===================================')
@@ -192,34 +182,6 @@ if menu == 2:
         simple_set_based = q_D_similarities(query, documentmatrix, docs)
         sorted_simple_set_based = sorted(simple_set_based, key=itemgetter(1), reverse=True)
 
-        #print(len(sorted_simple_set_based))
-
-        # set based with GSB
-        # change on the weights:
-        documentmatrix = doc_rep(doc_vectors, idf_vec, W_vec)
-        graphextention_set_based = q_D_similarities(query, documentmatrix, docs)
-        sorted_graphextention_set_based = sorted(graphextention_set_based, key=itemgetter(1), reverse=True)
-        #print(sorted_graphextention_set_based)
-        # set based model with both changes:
-
-        documentmatrix = doc_rep(doc_vectors, idf_vec, W_vec1)
-        graphextention_set_based_using_main_core = q_D_similarities(query, documentmatrix, docs)
-        sorted_graphextention_set_based_using_main_core = sorted(graphextention_set_based_using_main_core,
-                                                                 key=itemgetter(1), reverse=True)
-
-                                                            
-        ###############TEST####################
-        documentmatrix = doc_rep(doc_vectors, idf_vec, W_vec4)
-        graphextention_set_based_using_constant_window = q_D_similarities(query, documentmatrix, docs)
-        sorted_graphextention_set_based_using_constant_window = sorted(graphextention_set_based_using_constant_window,
-                                                            key=itemgetter(1), reverse=True)
-        documentmatrix = doc_rep(doc_vectors, idf_vec, W_vec5)
-        graphextention_set_based_using_sen_par_window = q_D_similarities(query, documentmatrix, docs)
-        sorted_graphextention_set_based_using_sen_par_window = sorted(graphextention_set_based_using_sen_par_window,
-                                                            key=itemgetter(1), reverse=True)
-        #####################################################
-
-
         relevant = ALLrelevant[Qtest.index(Query)]
         #print('Query = ', Q)
         #print('relevant= ',relevant)
@@ -227,67 +189,9 @@ if menu == 2:
         relevant = [item.zfill(5) for item in relevant]
         #print(relevant)
         list0 = [x[0].replace('txtfiles\\', '') for x, y in sorted_simple_set_based]
-        pre_rec = pre_rec_calculation(list0,relevant)
+        pre_rec = pre_rec_calculation(list0, relevant)
         av_precision.append(pre_rec[0])
         av_recall.append(pre_rec[1])
-        precision = pre_rec[2]
-        recall = pre_rec[3]
-
-        #print("****************list0******************")
-        list1 = [x[0].replace('txtfiles\\', '') for x, y in sorted_graphextention_set_based]
-
-        pre_rec = pre_rec_calculation(list1, relevant)
-        av_precision_gsb.append(pre_rec[0])
-        av_recall_gsb.append(pre_rec[1])
-        precision = pre_rec[2]
-        recall = pre_rec[3]
-
-        #print("****************list1******************")
-        list2 = [x[0].replace('txtfiles\\', '') for x, y in sorted_graphextention_set_based_using_main_core]
-        pre_rec = pre_rec_calculation(list2, relevant)
-        av_precision_gsb_mc.append(pre_rec[0])
-        av_recall_gsb_mc.append(pre_rec[1])
-        precision = pre_rec[2]
-        recall = pre_rec[3]
-
-        #print("****************list3******************")
-        list3 = [x[0].replace('txtfiles\\', '') for x, y in sorted_graphextention_set_based_using_dens]
-
-        pre_rec = pre_rec_calculation(list3, relevant)
-        av_precision_gsb_dens.append(pre_rec[0])
-        av_recall_gsb_dens.append(pre_rec[1])
-        precision = pre_rec[2]
-        recall = pre_rec[3]
-
-
-        #print("****************list3******************")
-        list4 = [x[0].replace('txtfiles\\', '') for x, y in sorted_graphextention_set_based_using_coreRank]
-
-        pre_rec = pre_rec_calculation(list4, relevant)
-        av_precision_gsb_coreRank.append(pre_rec[0])
-        av_recall_gsb_coreRank.append(pre_rec[1])
-        precision = pre_rec[2]
-        recall = pre_rec[3]
-
-        #print("****************list4******************")
-        
-        
-        ############TEST########################
-        list5 = [x[0].replace('txtfiles\\', '') for x, y in sorted_graphextention_set_based_using_constant_window]
-
-        pre_rec = pre_rec_calculation(list5, relevant)
-        av_precision_constant.append(pre_rec[0])
-        av_recall_constant.append(pre_rec[1])
-        precision = pre_rec[2]
-        recall = pre_rec[3]
-
-        #print("****************list5******************")
-		
-        list6 = [x[0].replace('txtfiles\\', '') for x, y in sorted_graphextention_set_based_using_sen_par_window]
-
-        pre_rec = pre_rec_calculation(list6, relevant)
-        av_precision_sen_par.append(pre_rec[0])
-        av_recall_sen_par.append(pre_rec[1])
         precision = pre_rec[2]
         recall = pre_rec[3]
 

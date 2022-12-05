@@ -3,41 +3,7 @@ from os import getcwd
 from os.path import exists
 
 
-class Collection():
-    id = -1
-    def __init__(self):
-        self.inv_ind ={}
-
-
-    def add_to_inv_ind(self, term, tf, posting_list, NWk):
-        if term not in self.inv_ind.keys():
-            temp ={}
-            Collection.id += 1
-            temp['id'] = Collection.id
-            temp['tf'] = tf
-            temp['posting_list'] = posting_list
-            temp['term'] = term
-            self.inv_ind[term] = temp
-        else:
-            # print("need to update current")
-            self.update_inv_index(term, tf, posting_list, NWk)
-        return
-
-
-    def update_inv_index(self, term, tf, posting_list, NWk):
-        # get the dict -> key:value for update:
-        #print(self.inv_ind[term])
-        self.inv_ind[term]['tf'] += tf
-        #need to check for duplicates?
-        self.inv_ind[term]['posting_list'].extend(posting_list)
-        return
-
-
-    def write_inverted_index_to_file(self):
-        pass
-
-
-class Document(Collection):
+class Document():
     def __init__(self, path=''):
         if exists(path):
             self.path = path
