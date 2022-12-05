@@ -1,4 +1,5 @@
-from numpy import array, zeros, round
+from numpy import array, zeros, round, dot
+from numpy.linalg import norm
 from math import log, log2
 
 
@@ -56,6 +57,47 @@ def calculate_tnw(freq_termsets, inv_index):
 def calculate_doc_weights(tf_ij, idf, tnw=1):
     ########## each column corresponds to a document #########
     return round((tf_ij.T * (idf * tnw)).T, 3)
+
+
+def cosine_similarity(u, v):
+    if all(u == 0) or all(v == 0):
+        return 0.
+    else:
+        return dot(u,v) / (norm(u)*norm(v))
+
+
+def evaluate_sim(query, dtm, k=50):
+    doc_sim = {}
+
+    for id, doc_vec in enumerate(dtm.T):
+        doc_sim[id] = cosine_similarity(query, doc_vec)
+
+    # return {id: s for id, s in sorted(doc_sim.items(), key=lambda item: item[1])}
+    # pseudo-sorting
+    ranked_sim = {}
+    for i in range(1, k):
+       ranked_sim[i] = doc_sim[i]
+
+    return ranked_sim
+
+
+def calc_precision_recall(doc_sims, relevant):
+    cnt = 0
+    retrieved = 1
+    recall = []
+    precision = []
+    for doc in doc_sims:
+        if doc in relevant:
+            cnt += 1
+            p = cnt / retrieved
+            r = cnt / len(relevant)
+            precision += [p]
+            recall += [r]
+        retrieved += 1
+
+    avg_pre = sum(precision)/len(precision)
+    avg_rec = sum(recall)/len(recall)
+    return avg_pre, avg_rec
 
 
     
