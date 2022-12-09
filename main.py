@@ -16,6 +16,7 @@ from retrieval import *
 
 from networkx.readwrite import json_graph
 
+
     
 def main():
     # define path
@@ -42,23 +43,16 @@ def main():
     # print(adj)
     
     # print('\n')
-    
+
     inv_index = collection.get_inverted_index()
-<<<<<<< Updated upstream
-    queries = [['TERM1', 'TERM2', 'TERM3', 'TERM51']]
-    queries = [['IS', 'CF', 'MUCUS', 'ABNORMAL']]
-    # queries = [['a', 'b', 'd', 'n']]
-    for query in queries:
-        print(query)
-=======
-    
+
     # queries = [['TERM1', 'TERM2', 'TERM3', 'TERM51']]
     # queries = [['IS', 'CF', 'MUCUS', 'ABNORMAL']]
 
     # queries = [['a', 'b', 'd', 'n']]
     with open('data/Queries.txt') as f:
         queries = [q.upper().split() for q in f.readlines()]
-    
+
     with open('data/Relevant.txt') as f:
         rel_docs = [[int(id) for id in d.split()] for d in f.readlines()]
 
@@ -66,15 +60,12 @@ def main():
     avg_pre = []
     avg_rec = []
     for i, query in enumerate(queries):
->>>>>>> Stashed changes
+
         freq_termsets = apriori(query, inv_index, min_freq=1)
         print(len(freq_termsets))
 
-<<<<<<< Updated upstream
-    #print(freq_termsets, len(freq_termsets), '\n')
-=======
+    	#print(freq_termsets, len(freq_termsets), '\n')
         # print(freq_termsets, len(freq_termsets), '\n')
->>>>>>> Stashed changes
 
         # bug for the whole collection!!
         idf = calculate_ts_idf(freq_termsets, N)
@@ -98,15 +89,9 @@ def main():
         avg_pre.append(pre)
         avg_rec.append(rec)
 
-<<<<<<< Updated upstream
     # needs sorting
     pre, rec = calc_precision_recall(document_similarities.keys(), rel_docs[4])
     print(pre, rec)
 
-=======
-    # print(avg_pre)
-    # print(avg)
-    
->>>>>>> Stashed changes
-    
+
 main()
