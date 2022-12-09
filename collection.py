@@ -1,8 +1,12 @@
+import utilities as utl
+from networkx.readwrite import json_graph
+import json
+from json import dumps
+
 
 from graphs import GraphDoc
 from matplotlib.pyplot import show
-from json import dumps
-from math import log 
+from math import log
 from networkx import Graph, set_node_attributes, get_node_attributes
 
 
@@ -11,7 +15,6 @@ class Collection(GraphDoc):
         super().__init__(path, window)
         self.graph_docs = graph_docs
         self.inverted_index = {}
-
 
     def get_inverted_index(self):
 
@@ -22,19 +25,18 @@ class Collection(GraphDoc):
                 if key not in self.inverted_index.keys():
 
                     self.inverted_index[key] = {
-                                                'id': id,
-                                                'tf': value,
-                                                'posting_list': [[graph_doc.doc_id, value]],
-                                                'nwk': nwk[key],
-                                                'term': key
-                                                }
+                        'id': id,
+                        'tf': value,
+                        'posting_list': [[graph_doc.doc_id, value]],
+                        'nwk': nwk[key],
+                        'term': key
+                    }
                     id += 1
                 else:
                     self.inverted_index[key]['tf'] += value
                     self.inverted_index[key]['posting_list'] += [[graph_doc.doc_id, value]]
 
         return self.inverted_index
-
 
     # creates posting list for each term in collection
     def get_posting_lists(self):
@@ -48,13 +50,12 @@ class Collection(GraphDoc):
 
         return inverted_index
 
-
     def save_inverted_index(self):
-            with open(f'inverted_index{self.doc_id}.txt', 'w', encoding='UTF-8') as inv_ind:
-                if self.inverted_index:
-                    inv_ind.write(dumps(self.inverted_index))
-                else: raise("Inverted Index Empty.")
-
+        with open(f'inverted_index{self.doc_id}.txt', 'w', encoding='UTF-8') as inv_ind:
+            if self.inverted_index:
+                inv_ind.write(dumps(self.inverted_index))
+            else:
+                raise ("Inverted Index Empty.")
 
     def union_graph(self, kcore=[], kcore_bool=False):
         union = Graph()
@@ -69,22 +70,21 @@ class Collection(GraphDoc):
                 for j in range(gd.adj_matrix.shape[1]):
                     if i > j:
                         if union.has_edge(terms[i], terms[j]):
-                            union[terms[i]][terms[j]]['weight'] += (gd.adj_matrix[i][j] * h) # += Wout
+                            union[terms[i]][terms[j]]['weight'] += (gd.adj_matrix[i][j] * h)  # += Wout
                         else:
                             union.add_edge(terms[i], terms[j], weight=gd.adj_matrix[i][j] * h)
-                    #create a dict of Wins[terms]
+                    # create a dict of Wins[terms]
                     elif i == j:
                         if terms[i] in terms_win:
-                            terms_win[terms[i]] += gd.adj_matrix[i][j] * h # += Win
+                            terms_win[terms[i]] += gd.adj_matrix[i][j] * h  # += Win
                         else:
                             terms_win[terms[i]] = gd.adj_matrix[i][j] * h
 
-        set_node_attributes(union, terms_win, 'weight') 
+        set_node_attributes(union, terms_win, 'weight')
 
-        self.graph = union       
+        self.graph = union
 
         return union
-
 
     def calculate_nwk(self, a=10, b=10):
         nwk = {}
@@ -98,5 +98,17 @@ class Collection(GraphDoc):
             s = b / (ngb[k] + 1)
             nwk[k] = round(log(1 + f) * log(1 + s), 3)
             # print(f'log(1 + ({a} * {Wout[k]} / (({Win[k]} + 1) * ({ngb[k]} + 1)) ) ) * log(1 + ({b} / ({ngb[k]} + 1))) = {nwk[k]}')
-        
+
         return nwk
+
+    def index_graph(self, name="default.json"):
+        if self.graph is None:
+            print("graph empty. Union graph not created")
+            return
+        else:
+            json_index = json_graph.adjacency_data(self.graph)
+            print(type(json_index))
+            json_index = json.dumps(json_index,cls=utl.NpEncoder)
+            with open(name, "w") as out:
+                json.dump(json_index, out)
+            return
