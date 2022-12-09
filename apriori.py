@@ -60,7 +60,7 @@ def create_candidate_k(freq_termsets, k):
 
 def apriori(query, inv_index, min_freq):
     # the candidate sets for the 1-item is different,
-    # create them independently from others
+    # create them independently of others
     c1 = create_candidate_1(query, inv_index)
     # print(f"Initial 1-termsets: {c1}\n")
     freq_termset = create_freq_term(c1, min_freq=min_freq)
