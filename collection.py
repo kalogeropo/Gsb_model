@@ -7,7 +7,7 @@ from json import dumps
 from graphs import GraphDoc
 from matplotlib.pyplot import show
 from math import log
-from networkx import Graph, set_node_attributes, get_node_attributes
+from networkx import Graph, set_node_attributes, get_node_attributes,info
 
 
 class Collection(GraphDoc):
@@ -86,7 +86,7 @@ class Collection(GraphDoc):
 
         return union
 
-    def calculate_nwk(self, a=10, b=10):
+    def calculate_nwk(self, a=1, b=10):
         nwk = {}
         Win = self.calculate_win()
         Wout = self.calculate_wout()
@@ -112,3 +112,11 @@ class Collection(GraphDoc):
             with open(name, "w") as out:
                 json.dump(json_index, out)
             return
+    def load_graph_from_file(self, name="default.json"):
+        with open(name) as f:
+            js_graph = json.loads(json.load(f))
+            #print(type(js_graph))
+            js_graph = json_graph.adjacency_graph(js_graph)
+        #print(info(js_graph))
+        self.graph = js_graph
+        return js_graph

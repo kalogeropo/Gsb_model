@@ -1,3 +1,4 @@
+import json
 from os import listdir, getcwd
 from os.path import expanduser, join
 from time import time
@@ -13,6 +14,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from apriori import apriori
 from retrieval import *
 
+from networkx.readwrite import json_graph
 
     
 def main():
@@ -23,26 +25,27 @@ def main():
     # list files
     filenames = [join(test_path, f) for f in listdir(test_path)]
     graph_documents = []
-    for filename in filenames:
-        graph_doc = GraphDoc(filename, window=10)
+    # for filename in filenames:
+    #     graph_doc = GraphDoc(filename, window=10)
+    #
+    #     # graph_doc.graph = graph_doc.create_graph_from_adjmatrix()
+    #     # print(graph_doc.get_win_terms())
+    #     # graph_doc.draw_graph()
+    #     graph_documents += [graph_doc]
+    #
+    # collection = Collection(graph_documents)
+    # union_graph = collection.union_graph()
+    # #collection.index_graph("test.json")
+    # # adj = to_numpy_array(union_graph)
+    # # adj_diagonal = list(collection.calculate_win().values())
+    # # fill_diagonal(adj, adj_diagonal)
+    # # print(adj)
+    #
+    # # print('\n')
+    # inv_index = collection.get_inverted_index()
+    #
 
-        # graph_doc.graph = graph_doc.create_graph_from_adjmatrix()
-        # print(graph_doc.get_win_terms())
-        # graph_doc.draw_graph()
-        graph_documents += [graph_doc]
 
-    collection = Collection(graph_documents)
-    union_graph = collection.union_graph()
-    print(collection.adj_matrix)
-    #collection.index_graph("test.json")
-    # adj = to_numpy_array(union_graph)
-    # adj_diagonal = list(collection.calculate_win().values())
-    # fill_diagonal(adj, adj_diagonal)
-    # print(adj)
-
-    # print('\n')
-    inv_index = collection.get_inverted_index()
-    #collection.draw_graph()
 
     # queries = [['TERM1', 'TERM2', 'TERM3', 'TERM51']]
     # queries = [['IS', 'CF', 'MUCUS', 'ABNORMAL']]
