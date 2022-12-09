@@ -3,12 +3,23 @@ from numpy.linalg import norm
 from math import log, log2
 
 
-def calculate_idf(freq_termsets, N):
+def calculate_tf(terms):
+    tf = {}
+    for term in terms:
+        if term not in tf:
+            tf[term] = 1
+        elif term in tf:
+            tf[term] += 1
+    return tf
+
+
+def calculate_ts_idf(termsets, N):
     # len(value) => in how many documents each termset appears
-    return array([round(log2(1 + (N / len(value))), 3) for value in freq_termsets.values()])
+    return array([round(log2(1 + (N / len(value))), 3) for value in termsets.values()])
 
 
-def calculate_tf_ij(freq_termsets, inv_index, N):
+# termset frequency
+def calculate_tsf(termsets, inv_index, N):
     #    d1  d2  d3  . . .  di
     # S1 f11 f12 f13 . . . f1i
     # S2     f22            .
@@ -17,10 +28,10 @@ def calculate_tf_ij(freq_termsets, inv_index, N):
     # .                  .  .
     # Sj fj1 fj2 fj3 . . . fij
 
-    tf_ij = zeros((len(freq_termsets), N))
+    tf_ij = zeros((len(termsets), N))
     # for each termset
-    for i, (termset, docs) in enumerate(freq_termsets.items()):
-        # e.x. termset = {'t1', 't2', 't3'}
+    for i, (termset, docs) in enumerate(termsets.items()):
+        # e.x. termset = fronzenset{'t1', 't2', 't3'}
         terms = list(termset) # ['t1', 't2', 't3']
         temp = {}
         # for each term in the termset
@@ -42,9 +53,9 @@ def calculate_tf_ij(freq_termsets, inv_index, N):
     return array(tf_ij)
 
 
-def calculate_tnw(freq_termsets, inv_index):
+def calculate_tnw(termsets, inv_index):
     termset_weight = []
-    for termset in freq_termsets:
+    for termset in termsets:
         tnw = 1
         for term in termset:
             if term in inv_index:
@@ -72,13 +83,13 @@ def evaluate_sim(query, dtm, k=50):
     for id, doc_vec in enumerate(dtm.T):
         doc_sim[id] = cosine_similarity(query, doc_vec)
 
-    # return {id: s for id, s in sorted(doc_sim.items(), key=lambda item: item[1])}
+    return {id: s for id, s in sorted(doc_sim.items(), key=lambda item: item[1], reverse=True) if s != 0.}
     # pseudo-sorting
-    ranked_sim = {}
-    for i in range(1, k):
-       ranked_sim[i] = doc_sim[i]
+    # ranked_sim = {}
+    # for i in range(1, k):
+    #    ranked_sim[i] = doc_sim[i]
 
-    return ranked_sim
+    # return ranked_sim
 
 
 def calc_precision_recall(doc_sims, relevant):

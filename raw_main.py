@@ -5,27 +5,6 @@ import time
 import sys
 import csv
 
-
-# deletes by re drawing the graph edges of the graph given a minimum weight !needs fix but dont work
-def pruneGraphbyWeight(aMatrix,termlist):
-    print('pruning the graph')
-    temp = Woutdegree(aMatrix) #[list of weight sums of each node]
-    maxval = (sum(temp[0]) / (len(temp[0]) * len(temp[0]))) #avarage weight of node
-    #maxval = (maxval * (+0.5)) + maxval #average weight of
-    gr = nx.Graph()
-    for i in range(len(aMatrix)):
-        gr.add_node(i, term=termlist[i])
-        for j in range(len(aMatrix)):
-            if i > j:
-                if aMatrix[i][j] >=  S * maxval: #S is the persentage of the allowed weight based on maxval
-                    # print("i = %d j=%d weight  = %d" % (i, j, aMatrix[i][j]))
-                    gr.add_edge(i, j, weight=aMatrix[i][j])
-                elif maxval < 1:
-                    gr.add_edge(i, j, weight=1)#used because we had implemented a precentange on average
-    return (gr)
-
-
-
 ########################--------test-------------#####################
 
 union_graph_termlist_id = []  # id of each unique word in the collection

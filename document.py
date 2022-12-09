@@ -1,6 +1,7 @@
 from re import findall
 from os import getcwd
 from os.path import exists
+from retrieval import calculate_tf
 
 
 class Document():
@@ -9,7 +10,7 @@ class Document():
             self.path = path
             self.doc_id = int(findall(r'\d+', self.path)[0])
             self.terms = self.read_document()
-            self.tf = self.create_tf()
+            self.tf = calculate_tf(self.terms)
         else:
             self.path = getcwd()
             self.doc_id = 696969
@@ -21,19 +22,9 @@ class Document():
         try:
             with open(self.path, 'r', encoding='UTF-8') as d:
                 # get all terms while checking for blanks and new lines
-                return d.read().strip().split()
+                return [r.strip() for r in d.readlines()]
         except FileNotFoundError:
             raise ('File does not exist.')
-
-
-    def create_tf(self):
-        tf = {}
-        for term in self.terms:
-            if term in tf:
-                tf[term] += 1
-            else:
-                tf[term] = 1
-        return tf
 
     
     def set_terms(self, terms):

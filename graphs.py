@@ -1,7 +1,9 @@
 from matplotlib import pyplot as plt
 from networkx import Graph, draw, circular_layout, get_node_attributes, set_node_attributes, get_edge_attributes, draw_networkx_edge_labels
-from document import Document
 from numpy import array, transpose, dot, fill_diagonal, zeros
+
+from document import Document
+from retrieval import calculate_tf
 
 
 class GraphDoc(Document):
@@ -31,8 +33,8 @@ class GraphDoc(Document):
             rows = array(list(self.tf.values()))
 
             # reshape list to column and row vector
-            row = transpose(rows.reshape(1, rows.shape[0]))
-            col = transpose(rows.reshape(rows.shape[0], 1))
+            row = rows.reshape(1, rows.shape[0]).T
+            col = rows.reshape(rows.shape[0], 1).T
 
             # create adjecency matrix by dot product
             adj_matrix = dot(row, col)
@@ -40,10 +42,6 @@ class GraphDoc(Document):
             # calculate Win weights (diagonal terms)
             win = [(w * (w + 1) * 0.5) for w in rows]
             fill_diagonal(adj_matrix, win)
-            # for i in range(adj_matrix.shape[0]):
-            #    for j in range(adj_matrix.shape[1]):
-            #        if i == j:
-            #            adj_matrix[i][j] = rows[i] * (rows[i] + 1) * 0.5  # Win
 
             return adj_matrix
 
@@ -53,10 +51,11 @@ class GraphDoc(Document):
         # check if adj matrix not built yet
         if self.adj_matrix is None:
             self.adj_matrix = self.create_adj_matrix()
-
+    
         graph = Graph()
         terms = list(self.tf.keys())
         w_in = self.adj_matrix.diagonal()
+
         for i in range(self.adj_matrix.shape[0]):
             graph.add_node(terms[i], weight=w_in[i])
             for j in range(self.adj_matrix.shape[1]):
@@ -65,27 +64,24 @@ class GraphDoc(Document):
 
         return graph
         
-
+    
     def create_adj_matrix_with_window(self):
         windows_size = self.window
-        # unique terms from whole document
-        terms = list(self.tf.keys())
+
         # create windowed document
         windowed_doc = self.split_document(windows_size)
-        # print(windowed_doc)
-        adj_matrix = zeros(shape=(len(terms), len(terms)), dtype=int)
+
+        adj_matrix = zeros(shape=(len(self.tf), len(self.tf)), dtype=int)
         for segment in windowed_doc:
-            tf = Document().set_terms(segment).create_tf()
-            # print(tf)
-            for i in range(adj_matrix.shape[0]):
-                for j in range(adj_matrix.shape[1]):
-                    term_i = terms[i]
-                    term_j = terms[j]
-                    if term_i in tf.keys() and term_j in tf.keys():
+            w_tf = calculate_tf(segment)
+
+            for i, term_i in enumerate(self.tf):
+                for j, term_j in enumerate(self.tf):
+                    if term_i in w_tf.keys() and term_j in w_tf.keys():
                         if i == j:
-                            adj_matrix[i][j] += tf[term_i] * (tf[term_i] + 1) / 2
+                            adj_matrix[i][j] += w_tf[term_i] * (w_tf[term_i] + 1) / 2
                         else:
-                            adj_matrix[i][j] += tf[term_i] * tf[term_j]
+                            adj_matrix[i][j] += w_tf[term_i] * w_tf[term_j]
         return adj_matrix
 
     
