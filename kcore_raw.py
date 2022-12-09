@@ -132,82 +132,6 @@ def stopwordsStats(kcore,term_list,file):
     fw.close()
 
 
-# -----------Union Graph to inverted index------------
-
-
-def w_and_write_to_filev2(wout, collection_terms, union_graph_termlist_id, collection_term_freq, postinglist, file):
-    # wout |[[term][wout][neibours]]\
-    print('Calculating weights and create inveted index')
-    print(file)
-    for entry in collection_terms:
-        term = entry
-        id = collection_terms[entry]
-        win = collection_term_freq[id]
-        for sublist in wout:
-            if term in sublist[0]:
-                # print('here')
-                Wo = sublist[1]
-                nbrs = sublist[2]
-                break
-        VarA = 1
-        VarB = 10
-        Alog = 1 + VarA * ((Wo / (nbrs + 1)) / (win + 1))
-        Blog = 1 + VarB * (1 / (nbrs + 1))
-        temp = log(Alog) * log(Blog)
-        indexofwordinlist = 2 * id + 1
-        graphToIndex(id, term, temp, postinglist[indexofwordinlist], filename=file)
-    return 1
-
-
-def load_inv_index(*args):
-    arg = list(args)
-    if not arg:
-        invindex = 'inverted index.dat'
-    else:
-        invindex = arg[0]
-    ids = []
-    trms = []
-    W = []
-    plist = []
-    with open(invindex, 'r') as csvf:
-        reader = csv.reader(csvf, delimiter=";")
-        for row in reader:
-            if row[0] not in ids:
-                ids.append(row[0])
-                trms.append(row[1])
-                W.append(row[2])
-                plist.append(row[3].split(','))
-    csvf.close()
-    # print(len(ids))
-    return ids, trms, W, plist
-
-
-def load_doc_info(*args):
-    args = list(args)
-    if not args:
-        docinfofile = "docinfo.dat"
-    else:
-        docinfofile = args[0]
-    info = []
-    with open(docinfofile, "r") as fh:
-        lines = [line.split() for line in fh]
-        for line in lines:
-            if line not in info:
-                info.append(line)
-    return info
-
-
-def Woutusinggraph(inputgraph):
-    nd = inputgraph.nodes()
-    woutlist = []
-    for n in nd:
-        # print(n,inputgraph.degree(n,weight= 'weight'))
-        woutlist.append([n, inputgraph.degree(n, weight='weight'), len(list(inputgraph.neighbors(n)))])
-
-    print('success')
-    return woutlist
-
-
 def density(A_graph):
     graph_edges = A_graph.number_of_edges()
     # print(graph_edges)
@@ -271,24 +195,3 @@ def average(lst):
     except ZeroDivisionError:
         return 0
 
-        
-def pre_rec_calculation(rev_list,relevant):
-    cnt = 0
-    retrieved = 1
-    recall = []
-    precision = []
-    for doc in rev_list:
-        if doc in relevant:
-            cnt += 1
-            p = cnt / retrieved
-            r = cnt / len(relevant)
-            precision.append(p)
-            recall.append(r)
-        retrieved += 1
-
-    #print(list0)
-    #print(precision[0:10])
-    #print(recall[0:10])
-    av_pre = average(precision)
-    av_rec = average(recall)
-    return av_pre, av_rec, precision, recall

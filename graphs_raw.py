@@ -1,16 +1,3 @@
-import nltk
-import numpy
-
-def graphToIndex(id, terms, calc_term_w, plist, *args, **kwargs):
-    filename = kwargs.get('filename', None)
-    if not filename:
-        filename = 'inverted index.dat'
-    f = open(filename, "a+")
-    data = ','.join(
-        [str(i) for i in plist])  # join list to a string so we can write it in the inv index and load it with ease
-    f.write('%d;%s;%f;%s;\n' % (id, terms, calc_term_w, data))
-    f.close()
-    return 1
 
 
 ##############################################################################################################################
@@ -68,24 +55,6 @@ def CreateAdjMatrix_Vazirgiannis_implementation(terms, file, window_size):
     return (adj_matrix)
 ########################################################################################################################
 ######### PART 2:KALOGEROPOULOS graph creation proccess and usefull graph functions
-
-
-# computes the degree of every node using adj matrix
-def Woutdegree(mat):
-    list_of_degrees = numpy.sum(mat, axis=0)
-    list_of_degrees = numpy.asarray(list_of_degrees)
-    id = []
-    # print(list_of_degrees)
-    # print(numpy.size(list_of_degrees))
-    for k in range(numpy.size(list_of_degrees)):
-        id.append(k)
-        list_of_degrees[k] -= mat[k][k]
-    list_of_degrees.tolist()
-    return list_of_degrees, id
-
-
-def sortByDegree(val):
-    return val[0]
 
 
 # deletes by re drawing the graph edges of the graph given a minimum weight !needs fix but dont work
