@@ -83,13 +83,7 @@ def evaluate_sim(query, dtm, k=50):
     for id, doc_vec in enumerate(dtm.T):
         doc_sim[id] = cosine_similarity(query, doc_vec)
 
-    return {id: s for id, s in sorted(doc_sim.items(), key=lambda item: item[1], reverse=True) if s != 0.}
-    # pseudo-sorting
-    # ranked_sim = {}
-    # for i in range(1, k):
-    #    ranked_sim[i] = doc_sim[i]
-
-    # return ranked_sim
+    return {id: sim for id, sim in sorted(doc_sim.items(), key=lambda item: item[1], reverse=True)}
 
 
 def calc_precision_recall(doc_sims, relevant):

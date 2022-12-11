@@ -42,7 +42,7 @@ def main():
     # fill_diagonal(adj, adj_diagonal)
     # print(adj)
     
-    # print('\n')
+    print('Union Graph Ready.\n')
 
     inv_index = collection.get_inverted_index()
 
@@ -54,19 +54,22 @@ def main():
         queries = [q.upper().split() for q in f.readlines()]
 
     with open('data/Relevant.txt') as f:
-        rel_docs = [[int(id) for id in d.split()] for d in f.readlines()]
+        relevant_docs = [[int(id) for id in d.split()] for d in f.readlines()]
 
     N = 1239
     avg_pre = []
     avg_rec = []
-    for i, query in enumerate(queries):
-
+    for i, (query, rel_docs) in enumerate(zip(queries, relevant_docs)):
+        if i == 20: break
+        
+        print(f"Query length: {len(query)}")
+        apriori_start = time()
         freq_termsets = apriori(query, inv_index, min_freq=1)
-        print(len(freq_termsets))
+        apriori_end = time()
+        print(f"Frequent Termsets: {len(freq_termsets)}")
+        print(f"Apriori iter {i} took {apriori_end-apriori_start} secs.")
 
-    	#print(freq_termsets, len(freq_termsets), '\n')
-        # print(freq_termsets, len(freq_termsets), '\n')
-
+        vector_start = time()
         # bug for the whole collection!!
         idf = calculate_ts_idf(freq_termsets, N)
         # print(idf, '\n')
@@ -78,20 +81,18 @@ def main():
         doc_weights = calculate_doc_weights(tf_ij, idf, tnw)
         # print(doc_weights)
         # print('\n')
-
+        vector_end = time()
+        print(f"Vector Space dimensionality {doc_weights.shape}")
+        print(f"Vector iter {i} took {vector_end-vector_start} secs.\n")
         q = idf
         document_similarities = evaluate_sim(q, doc_weights)
         # print(len(document_similarities))
 
-        pre, rec = calc_precision_recall(document_similarities.keys(), rel_docs[i])
+        pre, rec = calc_precision_recall(document_similarities.keys(), rel_docs)
         print(pre, rec)
 
         avg_pre.append(pre)
         avg_rec.append(rec)
-
-    # needs sorting
-    pre, rec = calc_precision_recall(document_similarities.keys(), rel_docs[4])
-    print(pre, rec)
 
 
 main()
