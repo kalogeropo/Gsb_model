@@ -1,23 +1,14 @@
-import json
 from os import listdir, getcwd
-from os.path import expanduser, join
+from os.path import join
 from time import time
 
-from graphs import GraphDoc
+from apriori import apriori
 from collection import Collection
-from matplotlib.pyplot import show
-from networkx import to_numpy_matrix, to_numpy_array
-
-from numpy import fill_diagonal, dot
-from sklearn.metrics.pairwise import cosine_similarity
-
-from apriori import apriori, intersection
+from graphs import GraphDoc
 from retrieval import *
+from utilities import parser
 
-from networkx.readwrite import json_graph
 
-
-    
 def main():
     # define path
     current_dir = getcwd()
@@ -26,6 +17,7 @@ def main():
     # list files
     filenames = [join(test_path, f) for f in listdir(test_path)]
     graph_documents = []
+    graph_start = time()
     for filename in filenames:
         graph_doc = GraphDoc(filename, window=10)
 
@@ -41,25 +33,25 @@ def main():
     # adj_diagonal = list(collection.calculate_win().values())
     # fill_diagonal(adj, adj_diagonal)
     # print(adj)
-    
+    graph_end = time()
+    print(f'Doc to Union Graph took {graph_end - graph_start } secs')
     print('Union Graph Ready.\n')
 
     inv_index = collection.get_inverted_index()
 
-    # queries = [['TERM1', 'TERM2', 'TERM3', 'TERM51']]
-    # queries = [['IS', 'CF', 'MUCUS', 'ABNORMAL']]
-
     # queries = [['a', 'b', 'd', 'n']]
-    with open('data/Queries.txt') as f:
-        queries = [q.upper().split() for q in f.readlines()]
-
-    with open('data/Relevant.txt') as f:
-        relevant_docs = [[int(id) for id in d.split()] for d in f.readlines()]
+    prs = parser()
+    relevant_docs,queries = prs.load_collection('/CF')
+    print(relevant_docs)
+    print(queries)
 
     N = 1239
     avg_pre = []
     avg_rec = []
     for i, (query, rel_docs) in enumerate(zip(queries, relevant_docs)):
+        print(f"\nQuery {i} of {len(queries)}")
+
+        #stop @i query
         if i == 20: break
         
         print(f"Query length: {len(query)}")
@@ -94,5 +86,6 @@ def main():
         avg_pre.append(pre)
         avg_rec.append(rec)
 
-
+#TODO: testing framework, logging result handling
+#TODO: implement vazirgiannis window and ranking
 main()
