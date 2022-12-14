@@ -20,21 +20,26 @@ class Collection(GraphDoc):
 
         nwk = self.calculate_nwk()
         id = 0
+        cnt=0
+
         for graph_doc in self.graph_docs:
             for key, value in graph_doc.tf.items():
-                if key not in self.inverted_index.keys():
-
-                    self.inverted_index[key] = {
-                        'id': id,
-                        'tf': value,
-                        'posting_list': [[graph_doc.doc_id, value]],
-                        'nwk': nwk[key],
-                        'term': key
-                    }
-                    id += 1
-                else:
-                    self.inverted_index[key]['tf'] += value
-                    self.inverted_index[key]['posting_list'] += [[graph_doc.doc_id, value]]
+                try:
+                    if key not in self.inverted_index.keys():
+                        self.inverted_index[key] = {
+                            'id': id,
+                            'tf': value,
+                            'posting_list': [[graph_doc.doc_id, value]],
+                            'nwk': nwk[key],
+                            'term': key
+                        }
+                        id += 1
+                    else:
+                        self.inverted_index[key]['tf'] += value
+                        self.inverted_index[key]['posting_list'] += [[graph_doc.doc_id, value]]
+                except:
+                    cnt+=1
+                    print(f"Keys not found {cnt}")
 
         return self.inverted_index
 
@@ -50,8 +55,9 @@ class Collection(GraphDoc):
 
         return inverted_index
 
-    def save_inverted_index(self):
-        with open(f'inverted_index{self.doc_id}.txt', 'w', encoding='UTF-8') as inv_ind:
+    def save_inverted_index(self,path =''):
+
+        with open("".join([path,f'inverted_index{self.doc_id}.txt']), 'w', encoding='UTF-8') as inv_ind:
             if self.inverted_index:
                 inv_ind.write(dumps(self.inverted_index))
             else:
@@ -72,7 +78,8 @@ class Collection(GraphDoc):
                         if union.has_edge(terms[i], terms[j]):
                             union[terms[i]][terms[j]]['weight'] += (gd.adj_matrix[i][j] * h)  # += Wout
                         else:
-                            union.add_edge(terms[i], terms[j], weight=gd.adj_matrix[i][j] * h)
+                            if gd.adj_matrix[i][j]>0:
+                                union.add_edge(terms[i], terms[j], weight=gd.adj_matrix[i][j] * h)
                     # create a dict of Wins[terms]
                     elif i == j:
                         if terms[i] in terms_win:
