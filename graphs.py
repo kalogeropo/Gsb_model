@@ -11,10 +11,10 @@ class GraphDoc(Document):
         super().__init__(path)
         self.window = window
 
-        if window > 0: # boolean flag is already taken into consideration to be true
-            if isinstance(window, int):
+        if self.window > 0: # boolean flag is already taken into consideration to be true
+            if isinstance(self.window, int):
                 self.adj_matrix = self.create_adj_matrix_with_window()
-            elif isinstance(window, float):
+            elif isinstance(self.window, float):
                 num_of_words = len(self.tf)
                 self.window = int(num_of_words * window) + 1
                 self.adj_matrix = self.create_adj_matrix_with_window()
@@ -66,6 +66,7 @@ class GraphDoc(Document):
         
     
     def create_adj_matrix_with_window(self):
+        #print(f"with window {self.window}")
         windows_size = self.window
 
         # create windowed document

@@ -8,7 +8,11 @@ class Document():
     def __init__(self, path=''):
         if exists(path):
             self.path = path
-            self.doc_id = int(findall(r'\d+', self.path)[0])
+            try:
+                self.doc_id = int(findall(r'\d+', self.path)[0])
+            except IndexError:
+                self.doc_id = 696969
+            #print(self.doc_id)
             self.terms = self.read_document()
             self.tf = calculate_tf(self.terms)
         else:
@@ -42,8 +46,8 @@ class Document():
         # If window is equal to zero get window according to length
         # or if percentage window flag is true
         windowed_doc = []
-        if window < 8:
-            window = 8
+        if window < 7:
+            window = 7
         # join words into a window sized text
         for i in range(0, num_of_words, window):
             windowed_doc.append(self.terms[i:i + window])

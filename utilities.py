@@ -1,9 +1,12 @@
 import json
 from os import getcwd, listdir, path
 
+from pandas import ExcelWriter
 import numpy as np
 
-#on creating a graph index, to cast int32 to int for JSON graph indexing
+
+
+# on creating a graph index, to cast int32 to int for JSON graph indexing
 class NpEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, np.integer):
@@ -16,21 +19,22 @@ class NpEncoder(json.JSONEncoder):
             return int(obj)
         return json.JSONEncoder.default(self, obj)
 
-#Here is the queries and relevant parser. It is important to notice that, this class does NOT handle the collection
-#parsing, but the *.txt files which are created by the neccessary collection parsing scripts
-class parser():
-    def __init__(self):
-        self.coll_path = "".join([getcwd(), "/collections/"])
-        self.queries = []
-        self.relevant = []
-    def load_collection(self,col_path=''):
-        self.coll_path="".join([self.coll_path,col_path])
-        if path.exists(self.coll_path):
-            for item in listdir(self.coll_path):
-                if item == "Queries.txt":
-                    with open("".join([self.coll_path,"/Queries.txt"]),"r") as fd:
-                        self.queries= [q.upper().split() for q in fd.readlines()]
-                if item == "Relevant.txt":
-                    with open("".join([self.coll_path,"/Relevant.txt"]),"r") as fd:
-                        self.relevant=[[int(id) for id in d.split()] for d in fd.readlines()]
-        return self.relevant,self.queries
+
+# Here is the queries and relevant parser. It is important to notice that, this class does NOT handle the collection
+# parsing, but the *.txt files which are created by the neccessary collection parsing scripts
+
+
+
+#TODO: CREATE file with test name as name if not exists, Fix warning on writer.save()
+class excelwriter():
+    def __init__(self,path):
+        self.res_path = path
+
+    def write_results(self,sheet_name,df):
+        # Create a Pandas Excel writer using XlsxWriter as the engine.
+        writer = ExcelWriter("".join([self.res_path,sheet_name,'.xlsx']), engine='xlsxwriter')
+        # Convert the dataframe to an XlsxWriter Excel object.
+        df.to_excel(writer, sheet_name=sheet_name)
+        writer.save()
+        workbook = writer.book
+        worksheet = writer.sheets[sheet_name]
