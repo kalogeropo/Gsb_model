@@ -4,7 +4,7 @@ from time import time
 timelist = []
 
 #########-------------------->1
-os.system('python parser.py --test_name apriori --Model index-constant --Parameters 0.05 --path CF' )
+#os.system('python parser.py --test_name apriori --Model index-constant --Parameters 0.05 --path CF' )
 for min_supp in range(1,10):
     start = time()
     os.system(f'python parser.py --test_name apriori --Model graph-ext_sum_tfs --Parameters {min_supp} --path CF')

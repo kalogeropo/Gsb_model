@@ -147,11 +147,11 @@ class Collection(GraphDoc):
         # reading the data from the file
         with open(name) as f:
             data = f.read()
-        print("Data type before reconstruction : ", type(data))
+        #print("Data type before reconstruction : ", type(data))
         # reconstructing the data as a dictionary
         js = json.loads(data)
-        print("Data type after reconstruction : ", type(js))
-        print(js)
+        #print("Data type after reconstruction : ", type(js))
+        #print(js)
         self.inverted_index = js
         return js
 

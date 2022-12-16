@@ -128,7 +128,7 @@ class tester():
     def retrieve_set_based(self,min_freq=1,graphs=True):
         path = "".join(["results/", self.test_name, "/"])
         col = Collection.load_collection(path)
-        print(col.inverted_index)
+        #print(col.inverted_index)
         inv_index = col.inverted_index
 
         N = 1239
@@ -138,7 +138,7 @@ class tester():
             print(f"\nQuery {i} of {len(self.queries)}")
 
             # stop @i query
-            #if i == 10: break
+            if i == 20: break
 
             print(f"Query length: {len(query)}")
             apriori_start = time()
