@@ -32,7 +32,10 @@ class excelwriter():
 
     def write_results(self,sheet_name,df):
         # Create a Pandas Excel writer using XlsxWriter as the engine.
-        writer = ExcelWriter("".join([self.res_path,sheet_name,'.xlsx']), engine='xlsxwriter',mode="a")
+        try:
+            writer = ExcelWriter("".join([self.res_path,sheet_name,'.xlsx']), engine='openpyxl',mode="a",if_sheet_exists='new')
+        except FileNotFoundError:
+            writer = ExcelWriter("".join([self.res_path,sheet_name,'.xlsx']), engine='openpyxl')
         # Convert the dataframe to an XlsxWriter Excel object.
         df.to_excel(writer, sheet_name=sheet_name)
         writer.save()

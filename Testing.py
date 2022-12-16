@@ -138,7 +138,7 @@ class tester():
             print(f"\nQuery {i} of {len(self.queries)}")
 
             # stop @i query
-            if i == 20: break
+            if i == 15: break
 
             print(f"Query length: {len(query)}")
             apriori_start = time()
