@@ -16,7 +16,8 @@ from parse import Parser
 def main():
     # define path
     current_dir = getcwd()
-    test_path = "".join([current_dir, "/data/baeza_docs"])
+    # test_path = "".join([current_dir, "/data/baeza_docs"])
+    test_path = "".join([current_dir, "/collections/CF/docs"])
 
     # list files
     filenames = [join(test_path, f) for f in listdir(test_path)]
@@ -29,17 +30,17 @@ def main():
         # print(graph_doc.get_win_terms())
         # graph_doc.draw_graph()
         graph_documents += [graph_doc]
-        print(graph_doc.adj_matrix)
+        # print(graph_doc.adj_matrix)
     
     collection = Collection(graph_documents)
     union_graph = collection.union_graph()
+    print(union_graph)
     # collection.index_graph("test.json")
     adj = to_numpy_array(union_graph)
     adj_diagonal = list(collection.calculate_win().values())
     fill_diagonal(adj, adj_diagonal)
-    print(adj)
-    graph_end = time()
-    print(f'\nCreation of Union Graph took {graph_end - graph_start} secs')
+    # print(adj)
+    print(f'\nCreation of Union Graph took {time() - graph_start} secs')
 
     """
     inv_index = collection.get_inverted_index()

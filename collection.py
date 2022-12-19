@@ -7,7 +7,7 @@ from os import listdir
 from graphs import GraphDoc
 from matplotlib.pyplot import show
 from math import log
-from networkx import Graph, set_node_attributes, get_node_attributes,info
+from networkx import Graph, set_node_attributes, get_node_attributes
 
 
 class Collection(GraphDoc):
@@ -68,8 +68,8 @@ class Collection(GraphDoc):
 
 
     def union_graph(self, kcore=[], kcore_bool=False):
+        
         union = Graph()
-        terms_win = {}
         # for every graph document object
         for gd in self.graph_docs:
             terms = list(gd.tf.keys())
@@ -78,26 +78,26 @@ class Collection(GraphDoc):
                 # gain value of importance
                 h = 0.06 if terms[i] in kcore and kcore_bool else 1
                 for j in range(gd.adj_matrix.shape[1]):
-                    if i > j:
+                    if i >= j:
                         if union.has_edge(terms[i], terms[j]):
-                            union[terms[i]][terms[j]]['weight'] += (gd.adj_matrix[i][j] * h)  # += Wout
+                            union[terms[i]][terms[j]]['weight'] += (gd.adj_matrix[i][j] * h)
                         else:
-                            if gd.adj_matrix[i][j] > 0:
-                                union.add_edge(terms[i], terms[j], weight=gd.adj_matrix[i][j] * h)
-                    # create a dict of Wins[terms]
-                    elif i == j:
-                        if terms[i] in terms_win:
-                            terms_win[terms[i]] += gd.adj_matrix[i][j] * h  # += Win
-                        else:
-                            terms_win[terms[i]] = gd.adj_matrix[i][j] * h
+                            union.add_edge(terms[i], terms[j], weight=gd.adj_matrix[i][j] * h)
 
-        set_node_attributes(union, terms_win, 'weight')
+        # in-wards edge weights represent Win
+        w_in = {n: union.get_edge_data(n, n)['weight'] for n in union.nodes()}
+
+        # set them as node attr
+        set_node_attributes(union, w_in, 'weight')
+
+        # remove in-wards edges
+        for n in union.nodes(): union.remove_edge(n, n)
 
         self.graph = union
 
         return union
-
-
+        
+ 
     def calculate_nwk(self, a=1, b=10):
         nwk = {}
         Win = self.calculate_win()
