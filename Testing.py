@@ -44,27 +44,23 @@ from retrieval import *
 from utilities import excelwriter
 
 
-class tester():
-    def __init__(self, name, model, params=[], coll_path="/data/docs", rel=None, quer=None):
+class Tester():
+    def __init__(self, model, name, params=[], coll_path="/data/docs", rel=[], queries=[]):
         print(coll_path)
-        if quer is None:
-            quer = []
-        if rel is None:
-            rel = []
-        self.relevant_docs = rel
-        self.queries = quer
-        self.test_name = name
         self.model = model
+        self.test_name = name
         self.parametres = params
+        self.relevant_docs = rel
+        self.queries = queries
         self.window_size = 0
-        current_dir = getcwd()
         self.path = coll_path
         #print(self.path)
-        self.dest_path = "".join([current_dir, "/results/", self.test_name, '/'])
+        self.dest_path = "".join([getcwd(), "/results/", self.test_name, '/'])
         #print(self.dest_path)
         # create dest_folder if not exists for result aggregation
         if not path.exists(self.dest_path):
             makedirs(self.dest_path)
+
 
     def start_model(self):
         if self.model == "index-complete":
@@ -84,14 +80,15 @@ class tester():
 
         # if self.model=="index-sliding":
         # if self.model=="index-sent-par":
-        #######RETRIVAL
+        #######RETRIEVAL
         # if self.model=="set-based_min_tf":
         if self.model=="set-based_sum_tfs":
-            self.retrieve_set_based(min_freq=int(self.parametres[0]),graphs=False)
+            self.retrieve_set_based(min_freq=int(self.parametres[0]), graphs=False)
         # if self.model=="graph-ext_min_tf":
         if self.model == "graph-ext_sum_tfs":
-            self.retrieve_set_based(min_freq=int(self.parametres[0]),graphs=True)
+            self.retrieve_set_based(min_freq=int(self.parametres[0]), graphs=True)
         # if self.model=="GoW-Tw-idf":
+
 
     def create_indexes(self, inverted_index=True, graph_index=False):
         if inverted_index:
@@ -101,11 +98,14 @@ class tester():
         if graph_index:
             self.collection.index_graph("".join([self.dest_path, " test.json"]))
 
+
+    # TODO: define the adjacency matrix format
     def indexing(self):
         self.path = "".join([self.path, '/docs/'])
         filenames = [join(self.path, f) for f in listdir(self.path)]
         graph_documents = []
         graph_start = time()
+        
         for filename in filenames:
             graph_doc = GraphDoc(filename, window=self.window_size)
             graph_doc.graph = graph_doc.create_graph_from_adjmatrix()
@@ -119,13 +119,12 @@ class tester():
         # adj_diagonal = list(collection.calculate_win().values())
         # fill_diagonal(adj, adj_diagonal)
         # print(adj)
-        graph_end = time()
-        print(f'Doc to Union Graph took {graph_end - graph_start} secs')
-        print('Union Graph Ready.\n')
+        print(f'Crreation of Union Graph took {time() - graph_start} secs')
 
         return collection
 
-    def retrieve_set_based(self,min_freq=1,graphs=True):
+
+    def retrieve_set_based(self, min_freq=1, graphs=True):
         path = "".join(["results/", self.test_name, "/"])
         col = Collection.load_collection(path)
         #print(col.inverted_index)

@@ -16,11 +16,12 @@ class Collection(GraphDoc):
         self.graph_docs = graph_docs
         self.inverted_index = {}
 
+
     def get_inverted_index(self):
 
         nwk = self.calculate_nwk()
         id = 0
-        cnt=0
+        cnt = 0
 
         for graph_doc in self.graph_docs:
             for key, value in graph_doc.tf.items():
@@ -38,10 +39,11 @@ class Collection(GraphDoc):
                         self.inverted_index[key]['tf'] += value
                         self.inverted_index[key]['posting_list'] += [[graph_doc.doc_id, value]]
                 except:
-                    cnt+=1
+                    cnt += 1
                     print(f"Keys not found {cnt}")
 
         return self.inverted_index
+
 
     # creates posting list for each term in collection
     def get_posting_lists(self):
@@ -55,6 +57,7 @@ class Collection(GraphDoc):
 
         return inverted_index
 
+
     def save_inverted_index(self,path =''):
 
         with open("".join([path,f'inverted_index_{self.doc_id}.txt']), 'w', encoding='UTF-8') as inv_ind:
@@ -62,6 +65,7 @@ class Collection(GraphDoc):
                 inv_ind.write(dumps(self.inverted_index))
             else:
                 raise ("Inverted Index Empty.")
+
 
     def union_graph(self, kcore=[], kcore_bool=False):
         union = Graph()
@@ -78,7 +82,7 @@ class Collection(GraphDoc):
                         if union.has_edge(terms[i], terms[j]):
                             union[terms[i]][terms[j]]['weight'] += (gd.adj_matrix[i][j] * h)  # += Wout
                         else:
-                            if gd.adj_matrix[i][j]>0:
+                            if gd.adj_matrix[i][j] > 0:
                                 union.add_edge(terms[i], terms[j], weight=gd.adj_matrix[i][j] * h)
                     # create a dict of Wins[terms]
                     elif i == j:
@@ -92,6 +96,7 @@ class Collection(GraphDoc):
         self.graph = union
 
         return union
+
 
     def calculate_nwk(self, a=1, b=10):
         nwk = {}
@@ -108,6 +113,7 @@ class Collection(GraphDoc):
 
         return nwk
 
+
     def index_graph(self, name="default.json"):
         if self.graph is None:
             print("graph empty. Union graph not created")
@@ -120,6 +126,7 @@ class Collection(GraphDoc):
                 json.dump(json_index, out)
             return
 
+
     def load_graph_from_file(self, name="default.json"):
         with open(name) as f:
             js_graph = json.loads(json.load(f))
@@ -128,22 +135,26 @@ class Collection(GraphDoc):
         #print(info(js_graph))
         self.graph = js_graph
         return js_graph
+
+
     @classmethod
     def load_collection(cls, index_path="default.json"):
         obj = cls.__new__(cls)
         super(Collection,obj).__init__(path="")
         for file in listdir(index_path):
             if file.endswith(".json"):
-                name="".join([index_path,file])
+                name = "".join([index_path, file])
                 js_graph = obj.load_graph_from_file(name)
             if file.endswith(".txt"):
-                name="".join([index_path,file])
-                js_inverted_index  = obj.load_inverted_index_from_file(name)
+                name = "".join([index_path, file])
+                js_inverted_index = obj.load_inverted_index_from_file(name)
         #print(info(js_graph))
         obj.graph = js_graph
         obj.inverted_index=js_inverted_index
         return obj
-    def load_inverted_index_from_file(self,name ="test.index_test.txt"):
+
+
+    def load_inverted_index_from_file(self, name ="test.index_test.txt"):
         # reading the data from the file
         with open(name) as f:
             data = f.read()

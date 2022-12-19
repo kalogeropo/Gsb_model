@@ -20,20 +20,20 @@ class NpEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-# Here is the queries and relevant parser. It is important to notice that, this class does NOT handle the collection
+# Here are the queries and relevant parser. It is important to notice that, this class does NOT handle the collection
 # parsing, but the *.txt files which are created by the neccessary collection parsing scripts
 
 
 
 #TODO: CREATE file with test name as name if not exists, Fix warning on writer.save()
 class excelwriter():
-    def __init__(self,path):
+    def __init__(self, path):
         self.res_path = path
 
-    def write_results(self,sheet_name,df):
+    def write_results(self, sheet_name, df):
         # Create a Pandas Excel writer using XlsxWriter as the engine.
         try:
-            writer = ExcelWriter("".join([self.res_path,sheet_name,'.xlsx']), engine='openpyxl',mode="a",if_sheet_exists='new')
+            writer = ExcelWriter("".join([self.res_path,sheet_name,'.xlsx']), engine='openpyxl', mode="a", if_sheet_exists='new')
         except FileNotFoundError:
             writer = ExcelWriter("".join([self.res_path,sheet_name,'.xlsx']), engine='openpyxl')
         # Convert the dataframe to an XlsxWriter Excel object.

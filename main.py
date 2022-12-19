@@ -1,54 +1,55 @@
 from os import listdir, getcwd
 from os.path import join
 from time import time
-
-import pandas as pd
+from pandas import DataFrame
+from networkx import to_numpy_array
+from numpy import fill_diagonal
 
 from apriori import apriori
 from collection import Collection
 from graphs import GraphDoc
 from retrieval import *
 from utilities import excelwriter
-from parser import parser
+from parse import Parser
 
 
 def main():
     # define path
     current_dir = getcwd()
-    test_path = "".join([current_dir, "/data/docs"])
+    test_path = "".join([current_dir, "/data/baeza_docs"])
 
     # list files
-    # filenames = [join(test_path, f) for f in listdir(test_path)]
-    # graph_documents = []
-    # graph_start = time()
-    # for filename in filenames:
-    #     graph_doc = GraphDoc(filename, window=10)
-    #
-    #     # graph_doc.graph = graph_doc.create_graph_from_adjmatrix()
-    #     # print(graph_doc.get_win_terms())
-    #     # graph_doc.draw_graph()
-    #     graph_documents += [graph_doc]
-    #
-    # collection = Collection(graph_documents)
-    # union_graph = collection.union_graph()
-    # # collection.index_graph("test.json")
-    # # adj = to_numpy_array(union_graph)
-    # # adj_diagonal = list(collection.calculate_win().values())
-    # # fill_diagonal(adj, adj_diagonal)
-    # # print(adj)
-    # graph_end = time()
-    # print(f'Doc to Union Graph took {graph_end - graph_start} secs')
-    # print('Union Graph Ready.\n')
-    #
-    # inv_index = collection.get_inverted_index()
-    col = Collection.load_collection('results/firstest/')
-    print(col.inverted_index)
-    inv_index = col.inverted_index
-    # queries = [['a', 'b', 'd', 'n']]
-    prs = parser()
-    relevant_docs, queries = prs.load_collection('/CF')
-    #print(relevant_docs)
-    #print(queries)
+    filenames = [join(test_path, f) for f in listdir(test_path)]
+    graph_documents = []
+    graph_start = time()
+    for filename in filenames:
+        graph_doc = GraphDoc(filename, window=0)
+    
+        # graph_doc.graph = graph_doc.create_graph_from_adjmatrix()
+        # print(graph_doc.get_win_terms())
+        # graph_doc.draw_graph()
+        graph_documents += [graph_doc]
+        print(graph_doc.adj_matrix)
+    
+    collection = Collection(graph_documents)
+    union_graph = collection.union_graph()
+    # collection.index_graph("test.json")
+    adj = to_numpy_array(union_graph)
+    adj_diagonal = list(collection.calculate_win().values())
+    fill_diagonal(adj, adj_diagonal)
+    print(adj)
+    graph_end = time()
+    print(f'\nCreation of Union Graph took {graph_end - graph_start} secs')
+
+    """
+    inv_index = collection.get_inverted_index()
+    # col = Collection.load_collection('results/firstest/')
+    # print(col.inverted_index)
+    # inv_index = col.inverted_index
+    queries = [['a', 'b', 'd', 'n']]
+    relevant_docs, queries = Parser().load_collection('/CF')
+    print(relevant_docs)
+    print(queries)
 
     N = 1239
     avg_pre = []
@@ -90,7 +91,7 @@ def main():
 
         avg_pre.append(pre)
         avg_rec.append(rec)
-    df = pd.DataFrame(list(zip(avg_pre, avg_rec)), columns=["A_pre", "A_rec"])
+    df = DataFrame(list(zip(avg_pre, avg_rec)), columns=["A_pre", "A_rec"])
     test_writer = excelwriter()
     test_writer.write_results('', df)
 
@@ -98,4 +99,5 @@ def main():
 # TODO: testing framework, logging result handling
 # TODO: fix set based calculation weights and test it with the summing one
 # TODO: implement vazirgiannis window and ranking (github: gowpy)
+"""
 main()
