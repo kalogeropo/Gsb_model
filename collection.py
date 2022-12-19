@@ -1,32 +1,39 @@
 import utilities as utl
 from networkx.readwrite import json_graph
-import json
-from json import dumps
+from json import dumps, load, loads
+from os.path import exists, join
+from os import mkdir, listdir, getcwd
 
-from os import listdir
 from graphs import GraphDoc
-from matplotlib.pyplot import show
 from math import log
-from networkx import Graph, set_node_attributes, get_node_attributes
+from networkx import Graph, set_node_attributes, get_node_attributes, to_numpy_array
+from numpy import fill_diagonal
 
 
-class Collection(GraphDoc):
-    def __init__(self, graph_docs, window=0, path=''):
-        super().__init__(path, window)
+class Collection():
+    def __init__(self, path, graph_docs=[]):
+        # create path
+        path = join(getcwd(), path)
+        # check if exists else create directory
+        if not exists(path): mkdir(path)
+
+        self.path = path
+        # TODO: create a params attr to handle all file naming for loading and storing
+        self.params = {} 
+
         self.graph_docs = graph_docs
         self.inverted_index = {}
 
 
-    def get_inverted_index(self):
+    def create_inverted_index(self):
 
         nwk = self.calculate_nwk()
-        id = 0
-        cnt = 0
+        id, cnt = 0
 
         for graph_doc in self.graph_docs:
             for key, value in graph_doc.tf.items():
                 try:
-                    if key not in self.inverted_index.keys():
+                    if key not in self.inverted_index:
                         self.inverted_index[key] = {
                             'id': id,
                             'tf': value,
@@ -42,6 +49,10 @@ class Collection(GraphDoc):
                     cnt += 1
                     print(f"Keys not found {cnt}")
 
+        return self
+
+    
+    def get_inverted_index(self):
         return self.inverted_index
 
 
@@ -58,18 +69,9 @@ class Collection(GraphDoc):
         return inverted_index
 
 
-    def save_inverted_index(self,path =''):
-
-        with open("".join([path,f'inverted_index_{self.doc_id}.txt']), 'w', encoding='UTF-8') as inv_ind:
-            if self.inverted_index:
-                inv_ind.write(dumps(self.inverted_index))
-            else:
-                raise ("Inverted Index Empty.")
-
-
     def union_graph(self, kcore=[], kcore_bool=False):
         
-        union = Graph()
+        self.graph = Graph()
         # for every graph document object
         for gd in self.graph_docs:
             terms = list(gd.tf.keys())
@@ -79,25 +81,35 @@ class Collection(GraphDoc):
                 h = 0.06 if terms[i] in kcore and kcore_bool else 1
                 for j in range(gd.adj_matrix.shape[1]):
                     if i >= j:
-                        if union.has_edge(terms[i], terms[j]):
-                            union[terms[i]][terms[j]]['weight'] += (gd.adj_matrix[i][j] * h)
+                        if self.graph.has_edge(terms[i], terms[j]):
+                            self.graph[terms[i]][terms[j]]['weight'] += (gd.adj_matrix[i][j] * h)
                         else:
-                            union.add_edge(terms[i], terms[j], weight=gd.adj_matrix[i][j] * h)
+                            self.graph.add_edge(terms[i], terms[j], weight=gd.adj_matrix[i][j] * h)
 
         # in-wards edge weights represent Win
-        w_in = {n: union.get_edge_data(n, n)['weight'] for n in union.nodes()}
+        w_in = {n: self.graph.get_edge_data(n, n)['weight'] for n in self.graph.nodes()}
 
         # set them as node attr
-        set_node_attributes(union, w_in, 'weight')
+        set_node_attributes(self.graph, w_in, 'weight')
 
         # remove in-wards edges
-        for n in union.nodes(): union.remove_edge(n, n)
+        for n in self.graph.nodes(): self.graph.remove_edge(n, n)
 
-        self.graph = union
-
-        return union
+        return self.graph
         
- 
+    
+    def calculate_win(self):
+        return get_node_attributes(self.graph, 'weight')
+
+
+    def calculate_wout(self):
+        return {node: val for (node, val) in self.graph.degree(weight='weight')}
+
+
+    def number_of_nbrs(self):
+         return {node: val for (node, val) in self.graph.degree()}
+
+
     def calculate_nwk(self, a=1, b=10):
         nwk = {}
         Win = self.calculate_win()
@@ -114,55 +126,93 @@ class Collection(GraphDoc):
         return nwk
 
 
-    def index_graph(self, name="default.json"):
+    def save_inverted_index(self, name='inv_index.json'):
+        # define indexes path
+        path = join(self.path, 'indexes', name)
+
+        try: 
+            with open(path, 'w', encoding='UTF-8') as inv_ind:
+                # create inv ind if not created 
+                if not self.inverted_index:
+                    self.create_inverted_index()
+                # store as JSON
+                inv_ind.write(dumps(self.inverted_index))
+        except:
+                raise ('Inverted Index failure.')
+
+
+    def save_graph_index(self, name='graph_index.json'):
+
         if self.graph is None:
-            print("graph empty. Union graph not created")
-            return
+            self.union_graph()
         else:
-            json_index = json_graph.adjacency_data(self.graph)
-            print(type(json_index))
-            json_index = json.dumps(json_index,cls=utl.NpEncoder)
-            with open(name, "w") as out:
-                json.dump(json_index, out)
-            return
+            # define path to store index
+            path = join(self.path, 'indexes', name)
+
+            # format data to store
+            graph_index = json_graph.adjacency_data(self.graph)
+
+            # store via the help of json dump
+            with open(path, "w") as gf:
+                gf.write(dumps(graph_index, cls=utl.NpEncoder))
+
+            return self
 
 
-    def load_graph_from_file(self, name="default.json"):
-        with open(name) as f:
-            js_graph = json.loads(json.load(f))
-            #print(type(js_graph))
-            js_graph = json_graph.adjacency_graph(js_graph)
-        #print(info(js_graph))
-        self.graph = js_graph
-        return js_graph
+    def load_graph(self, name='graph_index.json'):
+        # path to find stored graph index
+        print(self.path)
+        path = join(self.path, 'indexes', name)
+        # open file and read as dict
+        with open(path) as gf:
+            js_graph = load(gf)
+
+        self.graph = json_graph.adjacency_graph(js_graph)
+
+        return self.graph
+
+    
+    def get_adj_matrix(self):
+        
+        if self.graph is None:
+            try:
+                self.load_graph()
+            except:
+                self.union_graph()
+
+        adj = to_numpy_array(self.graph)
+        adj_diagonal = list(self.calculate_win().values())
+        fill_diagonal(adj, adj_diagonal)
+        
+        return adj
+
+
+    def load_inverted_index(self, name="inv_index.json"):
+        # path to find stored graph index
+        path = join(self.path, 'indexes', name)
+        # open file and read as dict
+        with open(path) as f:
+            # reconstructing the data as a dictionary
+            self.inverted_index = load(f)
+
+        return self.inverted_index
 
 
     @classmethod
-    def load_collection(cls, index_path="default.json"):
+    def load_col(cls):
         obj = cls.__new__(cls)
-        super(Collection,obj).__init__(path="")
-        for file in listdir(index_path):
-            if file.endswith(".json"):
-                name = "".join([index_path, file])
-                js_graph = obj.load_graph_from_file(name)
-            if file.endswith(".txt"):
-                name = "".join([index_path, file])
-                js_inverted_index = obj.load_inverted_index_from_file(name)
-        #print(info(js_graph))
-        obj.graph = js_graph
-        obj.inverted_index=js_inverted_index
+        super(Collection, obj).__init__(path='')
+
+        obj.load_graph()
+        obj.load_inverted_index()
+        
         return obj
 
 
-    def load_inverted_index_from_file(self, name ="test.index_test.txt"):
-        # reading the data from the file
-        with open(name) as f:
-            data = f.read()
-        #print("Data type before reconstruction : ", type(data))
-        # reconstructing the data as a dictionary
-        js = json.loads(data)
-        #print("Data type after reconstruction : ", type(js))
-        #print(js)
-        self.inverted_index = js
-        return js
+    # Alternative implementation of the above method
+    def load_collection(self):
 
+        self.load_graph()
+        self.load_inverted_index()
+        
+        return self

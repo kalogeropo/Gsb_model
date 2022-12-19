@@ -8,18 +8,9 @@ class Document():
     def __init__(self, path=''):
         if exists(path):
             self.path = path
-            try:
-                self.doc_id = int(findall(r'\d+', self.path)[0])
-            except IndexError:
-                self.doc_id = 696969
-            #print(self.doc_id)
+            self.doc_id = int(findall(r'\d+', self.path)[0])
             self.terms = self.read_document()
             self.tf = calculate_tf(self.terms)
-        else:
-            self.path = getcwd()
-            self.doc_id = 696969
-            self.terms = []
-            self.tf = {}
 
 
     def read_document(self):

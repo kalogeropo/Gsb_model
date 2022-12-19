@@ -2,8 +2,6 @@ from os import listdir, getcwd
 from os.path import join
 from time import time
 from pandas import DataFrame
-from networkx import to_numpy_array
-from numpy import fill_diagonal
 
 from apriori import apriori
 from collection import Collection
@@ -14,10 +12,10 @@ from parse import Parser
 
 
 def main():
+
     # define path
-    current_dir = getcwd()
-    # test_path = "".join([current_dir, "/data/baeza_docs"])
-    test_path = "".join([current_dir, "/collections/CF/docs"])
+    test_path = "".join([getcwd(), "/data/baeza_docs"])
+    # test_path = "".join([current_dir, "/collections/CF/docs"])
 
     # list files
     filenames = [join(test_path, f) for f in listdir(test_path)]
@@ -26,27 +24,29 @@ def main():
     for filename in filenames:
         graph_doc = GraphDoc(filename, window=0)
     
-        # graph_doc.graph = graph_doc.create_graph_from_adjmatrix()
+        graph_doc.graph = graph_doc.create_graph_from_adjmatrix()
         # print(graph_doc.get_win_terms())
         # graph_doc.draw_graph()
         graph_documents += [graph_doc]
-        # print(graph_doc.adj_matrix)
+
     
-    collection = Collection(graph_documents)
+    collection = Collection(path='collections/CF', graph_docs=graph_documents)
+
     union_graph = collection.union_graph()
     print(union_graph)
-    # collection.index_graph("test.json")
-    adj = to_numpy_array(union_graph)
-    adj_diagonal = list(collection.calculate_win().values())
-    fill_diagonal(adj, adj_diagonal)
-    # print(adj)
-    print(f'\nCreation of Union Graph took {time() - graph_start} secs')
+    print(collection.get_adj_matrix())
+    # print(f'\nCreation of Union Graph took {time() - graph_start} secs')
+    # collection.save_graph_index()
+    # collection.save_inverted_index()
+    # un_gr = Collection().load_graph()
+    # print(un_gr)
 
+    # inv_index = collection.get_inverted_index()
     """
-    inv_index = collection.get_inverted_index()
-    # col = Collection.load_collection('results/firstest/')
-    # print(col.inverted_index)
-    # inv_index = col.inverted_index
+    col = Collection().load_collection()
+    inv_index = col.inverted_index
+    
+
     queries = [['a', 'b', 'd', 'n']]
     relevant_docs, queries = Parser().load_collection('/CF')
     print(relevant_docs)
@@ -100,5 +100,7 @@ def main():
 # TODO: testing framework, logging result handling
 # TODO: fix set based calculation weights and test it with the summing one
 # TODO: implement vazirgiannis window and ranking (github: gowpy)
+
 """
+
 main()
