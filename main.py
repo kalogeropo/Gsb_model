@@ -9,42 +9,32 @@ from graphs import GraphDoc
 from retrieval import *
 from utilities import excelwriter
 from parse import Parser
+from networkx import to_numpy_array, to_numpy_matrix
 
 
 def main():
 
-    # define path
-    test_path = "".join([getcwd(), "/data/baeza_docs"])
-    # test_path = "".join([current_dir, "/collections/CF/docs"])
+    # create Collection Object by defining the path
+    collection = Collection(path='collections\\baeza', model='GSB', window=0, graph_docs=[]).load_collection()
+    print(collection.inv_index)
+    print(collection.graph)
+    # print(collection.union_graph())
+    # print(collection.inverted_index())
+    # collection.save_inverted_index()
+    # collection.save_graph_index()
+    # print(collection.get_adj_matrix())
 
-    # list files
-    filenames = [join(test_path, f) for f in listdir(test_path)]
-    graph_documents = []
-    graph_start = time()
-    for filename in filenames:
-        graph_doc = GraphDoc(filename, window=0)
-    
-        graph_doc.graph = graph_doc.create_graph_from_adjmatrix()
-        # print(graph_doc.get_win_terms())
-        # graph_doc.draw_graph()
-        graph_documents += [graph_doc]
-
-    
-    collection = Collection(path='collections/CF', graph_docs=graph_documents)
-
-    union_graph = collection.union_graph()
-    print(union_graph)
-    print(collection.get_adj_matrix())
     # print(f'\nCreation of Union Graph took {time() - graph_start} secs')
     # collection.save_graph_index()
     # collection.save_inverted_index()
     # un_gr = Collection().load_graph()
     # print(un_gr)
 
-    # inv_index = collection.get_inverted_index()
     """
-    col = Collection().load_collection()
-    inv_index = col.inverted_index
+    inv_index = collection.create_inverted_index()
+    print(inv_index)
+    # col = Collection().load_collection()
+    # inv_index = col.inverted_index
     
 
     queries = [['a', 'b', 'd', 'n']]
@@ -74,12 +64,12 @@ def main():
         # print(idf, '\n')
         tf_ij = calculate_tsf(freq_termsets, inv_index, N)
         # print(tf_ij, '\n')
-        tnw = calculate_tnw(freq_termsets, inv_index)
+        # tnw = calculate_tnw(freq_termsets, inv_index)
         # print(tnw, '\n')
 
-        doc_weights = calculate_doc_weights(tf_ij, idf, tnw)
-        # print(doc_weights)
-        # print('\n')
+        doc_weights = calculate_doc_weights(tf_ij, idf, tnw=1)
+        print(doc_weights)
+        print('\n')
         vector_end = time()
         print(f"Vector Space dimensionality {doc_weights.shape}")
         print(f"Vector iter {i} took {vector_end - vector_start} secs.\n")
@@ -92,9 +82,9 @@ def main():
 
         avg_pre.append(pre)
         avg_rec.append(rec)
-    df = DataFrame(list(zip(avg_pre, avg_rec)), columns=["A_pre", "A_rec"])
-    test_writer = excelwriter()
-    test_writer.write_results('', df)
+    # df = DataFrame(list(zip(avg_pre, avg_rec)), columns=["A_pre", "A_rec"])
+    # test_writer = excelwriter()
+    # stest_writer.write_results('', df)
 
 
 # TODO: testing framework, logging result handling
