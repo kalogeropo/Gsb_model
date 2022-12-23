@@ -2,6 +2,7 @@ import json
 from os import getcwd, listdir, path
 
 from pandas import ExcelWriter
+from openpyxl.workbook import Workbook
 import numpy as np
 
 
@@ -38,6 +39,6 @@ class excelwriter():
             writer = ExcelWriter("".join([self.res_path,sheet_name,'.xlsx']), engine='openpyxl')
         # Convert the dataframe to an XlsxWriter Excel object.
         df.to_excel(writer, sheet_name=sheet_name)
-        writer.save()
+        writer.close()
         workbook = writer.book
         worksheet = writer.sheets[sheet_name]

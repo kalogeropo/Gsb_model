@@ -51,7 +51,7 @@ def create_candidate_k(freq_termsets, k):
             t1_ids = freq_termsets[t1]
             t2_ids = freq_termsets[t2]
             intr = intersection(t1_ids, t2_ids)
-            if len(intr) >= k:
+            if len(intr) == k:
                 termset = t1 | t2
                 if termset not in ck:
                     ck[termset] = intr

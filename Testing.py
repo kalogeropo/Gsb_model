@@ -44,23 +44,27 @@ from retrieval import *
 from utilities import excelwriter
 
 
-class Tester():
-    def __init__(self, model, name, params=[], coll_path="/data/docs", rel=[], queries=[]):
+class tester():
+    def __init__(self, name, model, params=[], coll_path="/data/docs", rel=None, quer=None):
         print(coll_path)
-        self.model = model
-        self.test_name = name
-        self.parametres = params
+        if quer is None:
+            quer = []
+        if rel is None:
+            rel = []
         self.relevant_docs = rel
-        self.queries = queries
+        self.queries = quer
+        self.test_name = name
+        self.model = model
+        self.parametres = params
         self.window_size = 0
+        current_dir = getcwd()
         self.path = coll_path
         #print(self.path)
-        self.dest_path = "".join([getcwd(), "/results/", self.test_name, '/'])
+        self.dest_path = "".join([current_dir, "/results/", self.test_name, '/'])
         #print(self.dest_path)
         # create dest_folder if not exists for result aggregation
         if not path.exists(self.dest_path):
             makedirs(self.dest_path)
-
 
     def start_model(self):
         if self.model == "index-complete":
@@ -80,15 +84,14 @@ class Tester():
 
         # if self.model=="index-sliding":
         # if self.model=="index-sent-par":
-        #######RETRIEVAL
-        # if self.model=="set-based_min_tf":
-        if self.model=="set-based_sum_tfs":
-            self.retrieve_set_based(min_freq=int(self.parametres[0]), graphs=False)
-        # if self.model=="graph-ext_min_tf":
-        if self.model == "graph-ext_sum_tfs":
-            self.retrieve_set_based(min_freq=int(self.parametres[0]), graphs=True)
+        #######RETRIVAL
+        # if self.model=="set-based_sum_tfs":
+        if self.model=="set-based_min_tf":
+            self.retrieve_set_based(min_freq=int(self.parametres[0]),graphs=False)
+        # if self.model=="graph-ext_sum_tfs":
+        if self.model == "graph-ext_min_tf":
+            self.retrieve_set_based(min_freq=int(self.parametres[0]),graphs=True)
         # if self.model=="GoW-Tw-idf":
-
 
     def create_indexes(self, inverted_index=True, graph_index=False):
         if inverted_index:
@@ -98,14 +101,11 @@ class Tester():
         if graph_index:
             self.collection.index_graph("".join([self.dest_path, " test.json"]))
 
-
-    # TODO: define the adjacency matrix format
     def indexing(self):
         self.path = "".join([self.path, '/docs/'])
         filenames = [join(self.path, f) for f in listdir(self.path)]
         graph_documents = []
         graph_start = time()
-        
         for filename in filenames:
             graph_doc = GraphDoc(filename, window=self.window_size)
             graph_doc.graph = graph_doc.create_graph_from_adjmatrix()
@@ -119,12 +119,13 @@ class Tester():
         # adj_diagonal = list(collection.calculate_win().values())
         # fill_diagonal(adj, adj_diagonal)
         # print(adj)
-        print(f'Crreation of Union Graph took {time() - graph_start} secs')
+        graph_end = time()
+        print(f'Doc to Union Graph took {graph_end - graph_start} secs')
+        print('Union Graph Ready.\n')
 
         return collection
 
-
-    def retrieve_set_based(self, min_freq=1, graphs=True):
+    def retrieve_set_based(self,min_freq=1,graphs=True):
         path = "".join(["results/", self.test_name, "/"])
         col = Collection.load_collection(path)
         #print(col.inverted_index)
@@ -134,17 +135,17 @@ class Tester():
         avg_pre = []
         avg_rec = []
         for i, (query, rel_docs) in enumerate(zip(self.queries, self.relevant_docs)):
-            print(f"\nQuery {i} of {len(self.queries)}")
+            #print(f"\nQuery {i} of {len(self.queries)}")
 
             # stop @i query
-            if i == 15: break
+            # if i == 15: break
 
-            print(f"Query length: {len(query)}")
+            #print(f"Query length: {len(query)}")
             apriori_start = time()
             freq_termsets = apriori(query, inv_index, min_freq)
             apriori_end = time()
-            print(f"Frequent Termsets: {len(freq_termsets)}")
-            print(f"Apriori iter {i} took {apriori_end - apriori_start} secs.")
+            #print(f"Frequent Termsets: {len(freq_termsets)}")
+            #print(f"Apriori iter {i} took {apriori_end - apriori_start} secs.")
 
             vector_start = time()
             # bug for the whole collection!!
@@ -161,14 +162,14 @@ class Tester():
             else:
                 doc_weights = calculate_doc_weights(tf_ij, idf)
             vector_end = time()
-            print(f"Vector Space dimensionality {doc_weights.shape}")
-            print(f"Vector iter {i} took {vector_end - vector_start} secs.\n")
+            #print(f"Vector Space dimensionality {doc_weights.shape}")
+            #print(f"Vector iter {i} took {vector_end - vector_start} secs.\n")
             q = idf
             document_similarities = evaluate_sim(q, doc_weights)
             # print(len(document_similarities))
 
             pre, rec = calc_precision_recall(document_similarities.keys(), rel_docs)
-            print(pre, rec)
+            #print(pre, rec)
 
             avg_pre.append(pre)
             avg_rec.append(rec)

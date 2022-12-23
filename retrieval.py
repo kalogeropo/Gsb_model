@@ -71,11 +71,19 @@ def calculate_doc_weights(tf_ij, idf, tnw=1):
 
 
 def cosine_similarity(u, v):
-    if all(u == 0) or all(v == 0):
+    if (u == 0).all() | (v == 0).all():
         return 0.
     else:
         return dot(u,v) / (norm(u)*norm(v))
 
+def evaluate_sim(query, dtm):
+    doc_sim = {}
+
+    for id, doc_vec in enumerate(dtm.T, start=1):
+        doc_sim[id] = cosine_similarity(query, doc_vec)
+
+    return {id: sim for id, sim in sorted(doc_sim.items(), key=lambda item: item[1], reverse=True)}
+"""
 
 def evaluate_sim(query, dtm, k=50):
     doc_sim = {}
@@ -85,7 +93,7 @@ def evaluate_sim(query, dtm, k=50):
 
     return {id: sim for id, sim in sorted(doc_sim.items(), key=lambda item: item[1], reverse=True)}
 
-
+"""
 def calc_precision_recall(doc_sims, relevant):
     cnt = 0
     retrieved = 1

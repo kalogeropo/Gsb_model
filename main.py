@@ -49,7 +49,7 @@ def main():
         print(f"\nQuery {i} of {len(queries)}")
 
         # stop @i query
-        if i == 10: break
+        #if i == 10: break
 
         print(f"Query length: {len(query)}")
         apriori_start = time()
