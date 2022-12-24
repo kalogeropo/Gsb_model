@@ -50,11 +50,11 @@ def create_candidate_k(freq_termsets, k):
             # unioned to be the (k+2)-item candidate
             t1_ids = freq_termsets[t1]
             t2_ids = freq_termsets[t2]
-            intr = intersection(t1_ids, t2_ids)
+            intr = t1 & t2
             if len(intr) == k:
                 termset = t1 | t2
                 if termset not in ck:
-                    ck[termset] = intr
+                    ck[termset] = intersection(t1_ids, t2_ids)
     return ck
 
 
