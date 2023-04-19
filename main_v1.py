@@ -1,6 +1,6 @@
 from Preprocess.Collection import Collection
 from Preprocess.Document import Document
-from models.Model import Model
+from models.setbased import SetBased_model
 
 path = 'collections/CF/docs'
 path_to_write ='data/test_docs/tests'
@@ -9,9 +9,11 @@ testcol = Collection(path,name = "test")
 #print(testcol)
 testcol.create_collection()
 #print(testcol.inverted_index)
-#testcol.save_inverted_index(path_to_write)
+testcol.save_inverted_index(path_to_write)
 q,r = testcol.load_collection(col_path)
 #print(q)
 
-M = Model(testcol)
-M.fit()
+M = SetBased_model(testcol)
+print(M.get_model())
+M.fit(min_freq=10)
+M.evaluate()
