@@ -52,3 +52,4 @@ def calc_precision_recall(doc_sims, relevant):
     avg_pre = sum(precision) / len(precision)
     avg_rec = sum(recall) / len(recall)
     return avg_pre, avg_rec
+
