@@ -7,6 +7,12 @@ from models.Model import Model
 
 
 class GSBModel(Model):
+    """The GSBModel - Graph Based extention of the SetBased model will be consisted of:
+            a. graph - the union graph
+            b. _nwk - the term weights derived of each node
+            c. as well as any field of its superclass Model
+    The main model funct and vectorizer are overriden as we need a different functionality"""
+
     def __init__(self, collection):
         super().__init__(collection)
         self.model = self.get_model()
@@ -25,8 +31,8 @@ class GSBModel(Model):
         return tns
 
     def _vectorizer(self, tsf_ij, idf, *args):
-        tns, *_=args
-        return tsf_ij * (idf*tns).reshape(-1, 1)
+        tns, *_ = args
+        return tsf_ij * (idf * tns).reshape(-1, 1)
 
     @staticmethod
     def get_model():

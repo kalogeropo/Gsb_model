@@ -37,17 +37,21 @@ class Model(ABC):
         self.precision = []
         self.recall = []
 
+    @staticmethod
     @abstractmethod
     def get_model(self):
         return __class__.__name__
+
     @abstractmethod
     def _model_func(self, freq_termsets):
         pass
+
     @abstractmethod
     def _vectorizer(self, tsf_ij, idf, *args):
         pass
         ########## each column corresponds to a document #########
-        #return tsf_ij * idf.reshape(-1, 1)
+        # return tsf_ij * idf.reshape(-1, 1)
+
     # the base model fit function will implement the set based document Queries representation. can be overriden
     # in any subclass at will.
     def fit(self, queries=None, min_freq=1):
@@ -66,7 +70,7 @@ class Model(ABC):
             self._queryVectors.append(self.calculate_ts_idf(freq_termsets))
             self._docVectors.append(self.calculate_tsf(freq_termsets))
             self._weights.append(self._model_func(freq_termsets))
-            if i >=10:break
+            if i >= 10: break
         return self
 
     def calculate_ts_idf(self, termsets):
@@ -119,13 +123,12 @@ class Model(ABC):
 
             # cosine similarity between query and every document
             document_similarities = evaluate_sim(qv, dtsm)
-            #print(document_similarities.keys())
+            # print(document_similarities.keys())
 
             pre, rec = calc_precision_recall(document_similarities.keys(), rel)
-            #print(pre, rec)
+            # print(pre, rec)
             print(f"=> Query {i + 1}/{number_of_queries}, precision = {pre:.3f}, recall = {rec:.3f}")
             self.precision.append(round(pre, 3))
             self.recall.append(round(rec, 3))
 
         return array(self.precision), array(self.recall)
-

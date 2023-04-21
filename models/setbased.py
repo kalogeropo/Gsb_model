@@ -2,6 +2,8 @@ from models.Model import Model
 
 
 class SetBasedModel(Model):
+    """The set based model implementation. A subclass of the base model. All models will use the base model's fit and
+    evaluate function, and will differentiate on model_funct, and vectorization function!"""
     def __init__(self, collection):
         super().__init__(collection)
         self._model = self.get_model()
