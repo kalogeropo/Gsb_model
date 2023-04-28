@@ -1,6 +1,12 @@
 import openpyxl
 from openpyxl.utils.dataframe import dataframe_to_rows
 
+def write(xl_namefile ='example.xlsx',dest_path = "collections/test/debug_res",sheetname = "test",data = df):
+    writer = ExcelWriter(xl_namefile,dest_path)
+    writer.add_sheet(sheetname)
+    writer.write_data(df)
+    writer.save()
+    #writer.append_all_sheets("all_tests")
 
 class ExcelWriter:
     def __init__(self, filename, dest_path):

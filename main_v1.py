@@ -3,7 +3,7 @@ from networkx import info
 from Preprocess.Collection import Collection
 from models.GoW import Gow
 from models.WindowedGSB import WindowedGSBModel
-from utilities.ExcelWriter import ExcelWriter
+from utilities.ExcelWriter import ExcelWriter, write
 
 path = 'collections/CF/docs'
 #path = 'collections/test/docs'
@@ -28,10 +28,5 @@ df = M.results_to_df()
 # testing.fit()
 # testing.evaluate()
 # df = testing.results_to_df()
+write(xl_namefile ='example.xlsx',dest_path = "collections/test/debug_res",sheetname = "test",data =df)
 
-writer = ExcelWriter('example.xlsx','collections/test/debug_res')
-for i in range(1,5):
-    writer.add_sheet(f"test{i}")
-    writer.write_data(df)
-    writer.save()
-writer.append_all_sheets("all_tests")
