@@ -26,3 +26,4 @@ q,r = testcol.load_collection(col_path)
 
 testing = Gow(testcol)
 testing.fit()
+testing.evaluate()

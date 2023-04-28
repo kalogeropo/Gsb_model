@@ -1,7 +1,6 @@
 from numpy import zeros
 
 from models.GSB import GSBModel
-from Preprocess.Document import Document
 from utilities.document_utls import calculate_tf
 
 

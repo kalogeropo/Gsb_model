@@ -1,6 +1,7 @@
 from gowpy.feature_extraction.gow import TwidfVectorizer
 
 from models.Model import Model
+from utilities.document_utls import cosine_similarity, calc_precision_recall
 
 
 class Gow(Model):
@@ -12,12 +13,21 @@ class Gow(Model):
         pass
 
     def _vectorizer(self, **kwargs):
-        pass
+        text = kwargs['Text']
+        vec = self.vectorizer.fit_transform(text)
+        vec = vec.todense()
+        # print(vec)
 
-    def __init__(self,collection,window=4,
-                 isdirected = False,
-                 min_dfreq=0.0,max_dfreq=1.0,
-                term_weighting_scheme='degree'):
+        qv = vec[self.collection.num_docs - 1:]
+        dv = vec[0:self.collection.num_docs - 1]
+        # print(len(qv))
+        # print(len(dv))
+        return qv, dv
+
+    def __init__(self, collection, window=4,
+                 isdirected=False,
+                 min_dfreq=0.0, max_dfreq=1.0,
+                 term_weighting_scheme='degree'):
         self.vectorizer = TwidfVectorizer(
             # Graph-of-words specificities
             directed=isdirected,
@@ -31,26 +41,40 @@ class Gow(Model):
         super().__init__(collection)
 
     def fit(self, queries=None, min_freq=1):
-        text =[]
-
-        #for index_doc in range(self.collection.num_docs):
-        #     if self.collection.docs[index_doc].doc_id > index_doc:
-        #         text.append([])
-        #         print(f"index {index_doc + 1}")
-        #     else:
-        #         text.append(self.collection.docs[index_doc].terms)
-        #         print(f"index {index_doc+1} and docid {self.collection.docs[index_doc].doc_id}")
-        # print(len(text))
-        # cnt =0
-        # pos =0
-        # for list in text:
-        #     pos+=1
-        #     if not list:
-        #
-        #         print(pos)
-        #         cnt+=1
-        # print(cnt)
         if queries is None:
             queries = self._queries
-            no_of_qs = len(queries)
+        text = []
+        debug_ids = []
+        prev_doc = self.collection.docs[0]
+        for doc in self.collection.docs:
+            # print(doc)
+            if doc.doc_id != prev_doc.doc_id + 1:
+                text.append("")
+                debug_ids.append(prev_doc.doc_id + 1)
+                # print(doc.doc_id)
+            text.append(" ".join(doc.terms))
+            debug_ids.append(doc.doc_id)
+            prev_doc = doc
+        # print(text[125:130])
+        # print(debug_ids[125:130])
+        for q in queries:
+            text.append(" ".join(q))
 
+        self._queryVectors, self._docVectors = self._vectorizer(Text=text)
+
+        return self
+
+    def evaluate(self):
+        for j, q in enumerate(self._queryVectors):
+            eval_list = []
+            for i in range(0, len(self._docVectors)):
+                eval = cosine_similarity(q, self._docVectors[i, :].transpose())
+                # print(eval)
+                eval_list.append((i, float(eval)))
+            eval_list = sorted(eval_list, key=lambda x: x[1], reverse=True)
+            #print(eval_list)
+            ordered_docs = [tup[0] for tup in eval_list]
+            pre, rec = calc_precision_recall(ordered_docs, self.collection.relevant[j])
+            self.precision.append(pre)
+            self.recall.append(rec)
+        return self

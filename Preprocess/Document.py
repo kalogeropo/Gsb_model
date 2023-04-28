@@ -18,6 +18,10 @@ class Document:
         self.terms = self.read_document()
         self.tf = calculate_tf(self.terms)
 
+    def __str__(self):
+        return "doc ID: " + str(self.doc_id)
+        #return "doc ID: " + str(self.doc_id) + "\n Document term freq: " + str(self.tf)
+
     def read_document(self):
         try:
             with open(self.path, 'r', encoding='UTF-8') as d:

@@ -120,7 +120,7 @@ class Model(ABC):
             # all the money function
             # document - termset matrix - model balance weight
             dtsm = self._vectorizer(dv, qv, self._weights[i])
-
+            #print(len(self._docVectors[i][0]))
             # cosine similarity between query and every document
             document_similarities = evaluate_sim(qv, dtsm)
             # print(document_similarities.keys())

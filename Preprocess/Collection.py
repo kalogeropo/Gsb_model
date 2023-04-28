@@ -21,7 +21,9 @@ class Collection:
                     *** these depending on the model might be altered or augmented with more information.
     """
 
-    def __init__(self, path, docs=[],name=''):
+    def __init__(self, path, docs=None, name=''):
+        if docs is None:
+            docs = []
         self.relevant = None
         self.queries = None
         self.name = name
