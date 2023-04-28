@@ -4,8 +4,10 @@ from time import time
 
 from numpy import array, zeros
 
+from pandas import DataFrame
+
 from utilities.document_utls import evaluate_sim, calc_precision_recall
-from utilities.tools.apriori import apriori
+from utilities.apriori import apriori
 
 
 class Model(ABC):
@@ -132,3 +134,7 @@ class Model(ABC):
             self.recall.append(round(rec, 3))
 
         return array(self.precision), array(self.recall)
+
+    def results_to_df(self):
+        df = DataFrame(list(zip(self.precision, self.recall)), columns=["A_pre", "A_rec"])
+        return df
