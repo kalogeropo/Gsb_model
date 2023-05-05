@@ -38,7 +38,8 @@ class Model(ABC):
         # metrics
         self.precision = []
         self.recall = []
-
+        #model_document_ranking
+        self.ranking = []
     @staticmethod
     @abstractmethod
     def get_model(self):
@@ -126,7 +127,7 @@ class Model(ABC):
             # cosine similarity between query and every document
             document_similarities = evaluate_sim(qv, dtsm)
             # print(document_similarities.keys())
-
+            self.ranking.append([document_similarities.keys()])
             pre, rec = calc_precision_recall(document_similarities.keys(), rel)
             # print(pre, rec)
             print(f"=> Query {i + 1}/{number_of_queries}, precision = {pre:.3f}, recall = {rec:.3f}")
