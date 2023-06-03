@@ -73,7 +73,7 @@ class Model(ABC):
             self._queryVectors.append(self.calculate_ts_idf(freq_termsets))
             self._docVectors.append(self.calculate_tsf(freq_termsets))
             self._weights.append(self._model_func(freq_termsets))
-            if i >= 10: break
+            #if i >= 2: break
         return self
 
     def calculate_ts_idf(self, termsets):
@@ -127,7 +127,7 @@ class Model(ABC):
             # cosine similarity between query and every document
             document_similarities = evaluate_sim(qv, dtsm)
             # print(document_similarities.keys())
-            self.ranking.append([document_similarities.keys()])
+            self.ranking.append(list(document_similarities.keys()))
             pre, rec = calc_precision_recall(document_similarities.keys(), rel)
             # print(pre, rec)
             print(f"=> Query {i + 1}/{number_of_queries}, precision = {pre:.3f}, recall = {rec:.3f}")

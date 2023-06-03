@@ -1,33 +1,44 @@
 from networkx import info
 
 from Preprocess.Collection import Collection
-from models.GoW import Gow
 from models.WindowedGSB import WindowedGSBModel
-from utilities.ExcelWriter import ExcelWriter, write
+from models.borda_count import BordaCount
 
 path = 'collections/CF/docs'
-#path = 'collections/test/docs'
-path_to_write ='data/test_docs/tests'
+# path = 'collections/test/docs'
+path_to_write = 'data/test_docs/tests'
 col_path = 'data'
-testcol = Collection(path,name = "test")
-#print(testcol)
+testcol = Collection(path, name="test")
+# print(testcol)
 testcol.create_collection()
-#print(testcol.inverted_index)
+# print(testcol.inverted_index)
 testcol.save_inverted_index(path_to_write)
-q,r = testcol.load_collection(col_path)
-#print(q)
+q, r = testcol.load_collection(col_path)
+# print(q)
 # print(len(testcol.inverted_index))
-M = WindowedGSBModel(testcol,10)
+M = WindowedGSBModel(testcol, 10)
 print(M.get_model())
 print(info(M.graph))
 M.fit(min_freq=10)
 M.evaluate()
-df = M.results_to_df()
+# df = M.results_to_df()
 print(len(M.ranking))
-testing = Gow(testcol)
-testing.fit()
-testing.evaluate()
-print(len(testing.ranking))
-# df = testing.results_to_df()
-#write(xl_namefile='example.xlsx', dest_path="collections/test/debug_res", sheetname="test", data=df)
 
+N = WindowedGSBModel(testcol, 18)
+print(N.get_model())
+# print(info(N.graph))
+N.fit(min_freq=10)
+N.evaluate()
+# df = M.results_to_df()
+print(len(N.ranking))
+
+# testing = Gow(testcol)
+# testing.fit()
+# testing.evaluate()
+# print(len(testing.ranking))
+# df = testing.results_to_df()
+# write(xl_namefile='example.xlsx', dest_path="collections/test/debug_res", sheetname="test", data=df)
+
+bord = BordaCount(M.ranking, N.ranking, testcol)
+bord.fit()
+bord.evaluate()
