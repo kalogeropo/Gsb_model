@@ -1,4 +1,5 @@
 import openpyxl
+from openpyxl import load_workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
 
 
@@ -14,7 +15,10 @@ class ExcelWriter:
     def __init__(self, filename, dest_path):
         self.filename = filename
         self.dest_path = dest_path
-        self.wb = openpyxl.Workbook()
+        try:
+            self.wb = load_workbook(f"{self.dest_path}/{self.filename}")
+        except:
+            self.wb = openpyxl.Workbook()
         self.ws = self.wb.active
 
     def add_sheet(self, name):

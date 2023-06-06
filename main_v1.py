@@ -44,8 +44,8 @@ bord.fit()
 bord.evaluate()
 dest_path="collections/test/debug_res"
 #M
-res_to_excel(M,"testM.xlsx",dest_path,sheetname="test7")
+res_to_excel(M,"testM.xlsx",dest_path,sheetname="test70")
 #N
-res_to_excel(N,"testN.xlsx",dest_path,sheetname="test10")
+res_to_excel(N,"testN.xlsx",dest_path,sheetname="test100")
 #bord
-res_to_excel(bord,"testBord.xlsx",dest_path,sheetname="test7_10")
+res_to_excel(bord,"testBord.xlsx",dest_path,sheetname="test7_100")
