@@ -4,6 +4,8 @@ from os.path import exists
 from numpy import dot
 from numpy.linalg import norm
 
+from utilities.ExcelWriter import write
+
 
 def calculate_tf(terms):
     tf = {}
@@ -28,6 +30,8 @@ def evaluate_sim(query, dtm):
         doc_sim[id] = cosine_similarity(query, doc_vec)
 
     return {id: sim for id, sim in sorted(doc_sim.items(), key=lambda item: item[1], reverse=True)}
+
+
 def cosine_similarity(u, v):
     if (u == 0).all() | (v == 0).all():
         return 0.
@@ -53,3 +57,7 @@ def calc_precision_recall(doc_sims, relevant):
     avg_rec = sum(recall) / len(recall)
     return avg_pre, avg_rec
 
+
+def res_to_excel(result_model, namefile='example.xlsx', dest_path="collections/test/debug_res", sheetname="test"):
+    df = result_model.results_to_df()
+    write(xl_namefile=namefile, dest_path=dest_path, sheetname=sheetname, data=df)

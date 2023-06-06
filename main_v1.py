@@ -1,5 +1,5 @@
 from networkx import info
-
+from utilities.document_utls import res_to_excel
 from Preprocess.Collection import Collection
 from models.WindowedGSB import WindowedGSBModel
 from models.borda_count import BordaCount
@@ -16,7 +16,7 @@ testcol.save_inverted_index(path_to_write)
 q, r = testcol.load_collection(col_path)
 # print(q)
 # print(len(testcol.inverted_index))
-M = WindowedGSBModel(testcol, 10)
+M = WindowedGSBModel(testcol,10)
 print(M.get_model())
 print(info(M.graph))
 M.fit(min_freq=10)
@@ -24,7 +24,7 @@ M.evaluate()
 # df = M.results_to_df()
 print(len(M.ranking))
 
-N = WindowedGSBModel(testcol, 18)
+N = WindowedGSBModel(testcol, 13)
 print(N.get_model())
 # print(info(N.graph))
 N.fit(min_freq=10)
@@ -42,3 +42,10 @@ print(len(N.ranking))
 bord = BordaCount(M.ranking, N.ranking, testcol)
 bord.fit()
 bord.evaluate()
+dest_path="collections/test/debug_res"
+#M
+res_to_excel(M,"testM.xlsx",dest_path,sheetname="test7")
+#N
+res_to_excel(N,"testN.xlsx",dest_path,sheetname="test10")
+#bord
+res_to_excel(bord,"testBord.xlsx",dest_path,sheetname="test7_10")
