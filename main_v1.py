@@ -37,12 +37,12 @@ print(len(N.ranking))
 # testing.evaluate()
 # print(len(testing.ranking))
 # df = testing.results_to_df()
-# write(xl_namefile='example.xlsx', dest_path="collections/test/debug_res", sheetname="test", data=df)
+# write(xl_namefile='example.xlsx', dest_path="collections/test/Results", sheetname="test", data=df)
 
 bord = BordaCount(M.ranking, N.ranking, testcol)
 bord.fit()
 bord.evaluate()
-dest_path="collections/test/debug_res"
+dest_path= "collections/test/Results"
 #M
 res_to_excel(M,"testM.xlsx",dest_path,sheetname="test13")
 #N

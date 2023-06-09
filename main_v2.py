@@ -25,7 +25,7 @@ print(len(N.ranking))
 bord = BordaCount(M.ranking, N.ranking, testcol)
 bord.fit()
 bord.evaluate()
-dest_path="collections/test/debug_res"
+dest_path= "collections/test/Results"
 #M
 res_to_excel(M,"testsetbased.xlsx",dest_path,sheetname="test1")
 #N
@@ -46,7 +46,7 @@ print(len(N.ranking))
 bord = BordaCount(M.ranking, N.ranking, testcol)
 bord.fit()
 bord.evaluate()
-dest_path="collections/test/debug_res"
+dest_path= "collections/test/Results"
 #M
 res_to_excel(M,"testsetbased.xlsx",dest_path,sheetname="test1")
 #N
@@ -66,7 +66,7 @@ print(len(N.ranking))
 bord = BordaCount(M.ranking, N.ranking, testcol)
 bord.fit()
 bord.evaluate()
-dest_path="collections/test/debug_res"
+dest_path= "collections/test/Results"
 #M
 res_to_excel(M,"testsetbased.xlsx",dest_path,sheetname="test1")
 #N
@@ -88,7 +88,7 @@ print(len(N.ranking))
 bord = BordaCount(M.ranking, N.ranking, testcol)
 bord.fit()
 bord.evaluate()
-dest_path="collections/test/debug_res"
+dest_path= "collections/test/Results"
 #M
 res_to_excel(M,"testsetbased.xlsx",dest_path,sheetname="test1")
 #N
@@ -108,7 +108,7 @@ res_to_excel(bord,"testBord_set_win.xlsx",dest_path,sheetname="test__19")
 # bord = BordaCount(M.ranking, N.ranking, testcol)
 # bord.fit()
 # bord.evaluate()
-# dest_path="collections/test/debug_res"
+# dest_path="collections/test/Results"
 # #M
 # res_to_excel(M,"testsetbased.xlsx",dest_path,sheetname="test1")
 # #N

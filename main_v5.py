@@ -17,5 +17,5 @@ for i in range(0, 5):
     N = GSBModel(testcol)
     N.fit(min_freq=10)
     N.evaluate()
-    dest_path = "collections/test/debug_res"
+    dest_path = "collections/test/Results"
     res_to_excel(N, "GSBTesting.xlsx", dest_path, sheetname=f"test_{i}")

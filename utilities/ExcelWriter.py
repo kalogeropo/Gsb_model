@@ -3,7 +3,7 @@ from openpyxl import load_workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
 
 
-def write(xl_namefile='example.xlsx', dest_path="collections/test/debug_res", sheetname="test", data=None):
+def write(xl_namefile='example.xlsx', dest_path="collections/test/Results", sheetname="test", data=None):
     writer = ExcelWriter(xl_namefile, dest_path)
     writer.add_sheet(sheetname)
     writer.write_data(data)

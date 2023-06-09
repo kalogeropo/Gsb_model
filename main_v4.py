@@ -17,5 +17,5 @@ for i in range(0,100,5):
     N = WindowedGSBModel(testcol,perc)
     N.fit(min_freq=10)
     N.evaluate()
-    dest_path="collections/test/debug_res"
+    dest_path= "collections/test/Results"
     res_to_excel(N,"perc_windowTesting.xlsx",dest_path,sheetname=f"test_{i}")

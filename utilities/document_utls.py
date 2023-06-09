@@ -58,6 +58,6 @@ def calc_precision_recall(doc_sims, relevant):
     return avg_pre, avg_rec
 
 
-def res_to_excel(result_model, namefile='example.xlsx', dest_path="collections/test/debug_res", sheetname="test"):
+def res_to_excel(result_model, namefile='example.xlsx', dest_path="collections/test/Results", sheetname="test"):
     df = result_model.results_to_df()
     write(xl_namefile=namefile, dest_path=dest_path, sheetname=sheetname, data=df)
