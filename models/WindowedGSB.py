@@ -5,10 +5,10 @@ from utilities.document_utls import calculate_tf
 
 
 class WindowedGSBModel(GSBModel):
-    """The windowed version of the graph based extention of the set based model
+    """The windowed version of the graph based extension of the set based model
     Here will be implemented both the constant or percentage version by overriding
     the init function. The rest of the model is the same as the simple graph based
-     extention which is the super class of the model."""
+     extension which is the super class of the model."""
 
     def __init__(self, collection, window=8):
         self.window = window
