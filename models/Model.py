@@ -62,13 +62,13 @@ class Model(ABC):
             queries = self._queries
         inverted_index = self.collection.inverted_index
         for i, query in enumerate(queries, start=1):
-            print(f"\nQuery {i} of {len(queries)}")
-            print(f"Query length: {len(query)}")
+            #print(f"\nQuery {i} of {len(queries)}")
+            #print(f"Query length: {len(query)}")
             apriori_start = time()
             freq_termsets = apriori(query, inverted_index, min_freq)
             apriori_end = time()
-            print(f"Frequent Termsets: {len(freq_termsets)}")
-            print(f"Apriori iter {i} took {apriori_end - apriori_start} secs.")
+            #print(f"Frequent Termsets: {len(freq_termsets)}")
+            #print(f"Apriori iter {i} took {apriori_end - apriori_start} secs.")
 
             self._queryVectors.append(self.calculate_ts_idf(freq_termsets))
             self._docVectors.append(self.calculate_tsf(freq_termsets))
@@ -130,7 +130,7 @@ class Model(ABC):
             self.ranking.append(list(document_similarities.keys()))
             pre, rec = calc_precision_recall(document_similarities.keys(), rel)
             # print(pre, rec)
-            print(f"=> Query {i + 1}/{number_of_queries}, precision = {pre:.3f}, recall = {rec:.3f}")
+            #print(f"=> Query {i + 1}/{number_of_queries}, precision = {pre:.3f}, recall = {rec:.3f}")
             self.precision.append(round(pre, 3))
             self.recall.append(round(rec, 3))
 

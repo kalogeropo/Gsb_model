@@ -47,7 +47,7 @@ class BordaCount(Model):
         for i, (bordarank, rel) in enumerate(zip(self.bordaRanking, self._relevant)):
             pre, rec = calc_precision_recall(bordarank, rel)
             # print(pre, rec)
-            print(f"=> Query {i + 1}/{number_of_queries}, precision = {pre:.3f}, recall = {rec:.3f}")
+            #print(f"=> Query {i + 1}/{number_of_queries}, precision = {pre:.3f}, recall = {rec:.3f}")
             self.precision.append(round(pre, 3))
             self.recall.append(round(rec, 3))
         return 0
