@@ -11,6 +11,7 @@ testcol.create_collection()
 testcol.save_inverted_index(path_to_write)
 q, r = testcol.load_collection(col_path)
 
+wind_list = [i for i in range(5,26)]
 
 for i in wind_list:
     for j in wind_list:

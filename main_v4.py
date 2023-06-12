@@ -11,19 +11,19 @@ testcol = Collection(path, name="test")
 testcol.create_collection()
 testcol.save_inverted_index(path_to_write)
 q, r = testcol.load_collection(col_path)
-#
-# for i in range(0,100,5):
-#     perc = i/100
-#     N = WindowedGSBModel(testcol,perc)
-#     N.fit(min_freq=10)
-#     N.evaluate()
-#     dest_path= "collections/test/Results"
-#     res_to_excel(N,"perc_windowTesting.xlsx",dest_path,sheetname=f"test_{i}")
 
-for i in range(0, 5,1):
-    perc = i / 100
-    N = WindowedGSBModel(testcol, perc)
+for i in range(0,100,5):
+    perc = i/100
+    N = WindowedGSBModel(testcol,perc)
     N.fit(min_freq=10)
     N.evaluate()
-    dest_path = "collections/test/Results"
-    res_to_excel(N, "perc_windowTesting.xlsx", dest_path, sheetname=f"f_t_test_{i}")
+    dest_path= "collections/test/Results"
+    res_to_excel(N,"perc_windowTesting.xlsx",dest_path,sheetname=f"test_{i}")
+
+# for i in range(0, 5,1):
+#     perc = i / 100
+#     N = WindowedGSBModel(testcol, perc)
+#     N.fit(min_freq=10)
+#     N.evaluate()
+#     dest_path = "collections/test/Results"
+#     res_to_excel(N, "perc_windowTesting.xlsx", dest_path, sheetname=f"f_t_test_{i}")

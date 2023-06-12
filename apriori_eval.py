@@ -6,7 +6,7 @@ from models.SetBased import SetBasedModel
 from models.WindowedGSB import WindowedGSBModel
 from utilities.document_utls import res_to_excel
 
-support = [1, 2, 5, 10, 15]
+support = [1, 2, 3, 4, 5, 10, 15,20]
 
 set_times = []
 gsb_times = []
