@@ -64,11 +64,15 @@ def res_to_excel(result_model, namefile='example.xlsx', dest_path="collections/t
     write(xl_namefile=namefile, dest_path=dest_path, sheetname=sheetname, data=df)
 
 
-
-
 # write list to binary file
-def write_list(a_list,name):
+def write_list(a_list, name):
     # store list in binary file so 'wb' mode
-    with open(name, 'w') as fp:
+    with open(name, 'wb') as fp:
         pickle.dump(a_list, fp)
         print('Done writing list into a binary file')
+
+
+def read_list(name):
+    with open(name, 'rb') as f:
+        my_list = pickle.load(f)
+        return my_list

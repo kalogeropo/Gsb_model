@@ -69,17 +69,18 @@ class Model(ABC):
             apriori_end = time()
             #print(f"Frequent Termsets: {len(freq_termsets)}")
             #print(f"Apriori iter {i} took {apriori_end - apriori_start} secs.")
-            write_list(freq_termsets,"freq_term_7.csv")
+
+            #write_list(freq_termsets,"freq_term_7.csv")
 
 
             self._queryVectors.append(self.calculate_ts_idf(freq_termsets))
             #print(self._queryVectors)
-            df = DataFrame(self._queryVectors)
-            df.to_csv("qvecWin7.csv")
+
+            #df = DataFrame(self._queryVectors)
+            #df.to_csv("qvecWin7.csv")
 
             self._docVectors.append(self.calculate_tsf(freq_termsets))
             self._weights.append(self._model_func(freq_termsets))
-            print(len(self._queryVectors))
             #if i >= 2: break
         return self
 

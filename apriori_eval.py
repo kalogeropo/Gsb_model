@@ -32,7 +32,7 @@ for sup in support:
     M.fit(min_freq=sup)
     M.evaluate()
     end = timer()
-    av_pre_set.append(mean(M.ranking))
+    av_pre_set.append([mean(i) for i in M.ranking ])
     set_times.append(end - start)
 
     # GSB
@@ -41,7 +41,7 @@ for sup in support:
     N.fit(min_freq=sup)
     N.evaluate()
     end = timer()
-    av_pre_gsb.append(mean(N.ranking))
+    av_pre_gsb.append([mean(i) for i in mean(N.ranking)])
     gsb_times.append(end - start)
 
     # windowed
@@ -50,7 +50,7 @@ for sup in support:
     K.fit(min_freq=sup)
     K.evaluate()
     end = timer()
-    av_pre_wind.append(mean(K.ranking))
+    av_pre_wind.append([mean(i) for i in mean(K.ranking)])
     wind_times.append(end - start)
 
 print(f"set-based: AV Pre: {av_pre_set} \n time: {set_times} \n ------\n"
