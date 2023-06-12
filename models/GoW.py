@@ -74,7 +74,7 @@ class Gow(Model):
             eval_list = sorted(eval_list, key=lambda x: x[1], reverse=True)
             #print(eval_list)
             ordered_docs = [tup[0] for tup in eval_list]
-            self.ranking.append([ordered_docs])
+            self.ranking.append(ordered_docs)
             pre, rec = calc_precision_recall(ordered_docs, self.collection.relevant[j])
             self.precision.append(pre)
             self.recall.append(rec)

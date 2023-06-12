@@ -14,19 +14,20 @@ testcol.create_collection()
 testcol.save_inverted_index(path_to_write)
 q, r = testcol.load_collection(col_path)
 
-wind_list = [8,9,11,12,14,15,17,18,20,21,22,23,24,25]
-for i in wind_list:
-    print(f"{wind_list.index(i)} of {len(wind_list)}")
-    M = WindowedGSBModel(testcol,i)
-    M.fit(min_freq=10)
-    M.evaluate()
+# wind_list = [8,9,11,12,14,15,17,18,20,21,22,23,24,25]
+# for i in wind_list:
+#     print(f"{wind_list.index(i)} of {len(wind_list)}")
+#     M = WindowedGSBModel(testcol,i)
+#     M.fit(min_freq=10)
+#     M.evaluate()
+#
+#     N = SetBasedModel(testcol)
+#     N.fit(min_freq=10)
+#     N.evaluate()
+#
+#     bord = BordaCount(M.ranking, N.ranking, testcol)
+#     bord.fit()
+#     bord.evaluate()
+#     dest_path= "collections/test/Results"
+#     res_to_excel(bord,"testBord_set_win.xlsx",dest_path,sheetname=f"set_wind_{i}")
 
-    N = SetBasedModel(testcol)
-    N.fit(min_freq=10)
-    N.evaluate()
-
-    bord = BordaCount(M.ranking, N.ranking, testcol)
-    bord.fit()
-    bord.evaluate()
-    dest_path= "collections/test/Results"
-    res_to_excel(bord,"testBord_set_win.xlsx",dest_path,sheetname=f"set_wind_{i}")

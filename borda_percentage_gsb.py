@@ -17,7 +17,7 @@ q, r = testcol.load_collection(col_path)
 list_of_prec = [i for i in range(0,100,5)]
 
 for i in list_of_prec:
-    print(f"{list_of_prec.index(i)} of {len(list_of_prec)}")
+    print(f"{list_of_prec.index(i)+1} of {len(list_of_prec)}")
     perc = i/100
     M = WindowedGSBModel(testcol,perc)
     M.fit(min_freq=10)

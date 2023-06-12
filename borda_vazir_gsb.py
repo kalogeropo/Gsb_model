@@ -25,6 +25,8 @@ for i in wind_list:
     N.fit(min_freq=10)
     N.evaluate()
 
+    # print(M.ranking)
+    # print(N.ranking)
     bord = BordaCount(M.ranking, N.ranking, testcol)
     bord.fit()
     bord.evaluate()
