@@ -1,19 +1,15 @@
+from timeit import default_timer as timer
+
 from Preprocess.Collection import Collection
 from models.GSB import GSBModel
 from models.SetBased import SetBasedModel
-from statistics import mean
-
 from models.WindowedGSB import WindowedGSBModel
-
-from timeit import default_timer as timer
+from utilities.document_utls import res_to_excel
 
 support = [1, 2, 5, 10, 15]
 
-av_pre_set = []
 set_times = []
-av_pre_gsb = []
 gsb_times = []
-av_pre_wind = []
 wind_times = []
 
 path = 'collections/CF/docs'
@@ -24,15 +20,18 @@ testcol.create_collection()
 testcol.save_inverted_index(path_to_write)
 q, r = testcol.load_collection(col_path)
 
-for sup in support:
+dest_path = "collections/test/Results"
 
+
+for sup in support:
+    print(f"{support.index(sup) + 1} out of {len(support)}")
     # set
     start = timer()
     M = SetBasedModel(testcol)
     M.fit(min_freq=sup)
     M.evaluate()
     end = timer()
-    av_pre_set.append([mean(i) for i in M.ranking ])
+    res_to_excel(M, "apriori_set.xlsx", dest_path, sheetname=f"sup_{sup}")
     set_times.append(end - start)
 
     # GSB
@@ -41,7 +40,7 @@ for sup in support:
     N.fit(min_freq=sup)
     N.evaluate()
     end = timer()
-    av_pre_gsb.append([mean(i) for i in mean(N.ranking)])
+    res_to_excel(N, "apriori_gsb.xlsx", dest_path, sheetname=f"sup_{sup}")
     gsb_times.append(end - start)
 
     # windowed
@@ -50,9 +49,9 @@ for sup in support:
     K.fit(min_freq=sup)
     K.evaluate()
     end = timer()
-    av_pre_wind.append([mean(i) for i in mean(K.ranking)])
+    res_to_excel(K, "apriori_win_7.xlsx", dest_path, sheetname=f"sup_{sup}")
     wind_times.append(end - start)
 
-print(f"set-based: AV Pre: {av_pre_set} \n time: {set_times} \n ------\n"
-      f"GSB : AV Pre: {av_pre_gsb} \n time: {gsb_times} \n ------\n"
-      f"Windowed GSV: {av_pre_wind} \n time: {wind_times}\n-------")
+print(f"set-based time: {set_times} \n ------\n"
+      f"GSB time: {gsb_times} \n ------\n"
+      f"Windowed GSB - 7 time: {wind_times}\n-------")
