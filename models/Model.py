@@ -6,7 +6,7 @@ from numpy import array, zeros
 
 from pandas import DataFrame
 
-from utilities.document_utls import evaluate_sim, calc_precision_recall
+from utilities.document_utls import evaluate_sim, calc_precision_recall, write_list
 from utilities.apriori import apriori
 
 
@@ -69,7 +69,7 @@ class Model(ABC):
             apriori_end = time()
             #print(f"Frequent Termsets: {len(freq_termsets)}")
             #print(f"Apriori iter {i} took {apriori_end - apriori_start} secs.")
-
+            write_list(freq_termsets,"freq_term_7.csv")
 
 
             self._queryVectors.append(self.calculate_ts_idf(freq_termsets))

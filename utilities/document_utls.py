@@ -1,6 +1,7 @@
 from os import makedirs
 from os.path import exists
 
+import pickle
 from numpy import dot
 from numpy.linalg import norm
 
@@ -61,3 +62,13 @@ def calc_precision_recall(doc_sims, relevant):
 def res_to_excel(result_model, namefile='example.xlsx', dest_path="collections/test/Results", sheetname="test"):
     df = result_model.results_to_df()
     write(xl_namefile=namefile, dest_path=dest_path, sheetname=sheetname, data=df)
+
+
+
+
+# write list to binary file
+def write_list(a_list,name):
+    # store list in binary file so 'wb' mode
+    with open(name, 'w') as fp:
+        pickle.dump(a_list, fp)
+        print('Done writing list into a binary file')
