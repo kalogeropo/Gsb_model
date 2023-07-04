@@ -1,5 +1,5 @@
-from models.GSB import GSBModel
-from models.GoW import Gow
+from networkx import info
+
 from models.SetBased import SetBasedModel
 from utilities.document_utls import res_to_excel
 from Preprocess.Collection import Collection
@@ -13,22 +13,21 @@ testcol = Collection(path, name="test")
 testcol.create_collection()
 testcol.save_inverted_index(path_to_write)
 q, r = testcol.load_collection(col_path)
+support = [2, 3, 4, 5, 10, 15,20]
+for sup in support:
+    print(f"{support.index(sup) + 1} out of {len(support)}")
 
-wind_list = [i for i in range(5,26)]
-for i in wind_list:
-    print(f"{wind_list.index(i)} of {len(wind_list)}")
-    M = Gow(testcol, i)
-    M.fit()
+    M = WindowedGSBModel(testcol,7)
+    M.fit(min_freq=sup)
     M.evaluate()
 
     N = SetBasedModel(testcol)
-    N.fit(min_freq=10)
+    N.fit(min_freq=sup)
     N.evaluate()
 
-    # print(M.ranking)
-    # print(N.ranking)
     bord = BordaCount(M.ranking, N.ranking, testcol)
     bord.fit()
     bord.evaluate()
-    dest_path = "collections/test/Results"
-    res_to_excel(bord, "testBord_vazir_set.xlsx", dest_path, sheetname=f"GoW_{i}_set")
+    dest_path= "collections/test/Results"
+    res_to_excel(bord,"borda_set_wind7_apriori.xlsx",dest_path,sheetname=f"set_wind7_apri_{sup}")
+
