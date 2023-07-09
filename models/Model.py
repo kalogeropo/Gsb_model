@@ -38,9 +38,9 @@ class Model(ABC):
         # metrics
         self.precision = []
         self.recall = []
-        #model_document_ranking
+        # model_document_ranking
         self.ranking = []
-    @staticmethod
+
     @abstractmethod
     def get_model(self):
         return __class__.__name__
@@ -62,26 +62,25 @@ class Model(ABC):
             queries = self._queries
         inverted_index = self.collection.inverted_index
         for i, query in enumerate(queries, start=1):
-            #print(f"\nQuery {i} of {len(queries)}")
-            #print(f"Query length: {len(query)}")
+            # print(f"\nQuery {i} of {len(queries)}")
+            # print(f"Query length: {len(query)}")
             apriori_start = time()
             freq_termsets = apriori(query, inverted_index, min_freq)
             apriori_end = time()
-            #print(f"Frequent Termsets: {len(freq_termsets)}")
-            #print(f"Apriori iter {i} took {apriori_end - apriori_start} secs.")
+            # print(f"Frequent Termsets: {len(freq_termsets)}")
+            # print(f"Apriori iter {i} took {apriori_end - apriori_start} secs.")
 
-            #write_list(freq_termsets,"freq_term_7.csv")
-
+            # write_list(freq_termsets,"freq_term_7.csv")
 
             self._queryVectors.append(self.calculate_ts_idf(freq_termsets))
-            #print(self._queryVectors)
+            # print(self._queryVectors)
 
-            #df = DataFrame(self._queryVectors)
-            #df.to_csv("qvecWin7.csv")
+            # df = DataFrame(self._queryVectors)
+            # df.to_csv("qvecWin7.csv")
 
             self._docVectors.append(self.calculate_tsf(freq_termsets))
             self._weights.append(self._model_func(freq_termsets))
-            #if i >= 2: break
+            # if i >= 2: break
         return self
 
     def calculate_ts_idf(self, termsets):
@@ -129,19 +128,21 @@ class Model(ABC):
         # for each query and (dtm, relevant) pair
         for i, (qv, dv, rel) in enumerate(zip(self._queryVectors, self._docVectors, self._relevant)):
             # all the money function
+            # print(f"{i}({qv,dv,rel})")
             # document - termset matrix - model balance weight
             dtsm = self._vectorizer(dv, qv, self._weights[i])
-            #print(len(self._docVectors[i][0]))
+            #print(dtsm)
+            # print(len(self._docVectors[i][0]))
             # cosine similarity between query and every document
             document_similarities = evaluate_sim(qv, dtsm)
-            # print(document_similarities.keys())
+            # print(document_similarities)
             self.ranking.append(list(document_similarities.keys()))
             pre, rec = calc_precision_recall(document_similarities.keys(), rel)
             # print(pre, rec)
-            #print(f"=> Query {i + 1}/{number_of_queries}, precision = {pre:.3f}, recall = {rec:.3f}")
+            # print(f"=> Query {i + 1}/{number_of_queries}, precision = {pre:.3f}, recall = {rec:.3f}")
             self.precision.append(round(pre, 3))
             self.recall.append(round(rec, 3))
-
+            #if i > 1: break
         return array(self.precision), array(self.recall)
 
     def results_to_df(self):

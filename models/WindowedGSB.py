@@ -10,6 +10,7 @@ class WindowedGSBModel(GSBModel):
     the init function. The rest of the model is the same as the simple graph based
      extension which is the super class of the model."""
 
+
     def __init__(self, collection, window=8):
         self.window = window
         super().__init__(collection)

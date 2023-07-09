@@ -7,7 +7,7 @@ from models.Model import Model
 
 
 class GSBModel(Model):
-    """The GSBModel - Graph Based extention of the SetBased model will be consisted of:
+    """The GSBModel - Graph Based extension of the SetBased model will be consisted of:
             a. graph - the union graph
             b. _nwk - the term weights derived of each node
             c. as well as any field of its superclass Model
