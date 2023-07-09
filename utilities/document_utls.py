@@ -76,3 +76,32 @@ def read_list(name):
     with open(name, 'rb') as f:
         my_list = pickle.load(f)
         return my_list
+
+
+# transform json index to old index (input json index, output index.dat [id,term,wout,[plist]])
+def graphToIndex(id, terms, calc_term_w, plist, *args, **kwargs):
+    filename = kwargs.get('filename', None)
+    if not filename:
+        filename = 'inverted index.dat'
+    f = open(filename, "a+")
+    data = ','.join(
+        [str(i) for i in plist])  # join list to a string so we can write it in the inv index and load it with ease
+    f.write('%s;%s;%s;%s;\n' % (id, terms, calc_term_w, data))
+    f.close()
+    return 1
+
+
+def json_to_dat(collection, filename=None):
+    print(filename)
+    index = collection.inverted_index
+    print(len(index.keys()))
+    for key in index.keys():
+        id = index[key]['id']
+        terms = index[key]['term']
+        plist = index[key]['posting_list']
+        if 'nwk' in index[key].keys():
+            nwk = index[key]['nwk']
+        else:
+            print("NWK has not been calculated!!!!!!! is it intended?")
+            nwk = 0
+        graphToIndex(id, nwk, terms, plist, filename=filename)
