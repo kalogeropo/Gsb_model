@@ -17,10 +17,13 @@ q, r = testcol.load_collection(col_path)
 # print(q)
 # print(len(testcol.inverted_index))
 M = WindowedGSBModel(testcol,7)
+
+
 print(M.get_model())
 print(info(M.graph))
-M.fit(min_freq=10)
-M.evaluate()
+#M.graph node2vec # καθε κομβο
+#M.fit(min_freq=10)
+#M.evaluate()
 # df = M.results_to_df()
 print(len(M.ranking))
 

@@ -28,6 +28,13 @@ class Model(ABC):
         # init list and variables
         self._model = "Base Abstract Model"  # protected, model name by class
         self.collection = collection  # collection which will be used by the model
+        #time stats
+        self.idexing_time_start = -1
+        self.idexing_time_end = -1
+        self.proccess_time_start = -1
+        self.process_time_end = -1
+        self.retrival_time_start = -1
+        self.retrival_time_end = -1
 
         #
         self._queries = self.collection.queries
@@ -148,3 +155,4 @@ class Model(ABC):
     def results_to_df(self):
         df = DataFrame(list(zip(self.precision, self.recall)), columns=["A_pre", "A_rec"])
         return df
+    def time_stats(self):pass

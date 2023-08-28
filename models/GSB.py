@@ -1,3 +1,4 @@
+import time
 from math import log
 
 from networkx import Graph, set_node_attributes, get_node_attributes
@@ -14,10 +15,13 @@ class GSBModel(Model):
     The main model funct and vectorizer are overriden as we need a different functionality"""
 
     def __init__(self, collection):
+        start_time = time.time()
         super().__init__(collection)
         self.model = self.get_model()
         self.graph = self.union_graph()
         self._nwk = self._calculate_nwk()
+        end_time = time.time()
+        print(f"model took {end_time-start_time} secs")
 
     def _model_func(self, freq_termsets):
         tns = zeros(len(freq_termsets), dtype=float)
