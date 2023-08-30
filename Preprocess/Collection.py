@@ -1,9 +1,9 @@
 from json import dumps
-from os.path import join
+from os.path import join, exists
 from os import listdir, getcwd, path
 
 from Preprocess.Document import Document
-from utilities.document_utls import create_dir
+from utilities.document_utls import create_dir, remove_punctuation
 
 
 class Collection:
@@ -29,8 +29,11 @@ class Collection:
         self.name = name
         self.path = join(getcwd(), path)
 
-        self.num_docs = len(listdir(self.path))
 
+        if exists(self.path):
+            self.num_docs = len(listdir(self.path))
+        else:
+            create_dir(self.path)
         # can be used to hold different user given information
         self.params = {}
 
@@ -39,8 +42,36 @@ class Collection:
 
         # inverted index
         self.inverted_index = {}
+    def create_col_from_list(self, dict_of_docs, preproccess = False, list_of_q=None, list_of_rel=None,coll_path=None):
+        for doc in dict_of_docs:
+            print(doc['doc_id'])
+            with open("".join([self.path,'/',str(doc['doc_id']),'.txt']),'w',encoding='UTF-8') as fd:
+                doc_to_write = doc['text']
+                if preproccess:
+                    doc_to_write = remove_punctuation(doc_to_write).upper().split(" ")
+                    #print(doc_to_write)
+                fd.write('\n'.join(doc_to_write))
+
+            #create txts
+
+        if list_of_rel is None:
+            list_of_rel = []
+        else:
+            print(list_of_rel)
+            with open("".join([coll_path, "/Relevant.txt"]), 'w', encoding='UTF-8') as fd:
+                for item in list_of_rel:
+                    fd.write(' '.join(str(i) for i in item))
+                    fd.write('\n')
+        if list_of_q is None:
+            list_of_q = []
+        else:
+            with open("".join([coll_path, "/Queries.txt"]), 'w', encoding='UTF-8') as fd:
+                fd.write("\n".join(list_of_q))
+        return 0
+
 
     def create_collection(self):
+        self.num_docs = 0
         if not self.docs:
             # generate file names
             filenames = [join(self.path, id) for id in listdir(self.path)]
@@ -48,12 +79,14 @@ class Collection:
             for fn in filenames:
                 if not path.isdir(fn):
                     self.docs.append(Document(fn))
+                    self.num_docs +=1
             # Create inverted index
             # --->Debug
             # for doc in self.docs:
             #    print(doc.tf)
             self.inverted_index = self.create_inverted_index()
-            self.num_docs = self.docs[-1].doc_id
+
+
 
     def create_inverted_index(self):
         inv_index = {}

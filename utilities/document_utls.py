@@ -4,9 +4,13 @@ from os.path import exists
 import pickle
 from numpy import dot
 from numpy.linalg import norm
-
+import string
 from utilities.ExcelWriter import write
-
+def remove_punctuation(input_string):
+    # Make a translator object to replace punctuation with none
+    translator = str.maketrans('', '', string.punctuation)
+    # Use the translator
+    return input_string.translate(translator)
 
 def calculate_tf(terms):
     tf = {}
