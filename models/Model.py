@@ -28,7 +28,7 @@ class Model(ABC):
         # init list and variables
         self._model = "Base Abstract Model"  # protected, model name by class
         self.collection = collection  # collection which will be used by the model
-        #time stats
+        # time stats
         self.idexing_time_start = -1
         self.idexing_time_end = -1
         self.proccess_time_start = -1
@@ -130,7 +130,7 @@ class Model(ABC):
 
         return array(tf_ij)
 
-    def evaluate(self):
+    def evaluate(self,k = None):
         number_of_queries = len(self._queryVectors)
         # for each query and (dtm, relevant) pair
         for i, (qv, dv, rel) in enumerate(zip(self._queryVectors, self._docVectors, self._relevant)):
@@ -138,21 +138,24 @@ class Model(ABC):
             # print(f"{i}({qv,dv,rel})")
             # document - termset matrix - model balance weight
             dtsm = self._vectorizer(dv, qv, self._weights[i])
-            #print(dtsm)
+            # print(dtsm)
             # print(len(self._docVectors[i][0]))
             # cosine similarity between query and every document
             document_similarities = evaluate_sim(qv, dtsm)
             # print(document_similarities)
             self.ranking.append(list(document_similarities.keys()))
-            pre, rec = calc_precision_recall(document_similarities.keys(), rel)
+            if k is None: k = len(document_similarities.keys())
+            pre, rec , mrr = calc_precision_recall(document_similarities.keys(), rel, k )
             # print(pre, rec)
             # print(f"=> Query {i + 1}/{number_of_queries}, precision = {pre:.3f}, recall = {rec:.3f}")
-            self.precision.append(round(pre, 3))
-            self.recall.append(round(rec, 3))
-            #if i > 1: break
+            self.precision.append(round(pre, 8))
+            self.recall.append(round(rec, 8))
+            # if i > 1: break
         return array(self.precision), array(self.recall)
 
     def results_to_df(self):
         df = DataFrame(list(zip(self.precision, self.recall)), columns=["A_pre", "A_rec"])
         return df
-    def time_stats(self):pass
+
+    def time_stats(self):
+        pass

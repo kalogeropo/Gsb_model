@@ -44,23 +44,35 @@ def cosine_similarity(u, v):
         return dot(u, v) / (norm(u) * norm(v))
 
 
-def calc_precision_recall(doc_sims, relevant):
+def calc_precision_recall(doc_sims, relevant, k):
+    #print(doc_sims)
+    #print(relevant)
     cnt = 0
     retrieved = 1
     recall = []
     precision = []
+    mrr = 0
     for doc in doc_sims:
         if doc in relevant:
             cnt += 1
             p = cnt / retrieved
+            if cnt == 1:
+                mrr = p
             r = cnt / len(relevant)
             precision += [p]
             recall += [r]
         retrieved += 1
-
-    avg_pre = sum(precision) / len(precision)
-    avg_rec = sum(recall) / len(recall)
-    return avg_pre, avg_rec
+        if retrieved == k+1:
+            break
+    try:
+        avg_pre = sum(precision) / len(precision)
+    except ZeroDivisionError:
+        avg_pre =0
+    try:
+        avg_rec = sum(recall) / len(recall)
+    except ZeroDivisionError:
+        avg_rec = 0
+    return avg_pre, avg_rec, mrr
 
 
 def res_to_excel(result_model, namefile='example.xlsx', dest_path="collections/test/Results", sheetname="test"):

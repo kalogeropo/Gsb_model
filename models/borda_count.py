@@ -41,15 +41,18 @@ class BordaCount(Model):
             # print(scores)
             self.bordaRanking.append(list(scores.keys()))
 
-    def evaluate(self):
+    def evaluate(self, k =None):
+
         # print(self.bordaRanking)
         number_of_queries = len(self.bordaRanking)
         for i, (bordarank, rel) in enumerate(zip(self.bordaRanking, self._relevant)):
-            pre, rec = calc_precision_recall(bordarank, rel)
+            if k is None:
+                k = len(self.bordaRanking)
+            pre, rec , mrr = calc_precision_recall(bordarank, rel,k)
             # print(pre, rec)
             #print(f"=> Query {i + 1}/{number_of_queries}, precision = {pre:.3f}, recall = {rec:.3f}")
-            self.precision.append(round(pre, 3))
-            self.recall.append(round(rec, 3))
+            self.precision.append(round(pre, 8))
+            self.recall.append(round(rec, 8))
         return 0
 
     def get_model(self):

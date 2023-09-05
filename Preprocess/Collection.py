@@ -29,7 +29,6 @@ class Collection:
         self.name = name
         self.path = join(getcwd(), path)
 
-
         if exists(self.path):
             self.num_docs = len(listdir(self.path))
         else:
@@ -42,22 +41,23 @@ class Collection:
 
         # inverted index
         self.inverted_index = {}
-    def create_col_from_list(self, dict_of_docs, preproccess = False, list_of_q=None, list_of_rel=None,coll_path=None):
+
+    def create_col_from_list(self, dict_of_docs, preproccess=False, list_of_q=None, list_of_rel=None, coll_path=None):
         for doc in dict_of_docs:
-            print(doc['doc_id'])
-            with open("".join([self.path,'/',str(doc['doc_id']),'.txt']),'w',encoding='UTF-8') as fd:
+            # print(doc['doc_id'])
+            with open("".join([self.path, '/', str(doc['doc_id']), '.txt']), 'w', encoding='UTF-8') as fd:
                 doc_to_write = doc['text']
                 if preproccess:
                     doc_to_write = remove_punctuation(doc_to_write).upper().split(" ")
-                    #print(doc_to_write)
+                    # print(doc_to_write)
                 fd.write('\n'.join(doc_to_write))
 
-            #create txts
+            # create txts
 
         if list_of_rel is None:
             list_of_rel = []
         else:
-            print(list_of_rel)
+            #print(list_of_rel)
             with open("".join([coll_path, "/Relevant.txt"]), 'w', encoding='UTF-8') as fd:
                 for item in list_of_rel:
                     fd.write(' '.join(str(i) for i in item))
@@ -69,7 +69,6 @@ class Collection:
                 fd.write("\n".join(list_of_q))
         return 0
 
-
     def create_collection(self):
         self.num_docs = 0
         if not self.docs:
@@ -79,14 +78,12 @@ class Collection:
             for fn in filenames:
                 if not path.isdir(fn):
                     self.docs.append(Document(fn))
-                    self.num_docs +=1
+                    self.num_docs += 1
             # Create inverted index
             # --->Debug
             # for doc in self.docs:
             #    print(doc.tf)
             self.inverted_index = self.create_inverted_index()
-
-
 
     def create_inverted_index(self):
         inv_index = {}
@@ -113,7 +110,7 @@ class Collection:
 
     def save_inverted_index(self, path=''):
         if not path:
-            path=self.path
+            path = self.path
         print(path)
         create_dir(path)
         with open("".join([path, f'\inverted_index_{self.name}.json']), 'w', encoding='UTF-8') as inv_ind:
@@ -122,7 +119,7 @@ class Collection:
             else:
                 raise ("Inverted Index Empty.")
 
-    def load_collection(self,coll_path= ''):
+    def load_collection(self, coll_path=''):
         if path.exists(coll_path):
             for item in listdir(coll_path):
                 if item == "Queries.txt":
@@ -131,5 +128,6 @@ class Collection:
                 if item == "Relevant.txt":
                     with open("".join([coll_path, "/Relevant.txt"]), "r") as fd:
                         self.relevant = [[int(id) for id in d.split()] for d in fd.readlines()]
-        else: print("path issue")
+        else:
+            print("path issue")
         return self.relevant, self.queries
