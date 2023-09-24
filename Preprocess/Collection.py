@@ -74,11 +74,14 @@ class Collection:
         if not self.docs:
             # generate file names
             filenames = [join(self.path, id) for id in listdir(self.path)]
+            max_id = max([id for id in listdir(self.path)])
+            self.num_docs = int(max_id)
+            print(self.num_docs)
             # print(filenames)
             for fn in filenames:
                 if not path.isdir(fn):
                     self.docs.append(Document(fn))
-                    self.num_docs += 1
+
             # Create inverted index
             # --->Debug
             # for doc in self.docs:

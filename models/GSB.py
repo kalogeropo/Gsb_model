@@ -1,10 +1,33 @@
 import time
 from math import log
 
-from networkx import Graph, set_node_attributes, get_node_attributes
-from numpy import dot, fill_diagonal, array, zeros
+from networkx import Graph, set_node_attributes, get_node_attributes, from_numpy_array, k_core, selfloop_edges
+from numpy import dot, fill_diagonal, array, zeros, mean
 from Preprocess import Document
 from models.Model import Model
+
+
+def adj_to_graph(adj_matrix):
+    G = from_numpy_array(adj_matrix)
+    # print(G.edges(data=True))
+    return G
+
+
+def nodes_to_terms(terms, maincore):
+    k_core = []
+    for i in maincore:
+        k_core.append(terms[i])
+    # print(k_core)
+    return k_core
+
+
+def calc_average_edge_w(adj_matrix):
+    return mean(adj_matrix) / 2
+
+
+def prune_matrix(adj_matrix,threshold):
+    adj_matrix[adj_matrix <= threshold] = 0
+    return adj_matrix
 
 
 class GSBModel(Model):
@@ -14,14 +37,24 @@ class GSBModel(Model):
             c. as well as any field of its superclass Model
     The main model funct and vectorizer are overriden as we need a different functionality"""
 
-    def __init__(self, collection):
-        start_time = time.time()
+    def __init__(self, collection, k_core_bool=False, h_val=1, p_val=0):
+        self.start_time = time.time()
+        self.k_core_bool = k_core_bool
+        if isinstance(h_val, int):
+            self.h = h_val
+        elif isinstance(h_val, float):
+            self.h = h_val * 100
+        if isinstance(p_val, int):
+            self.p = p_val / 100
+        elif isinstance(p_val, float):
+            self.p = p_val
         super().__init__(collection)
         self.model = self.get_model()
         self.graph = self.union_graph()
         self._nwk = self._calculate_nwk()
-        end_time = time.time()
-        print(f"model took {end_time-start_time} secs")
+        self.end_time = time.time()
+        self.elapsed_time = self.end_time - self.start_time
+        print(f"model took {self.elapsed_time} secs")
 
     def _model_func(self, freq_termsets):
         tns = zeros(len(freq_termsets), dtype=float)
@@ -56,15 +89,24 @@ class GSBModel(Model):
         fill_diagonal(adj_matrix, win)
         return adj_matrix
 
-    def union_graph(self, kcore=[], kcore_bool=False):
+    def union_graph(self):
         union = Graph()
         for doc in self.collection.docs:
             terms = list(doc.tf.keys())
             adj_matrix = self.doc_to_matrix(doc)
+            kcore = []
+            if self.k_core_bool:
+                if self.model == "GSBModel":
+                    thres_edge_weight = self.p * calc_average_edge_w(adj_matrix)
+                    adj_matrix = prune_matrix(adj_matrix,thres_edge_weight)
+                g = adj_to_graph(adj_matrix)
+                maincore = self.kcore_nodes(g)
+                kcore = nodes_to_terms(terms, maincore)
+
             # iterate through lower triangular matrix
             for i in range(adj_matrix.shape[0]):
                 # gain value of importance
-                h = 0.06 if terms[i] in kcore and kcore_bool else 1
+                h = self.h if terms[i] in kcore and self.k_core_bool else 1
                 for j in range(adj_matrix.shape[1]):
                     if i >= j:
                         if union.has_edge(terms[i], terms[j]):
@@ -86,6 +128,12 @@ class GSBModel(Model):
     def _number_of_nbrs(self):
         return {node: val for (node, val) in self.graph.degree()}
 
+    def kcore_nodes(self, nxgraph, k=None):
+        nxgraph.remove_edges_from(selfloop_edges(nxgraph))
+        maincore = k_core(nxgraph, k)
+        # print(maincore.nodes)
+        return maincore.nodes
+
     def _calculate_nwk(self, a=1, b=10):
         nwk = {}
         Win = self._calculate_win()
@@ -95,8 +143,8 @@ class GSBModel(Model):
         ngb = self._number_of_nbrs()
         # print(ngb)
         for k in list(Win.keys()):
-            f = a * Wout[k] / ((Win[k] + 1) * (ngb[k] + 1))
-            s = b / (ngb[k] + 1)
-            self.collection.inverted_index[k]['nwk'] = round(log(1 + f) * log(1 + s), 3)
+            f = log(1 + a * Wout[k] / ((Win[k] + 1) * (ngb[k] + 1)))
+            s = log(1 + b / (ngb[k] + 1))
+            self.collection.inverted_index[k]['nwk'] = round(f * s, 3)
 
         return nwk
