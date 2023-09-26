@@ -2,10 +2,41 @@ from os import makedirs
 from os.path import exists
 
 import pickle
-from numpy import dot
+
+from networkx import from_numpy_array
+from numpy import dot, fill_diagonal, diag, mean
 from numpy.linalg import norm
 import string
 from utilities.ExcelWriter import write
+
+def adj_to_graph(adj_matrix):
+    G = from_numpy_array(adj_matrix)
+    # print(G.edges(data=True))
+    return G
+
+
+def nodes_to_terms(terms, maincore):
+    k_core = []
+    for i in maincore:
+        k_core.append(terms[i])
+    # print(k_core)
+    return k_core
+
+
+def calc_average_edge_w(adj_matrix):
+    return mean(adj_matrix) / 2
+
+
+def prune_matrix(adj_matrix,threshold):
+    diagonal1 = diag(adj_matrix).copy()
+    #print(diagonal1)
+    if threshold>1:
+        adj_matrix[adj_matrix <= threshold] = 0
+        #print(diagonal1)
+    fill_diagonal(adj_matrix,diagonal1)
+    new_diagonal = adj_matrix.diagonal()
+    return adj_matrix
+
 def remove_punctuation(input_string):
     # Make a translator object to replace punctuation with none
     translator = str.maketrans('', '', string.punctuation)

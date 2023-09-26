@@ -1,33 +1,11 @@
 import time
-from math import log
+from math import log, log2
 
-from networkx import Graph, set_node_attributes, get_node_attributes, from_numpy_array, k_core, selfloop_edges
-from numpy import dot, fill_diagonal, array, zeros, mean
+from networkx import Graph, set_node_attributes, get_node_attributes,  k_core, selfloop_edges
+from numpy import dot, fill_diagonal, array, zeros, float64
 from Preprocess import Document
 from models.Model import Model
-
-
-def adj_to_graph(adj_matrix):
-    G = from_numpy_array(adj_matrix)
-    # print(G.edges(data=True))
-    return G
-
-
-def nodes_to_terms(terms, maincore):
-    k_core = []
-    for i in maincore:
-        k_core.append(terms[i])
-    # print(k_core)
-    return k_core
-
-
-def calc_average_edge_w(adj_matrix):
-    return mean(adj_matrix) / 2
-
-
-def prune_matrix(adj_matrix,threshold):
-    adj_matrix[adj_matrix <= threshold] = 0
-    return adj_matrix
+from utilities.document_utls import calc_average_edge_w, prune_matrix, adj_to_graph, nodes_to_terms
 
 
 class GSBModel(Model):
@@ -143,8 +121,18 @@ class GSBModel(Model):
         ngb = self._number_of_nbrs()
         # print(ngb)
         for k in list(Win.keys()):
-            f = log(1 + a * Wout[k] / ((Win[k] + 1) * (ngb[k] + 1)))
-            s = log(1 + b / (ngb[k] + 1))
-            self.collection.inverted_index[k]['nwk'] = round(f * s, 3)
+            try:
 
+                f = float64(a * Wout[k] / ((Win[k] + 1) * (ngb[k] + 1)))
+                s = float64(b / (ngb[k] + 1))
+                self.collection.inverted_index[k]['nwk'] = round(log2(1 + f) * log2(1 + s), 3)
+            except ValueError:
+                print(f"f = {f}\ns = {s}\n")
+                if f<0:
+                    print("**************")
+                    print(Wout[k])
+                    print(Win[k])
+                    print(ngb[k])
+                    print("**************")
+                self.collection.inverted_index[k]['nwk'] = 0
         return nwk

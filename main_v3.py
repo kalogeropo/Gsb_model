@@ -11,7 +11,7 @@ testcol.create_collection()
 testcol.save_inverted_index(path_to_write)
 q, r = testcol.load_collection(col_path)
 
-for i in range(19,26):
+for i in range(7,14):
     N = WindowedGSBModel(testcol,i)
     N.fit(min_freq=10)
     N.evaluate()

@@ -1,3 +1,5 @@
+from numpy import mean
+
 from Preprocess.Collection import Collection
 from models.GSB import GSBModel
 from utilities.document_utls import res_to_excel
@@ -19,3 +21,4 @@ for i in range(0, 5):
     N.evaluate()
     dest_path = "collections/test/Results"
     res_to_excel(N, "GSBTesting.xlsx", dest_path, sheetname=f"test_{i}")
+    print(mean(N.precision))

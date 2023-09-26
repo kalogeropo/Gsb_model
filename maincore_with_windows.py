@@ -3,6 +3,7 @@ from pandas import DataFrame
 
 from Preprocess.Collection import Collection
 from models.GSB import GSBModel
+from models.WindowedGSB import WindowedGSBModel
 from utilities.ExcelWriter import write
 from utilities.document_utls import res_to_excel
 
@@ -17,11 +18,12 @@ testcol.create_collection()
 testcol.save_inverted_index(path_to_write)
 q, r = testcol.load_collection(col_path)
 
-importance_vals = [h for h in range(30, 200, 20)]
+importance_vals = [h for h in range(30, 500, 20)]
 #prune_vals = [p for p in range(30, 90, 10)]
 #prune_vals = [p for p in range(90, 150, 10)]
 #prune_vals = [p for p in range(150, 190, 10)]
-prune_vals = [p for p in range(190, 250, 10)]
+#prune_vals = [p for p in range(190, 250, 10)]
+prune_vals = [1] #----> irrelevant
 countdown = len(importance_vals) * len(prune_vals)
 dest_path = "collections/test/Results"
 MAP = []
@@ -30,14 +32,13 @@ for h in importance_vals:
     for p in prune_vals:
         print(countdown)
         countdown -= 1
-        test = GSBModel(testcol, True, h_val=h, p_val=p)
-        # test = WindowedGSBModel(testcol, 8, True)
+        test = WindowedGSBModel(testcol,8,True)
         test.fit(min_freq=11)
         test.evaluate()
-        res_to_excel(test, "gsb_h_prune_w_o_2.xlsx", dest_path, sheetname=f"GSB_{h}_{p}")
+        res_to_excel(test, "windwed_h.xlsx", dest_path, sheetname=f"GSB_{h}")
         MAP.append(mean(test.precision))
-        testname = f"GSB_h={h}_p={p}"
+        testname = f"wind_8_h={h}"
         name.append(testname)
 
 df = DataFrame(list(zip(MAP, name)), columns=["map", "Names"])
-write(xl_namefile="gsb_h_prune_w_o_2.xlsx", dest_path=dest_path, sheetname="GSB_comp_hyper_aggresive_v2", data=df)
+write(xl_namefile="windwed_h.xlsx", dest_path=dest_path, sheetname="windowed_h_aggregate", data=df)
