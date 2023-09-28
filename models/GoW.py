@@ -64,7 +64,7 @@ class Gow(Model):
 
         return self
 
-    def evaluate(self):
+    def evaluate(self,k = None):
         for j, q in enumerate(self._queryVectors):
             eval_list = []
             for i in range(0, len(self._docVectors)):
@@ -75,7 +75,8 @@ class Gow(Model):
             #print(eval_list)
             ordered_docs = [tup[0] for tup in eval_list]
             self.ranking.append(ordered_docs)
-            pre, rec = calc_precision_recall(ordered_docs, self.collection.relevant[j])
+            if k is None: k = len(ordered_docs)
+            pre, rec ,mrr = calc_precision_recall(ordered_docs, self.collection.relevant[j],k)
             self.precision.append(pre)
             self.recall.append(rec)
         return self

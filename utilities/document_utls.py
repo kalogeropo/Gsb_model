@@ -7,7 +7,8 @@ from networkx import from_numpy_array
 from numpy import dot, fill_diagonal, diag, mean
 from numpy.linalg import norm
 import string
-from utilities.ExcelWriter import write
+
+from utilities.Result_handling import write
 
 def adj_to_graph(adj_matrix):
     G = from_numpy_array(adj_matrix)
@@ -106,9 +107,7 @@ def calc_precision_recall(doc_sims, relevant, k):
     return avg_pre, avg_rec, mrr
 
 
-def res_to_excel(result_model, namefile='example.xlsx', dest_path="collections/test/Results", sheetname="test"):
-    df = result_model.results_to_df()
-    write(xl_namefile=namefile, dest_path=dest_path, sheetname=sheetname, data=df)
+
 
 
 # write list to binary file
@@ -152,3 +151,4 @@ def json_to_dat(collection, filename=None):
             print("NWK has not been calculated!!!!!!! is it intended?")
             nwk = 0
         graphToIndex(id, nwk, terms, plist, filename=filename)
+

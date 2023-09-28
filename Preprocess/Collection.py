@@ -32,7 +32,8 @@ class Collection:
         if exists(self.path):
             self.num_docs = len(listdir(self.path))
         else:
-            create_dir(self.path)
+            print(self.path)
+            #create_dir(self.path)
         # can be used to hold different user given information
         self.params = {}
 

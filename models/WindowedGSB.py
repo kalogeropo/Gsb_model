@@ -3,16 +3,15 @@ from numpy import zeros
 from models.GSB import GSBModel
 from utilities.document_utls import calculate_tf
 
-
 class WindowedGSBModel(GSBModel):
     """The windowed version of the graph based extension of the set based model
     Here will be implemented both the constant or percentage version by overriding
     the init function. The rest of the model is the same as the simple graph based
      extension which is the super class of the model."""
 
-    def __init__(self, collection, window=8,k_core_bool =False):
+    def __init__(self, collection, window=8, h_val=1, k_core_bool=False):
         self.window = window
-        super().__init__(collection,k_core_bool)
+        super().__init__(collection, k_core_bool=k_core_bool,h_val=h_val)
 
     def get_model(self):
         return __class__.__name__

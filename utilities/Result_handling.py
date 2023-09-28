@@ -3,6 +3,19 @@ from openpyxl import load_workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
 
 
+def res_to_excel(result_model, namefile='example.xlsx', dest_path="collections/test/Results", sheetname="test"):
+    df = result_model.results_to_df()
+    write(xl_namefile=namefile, dest_path=dest_path, sheetname=sheetname, data=df)
+
+def expir_start(path,path_to_write,col_path):
+
+    from Preprocess.Collection import Collection
+    testcol = Collection(path, name="test")
+    testcol.create_collection()
+    testcol.save_inverted_index(path_to_write)
+    r, q = testcol.load_collection(col_path)
+    return testcol,q,r
+
 def write(xl_namefile='example.xlsx', dest_path="collections/test/Results", sheetname="test", data=None):
     writer = ExcelWriter(xl_namefile, dest_path)
     writer.add_sheet(sheetname)
