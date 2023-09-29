@@ -1,28 +1,18 @@
 from numpy import mean
 from pandas import DataFrame
 
-from Preprocess.Collection import Collection
 from models.GSB import GSBModel
-from utilities.ExcelWriter import write
-from utilities.document_utls import res_to_excel
+from utilities.Result_handling import write, expir_start
 
-path = 'collections/CF/docs'
-# path = 'collections/test/docs'
-path_to_write = 'data/test_docs/tests'
-col_path = 'data'
-testcol = Collection(path, name="test")
-# print(testcol)
-testcol.create_collection()
-# print(testcol.inverted_index)
-testcol.save_inverted_index(path_to_write)
-q, r = testcol.load_collection(col_path)
+path = 'experiments/collections/CF/docs'
+path_to_write = 'Gsb_model/data/test_docs/tests'
+col_path = 'experiments/collections/CF'
+dest_path = "experiments/paper_results"
+testcol, q, r = expir_start(path, path_to_write, col_path)
 
-#importance_vals = [h for h in range(30, 200, 20)]
 importance_vals =[50]
-# prune_vals = [p for p in range(350, 610, 20)]
-prune_vals = [p for p in range(610, 710, 20)]
+prune_vals = [p for p in range(350, 710, 20)]
 countdown = len(importance_vals) * len(prune_vals)
-dest_path = "collections/test/Results"
 MAP = []
 name = []
 for h in importance_vals:
