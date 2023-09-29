@@ -1,7 +1,6 @@
 from numpy import mean
 from pandas import DataFrame
 
-from Preprocess.Collection import Collection
 from models.GSB import GSBModel
 from models.WindowedGSB import WindowedGSBModel
 from models.borda_count import BordaCount
