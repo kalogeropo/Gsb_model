@@ -38,8 +38,9 @@ class BordaCount(Model):
                         scores[candidate] += num_of_candidates - item
 
             scores = dict(sorted(scores.items(), key=lambda item: item[1], reverse=True))
-            # print(scores)
+            #print(scores)
             self.bordaRanking.append(list(scores.keys()))
+        print(len(self.bordaRanking))
 
     def evaluate(self, k =None):
 
@@ -47,10 +48,12 @@ class BordaCount(Model):
         number_of_queries = len(self.bordaRanking)
         for i, (bordarank, rel) in enumerate(zip(self.bordaRanking, self._relevant)):
             if k is None:
-                k = len(self.bordaRanking)
+                #print(F"k = {len(self.bordaRanking[0])}")
+                k = len(self.bordaRanking[0])
             pre, rec , mrr = calc_precision_recall(bordarank, rel,k)
             # print(pre, rec)
             #print(f"=> Query {i + 1}/{number_of_queries}, precision = {pre:.3f}, recall = {rec:.3f}")
+            #print(self.bordaRanking)
             self.precision.append(round(pre, 8))
             self.recall.append(round(rec, 8))
         return 0

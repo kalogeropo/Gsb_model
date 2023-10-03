@@ -142,9 +142,11 @@ class Model(ABC):
             # print(len(self._docVectors[i][0]))
             # cosine similarity between query and every document
             document_similarities = evaluate_sim(qv, dtsm)
-            # print(document_similarities)
+            #print(document_similarities)
             self.ranking.append(list(document_similarities.keys()))
-            if k is None: k = len(document_similarities.keys())
+            if k is None:
+                k = len(document_similarities.keys())
+                #print(F"k for MODEL is {k}")
             pre, rec , mrr = calc_precision_recall(document_similarities.keys(), rel, k )
             # print(pre, rec)
             # print(f"=> Query {i + 1}/{number_of_queries}, precision = {pre:.3f}, recall = {rec:.3f}")

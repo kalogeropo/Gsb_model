@@ -33,8 +33,7 @@ for i in list_of_prec:
     bord.fit()
     bord.evaluate()
     map_borda.append(mean(bord.precision))
-
-    #res_to_excel(bord,"testBord_percentage_Gsb.xlsx",dest_path,sheetname=f"gsb_perc_{i}")
+    res_to_excel(bord,"testBord_percentage_Gsb.xlsx",dest_path,sheetname=f"gsb_perc_{i}")
 
 df = DataFrame(list(zip(map_perc_wind,map_borda)), columns=["Perc","Borda"])
 write(xl_namefile="testBord_percentage_Gsb.xlsx", dest_path=dest_path, sheetname="acc_borda_perc_gsb", data=df)

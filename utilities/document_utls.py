@@ -104,6 +104,8 @@ def calc_precision_recall(doc_sims, relevant, k):
         avg_rec = sum(recall) / len(recall)
     except ZeroDivisionError:
         avg_rec = 0
+    if avg_rec == 0 or avg_pre == 0:
+        print(f"Doc SIM: {doc_sims}\nRel:{relevant}\nret:{retrieved}")
     return avg_pre, avg_rec, mrr
 
 
