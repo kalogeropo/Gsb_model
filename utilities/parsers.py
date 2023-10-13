@@ -5,7 +5,7 @@ def write_file(filename, list_to_write):
     print(filename)
     with open(filename, "w") as fd:
         for word in list_to_write:
-            fd.write("%s\n" % word)
+            fd.write("%s\n" % word.upper())
     return 0
 
 
@@ -29,7 +29,7 @@ def npl_q_r_parser(npl_q_r_dest_path, npl_q_path=None, npl_r_path=None):
             for sub in queries:
                 qs.append(sub.replace("\n", ""))
             print(qs)
-            res = write_file("/".join([npl_q_r_dest_path,"queries.txt"]),qs)
+            res = write_file("/".join([npl_q_r_dest_path,"Queries.txt"]),qs)
 
     # Handling relevant
     if npl_r_path:
@@ -55,7 +55,7 @@ def npl_q_r_parser(npl_q_r_dest_path, npl_q_path=None, npl_r_path=None):
             del list[-1]
             rel_to_write.append(list)
         print(rel_to_write)
-        with open("/".join([npl_q_r_dest_path,"relevant.txt"]),"w") as fd:
+        with open("/".join([npl_q_r_dest_path,"Relevant.txt"]),"w") as fd:
             for item in rel_to_write:
                 item.append("\n")
                 fd.write(" ".join(item))
@@ -83,7 +83,7 @@ def npl_doc_parser(npl_docs_path, npl_docs_dest_path):
                     text_as_list = line.split()
             except IndexError:
                 break
-        filename = "/".join([npl_docs_dest_path, temp_text_list[0]])
+        filename = "/".join([npl_docs_dest_path, temp_text_list[0].zfill(5)])
         text = temp_text_list[1:len(temp_text_list)]
         print(text)
         count += 1

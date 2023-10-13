@@ -32,7 +32,7 @@ for sup in support:
     M.fit(min_freq=sup)
     M.evaluate()
     end = timer()
-    res_to_excel(M, "apriori_set.xlsx", dest_path, sheetname=f"sup_{sup}")
+    #res_to_excel(M, "apriori_set.xlsx", dest_path, sheetname=f"sup_{sup}")
     set_times.append(end - start)
     set_pre.append(mean(M.precision))
     # GSB
@@ -41,7 +41,7 @@ for sup in support:
     N.fit(min_freq=sup)
     N.evaluate()
     end = timer()
-    res_to_excel(N, "apriori_gsb.xlsx", dest_path, sheetname=f"sup_{sup}")
+    #res_to_excel(N, "apriori_gsb.xlsx", dest_path, sheetname=f"sup_{sup}")
     gsb_times.append(end - start)
     gsb_pre.append(mean(N.precision))
 
@@ -51,7 +51,7 @@ for sup in support:
     K.fit(min_freq=sup)
     K.evaluate()
     end = timer()
-    res_to_excel(K, "apriori_win_7.xlsx", dest_path, sheetname=f"sup_{sup}")
+    #res_to_excel(K, "apriori_win_7.xlsx", dest_path, sheetname=f"sup_{sup}")
     wind_times.append(end - start)
     wind_pre.append(mean(K.precision))
 

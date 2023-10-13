@@ -16,9 +16,10 @@ class Gow(Model):
         text = kwargs['Text']
         vec = self.vectorizer.fit_transform(text)
         vec = vec.todense()
+        # print(len(vec))
         # print(vec)
-
-        qv = vec[self.collection.num_docs - 1:]
+        # print(self.collection.num_docs)
+        qv = vec[self.collection.num_docs - 1:len(vec)]
         dv = vec[0:self.collection.num_docs - 1]
         # print(len(qv))
         # print(len(dv))
@@ -46,10 +47,11 @@ class Gow(Model):
         text = []
         debug_ids = []
         prev_doc = self.collection.docs[0]
-        for doc in self.collection.docs:
+        for doc in self.collection.docs[1:]:
             # print(doc)
             if doc.doc_id != prev_doc.doc_id + 1:
                 text.append("")
+                #print(f"doc id:{doc.doc_id} and prev {prev_doc.doc_id}")
                 debug_ids.append(prev_doc.doc_id + 1)
                 # print(doc.doc_id)
             text.append(" ".join(doc.terms))
@@ -65,6 +67,8 @@ class Gow(Model):
         return self
 
     def evaluate(self,k = None):
+        #print(len(self._queryVectors))
+        #print(self._queryVectors)
         for j, q in enumerate(self._queryVectors):
             eval_list = []
             for i in range(0, len(self._docVectors)):
@@ -76,6 +80,7 @@ class Gow(Model):
             ordered_docs = [tup[0] for tup in eval_list]
             self.ranking.append(ordered_docs)
             if k is None: k = len(ordered_docs)
+            print(f"j:{j}, {len(self.collection.relevant[j])}")
             pre, rec ,mrr = calc_precision_recall(ordered_docs, self.collection.relevant[j],k)
             self.precision.append(pre)
             self.recall.append(rec)

@@ -87,7 +87,7 @@ class Model(ABC):
 
             self._docVectors.append(self.calculate_tsf(freq_termsets))
             self._weights.append(self._model_func(freq_termsets))
-            # if i >= 2: break
+            #if i >= 2: break
         return self
 
     def calculate_ts_idf(self, termsets):

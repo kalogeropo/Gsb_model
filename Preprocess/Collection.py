@@ -74,8 +74,10 @@ class Collection:
         self.num_docs = 0
         if not self.docs:
             # generate file names
+            #print(listdir(self.path))
             filenames = [join(self.path, id) for id in listdir(self.path)]
-            max_id = max([id for id in listdir(self.path)])
+            #print(filenames)
+            max_id = max([int(id) for id in listdir(self.path)])
             self.num_docs = int(max_id)
             print(self.num_docs)
             # print(filenames)
