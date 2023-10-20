@@ -39,6 +39,7 @@ class Document:
         # If window is equal to zero get window according to length
         # or if percentage window flag is true
         windowed_doc = []
+        """For small collections remove the next 2 lines"""
         if window < 7:
             window = 7
         # join words into a window sized text

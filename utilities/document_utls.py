@@ -8,7 +8,14 @@ from numpy import dot, fill_diagonal, diag, mean
 from numpy.linalg import norm
 import string
 
+try:
+    from rank_bm25 import BM25Okapi
+except ModuleNotFoundError:
+    from os import system
+
+    system("pip install rank_bm25")
 from utilities.Result_handling import write
+
 
 def adj_to_graph(adj_matrix):
     G = from_numpy_array(adj_matrix)
@@ -28,21 +35,23 @@ def calc_average_edge_w(adj_matrix):
     return mean(adj_matrix) / 2
 
 
-def prune_matrix(adj_matrix,threshold):
+def prune_matrix(adj_matrix, threshold):
     diagonal1 = diag(adj_matrix).copy()
-    #print(diagonal1)
-    if threshold>1:
+    # print(diagonal1)
+    if threshold > 1:
         adj_matrix[adj_matrix <= threshold] = 0
-        #print(diagonal1)
-    fill_diagonal(adj_matrix,diagonal1)
+        # print(diagonal1)
+    fill_diagonal(adj_matrix, diagonal1)
     new_diagonal = adj_matrix.diagonal()
     return adj_matrix
+
 
 def remove_punctuation(input_string):
     # Make a translator object to replace punctuation with none
     translator = str.maketrans('', '', string.punctuation)
     # Use the translator
     return input_string.translate(translator)
+
 
 def calculate_tf(terms):
     tf = {}
@@ -58,6 +67,14 @@ def create_dir(path):
     if not exists(path):
         makedirs(path)
         print("Directories Created")
+
+
+def evaluate_bm25_score(q, bm25_vectors):
+    doc_sim = {}
+    score = bm25_vectors.get_scores(q)
+    for id, s in enumerate(score.T, start=1):
+        doc_sim[id] = s
+    return {id: sim for id, sim in sorted(doc_sim.items(), key=lambda item: item[1], reverse=True)}
 
 
 def evaluate_sim(query, dtm):
@@ -77,8 +94,7 @@ def cosine_similarity(u, v):
 
 
 def calc_precision_recall(doc_sims, relevant, k):
-    #print(doc_sims)
-    #print(relevant)
+    print(len(doc_sims))
     cnt = 0
     retrieved = 1
     recall = []
@@ -94,12 +110,13 @@ def calc_precision_recall(doc_sims, relevant, k):
             precision += [p]
             recall += [r]
         retrieved += 1
-        if retrieved == k+1:
+        if retrieved == k:
             break
+
     try:
         avg_pre = sum(precision) / len(precision)
     except ZeroDivisionError:
-        avg_pre =0
+        avg_pre = 0
     try:
         avg_rec = sum(recall) / len(recall)
     except ZeroDivisionError:
@@ -107,9 +124,6 @@ def calc_precision_recall(doc_sims, relevant, k):
     if avg_rec == 0 or avg_pre == 0:
         print(f"Doc SIM: {doc_sims}\nRel:{relevant}\nret:{retrieved}")
     return avg_pre, avg_rec, mrr
-
-
-
 
 
 # write list to binary file
@@ -153,4 +167,3 @@ def json_to_dat(collection, filename=None):
             print("NWK has not been calculated!!!!!!! is it intended?")
             nwk = 0
         graphToIndex(id, nwk, terms, plist, filename=filename)
-

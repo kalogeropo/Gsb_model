@@ -21,7 +21,8 @@ testcol, q, r = expir_start(path, path_to_write, col_path)
 
 list_to_total = []
 test_name = []
-for i in range(7,25):
+for i in range(3,6):
+#for i in range(7,25):
     N = WindowedGSBModel(testcol,i)
     N.fit(min_freq=10)
     N.evaluate()
