@@ -1,5 +1,6 @@
 from networkx import info
 
+from models.GSB import GSBModel
 from models.GoW import Gow
 from models.WindowedGSB import WindowedGSBModel
 from models.borda_count import BordaCount
@@ -22,19 +23,6 @@ dest_path = "experiments/paper_results"
 
 testcol, q, r = expir_start(path, path_to_write, col_path)
 
-#
-# M = WindowedGSBModel(testcol,7)
-#
-# print(M.get_model())
-# print(info(M.graph))
-# M.fit(min_freq=10)
-# print(M.ranking)
-# M.evaluate()
-# df = M.results_to_df()
-# write(xl_namefile='example.xlsx', dest_path="experiments/collections/test", sheetname="test0", data=df)
-
-# print(f"ranking size = {len(M.ranking)}\nfirst Q: {M.ranking[0]}")
-
 
 # N = WindowedGSBModel(testcol, 3)
 # print(N.get_model())
@@ -46,10 +34,10 @@ testcol, q, r = expir_start(path, path_to_write, col_path)
 # df = N.results_to_df()
 # write(xl_namefile='example.xlsx', dest_path="experiments/collections/test", sheetname="test1", data=df)
 
-# testing = Gow(testcol)
-# testing.fit()
-# testing.evaluate()
-# print(len(testing.ranking))
+testing = Gow(testcol)
+testing.fit()
+testing.evaluate()
+print(len(testing.ranking))
 # df = testing.results_to_df()
 # write(xl_namefile='example.xlsx', dest_path="experiments/collections/test", sheetname="test2", data=df)
 
@@ -67,5 +55,9 @@ testcol, q, r = expir_start(path, path_to_write, col_path)
 testbm25 = BM25Model(testcol)
 testbm25.fit()
 testbm25.evaluate()
-res_to_excel(testbm25,"bm25.xlsx",dest_path,sheetname="bm25")
+res_to_excel(testbm25,"[NPL]bm25.xlsx",dest_path,sheetname="bm25")
 print(testbm25.precision)
+
+# testgsb = GSBModel(testcol)
+# testgsb.fit()
+# testgsb.evaluate()

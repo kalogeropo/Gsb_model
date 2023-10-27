@@ -72,6 +72,7 @@ def create_dir(path):
 def evaluate_bm25_score(q, bm25_vectors):
     doc_sim = {}
     score = bm25_vectors.get_scores(q)
+    #print(len(score))
     for id, s in enumerate(score.T, start=1):
         doc_sim[id] = s
     return {id: sim for id, sim in sorted(doc_sim.items(), key=lambda item: item[1], reverse=True)}
@@ -94,7 +95,7 @@ def cosine_similarity(u, v):
 
 
 def calc_precision_recall(doc_sims, relevant, k):
-    print(len(doc_sims))
+   # print(len(doc_sims))
     cnt = 0
     retrieved = 1
     recall = []
