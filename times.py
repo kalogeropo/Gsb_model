@@ -1,7 +1,6 @@
 from models.GSB import GSBModel
 from models.GoW import Gow
 from models.SetBased import SetBasedModel
-from utilities.document_utls import res_to_excel
 from Preprocess.Collection import Collection
 from models.WindowedGSB import WindowedGSBModel
 from models.borda_count import BordaCount

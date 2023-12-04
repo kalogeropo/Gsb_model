@@ -141,7 +141,7 @@ class Collection:
             print("path issue")
         return self.relevant, self.queries
 
-    def Q_R_stats(self):
+    def q_r_stats(self):
         from nltk.corpus import stopwords
         try:
             stop_words = set(stopwords.words('english'))

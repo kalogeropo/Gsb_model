@@ -22,18 +22,18 @@ dest_path = "experiments/paper_results"
 # print(len(testcol.inverted_index))
 
 testcol, q, r = expir_start(path, path_to_write, col_path)
-df = testcol.Q_R_stats()
+df = testcol.q_r_stats()
 write(xl_namefile='example.xlsx', dest_path="experiments/paper_results", sheetname="cf_queries", data=df)
-exit(123)
+
 N = WindowedGSBModel(testcol,7)
 print(N.get_model())
 # print(info(N.graph))
 N.fit()
 N.evaluate()
 # df = M.results_to_df()
-print(len(N.ranking))
-df = N.results_to_df()
-write(xl_namefile='example.xlsx', dest_path="experiments/paper_results", sheetname="cf_supp_1", data=df)
+#print(len(N.ranking))
+#df = N.results_to_df()
+#write(xl_namefile='example.xlsx', dest_path="experiments/paper_results", sheetname="cf_supp_1", data=df)
 
 # testing = Gow(testcol)
 # testing.fit()
@@ -59,6 +59,6 @@ write(xl_namefile='example.xlsx', dest_path="experiments/paper_results", sheetna
 # res_to_excel(testbm25,"[NPL]bm25.xlsx",dest_path,sheetname="bm25")
 # print(testbm25.precision)
 
-testgsb = GSBModel(testcol)
-testgsb.fit()
-testgsb.evaluate()
+# testgsb = GSBModel(testcol)
+# testgsb.fit()
+# testgsb.evaluate()

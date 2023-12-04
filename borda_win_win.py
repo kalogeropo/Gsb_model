@@ -5,11 +5,17 @@ from utilities.Result_handling import expir_start, res_to_excel, write
 from Preprocess.Collection import Collection
 from models.WindowedGSB import WindowedGSBModel
 from models.borda_count import BordaCount
+#CF
+# path = 'experiments/collections/CF/docs'
+# path_to_write = 'Gsb_model/data/test_docs/tests'
+# col_path = 'experiments/collections/CF'
+# dest_path = "experiments/paper_results"
 
-path = 'experiments/collections/CF/docs'
-path_to_write = 'Gsb_model/data/test_docs/tests'
-col_path = 'experiments/collections/CF'
-dest_path = "experiments/paper_results"
+#NPL
+path = 'experiments/collections/NPL/docs'
+path_to_write = 'experiments/temp'
+col_path = 'experiments/collections/NPL'
+dest_path = "experiments/paper_results/NPL_results"
 testcol, q, r = expir_start(path, path_to_write, col_path)
 
 wind_list = [i for i in range(7,16)]
@@ -38,6 +44,6 @@ for i in wind_list:
             bord.evaluate()
             map_borda.append(mean(bord.precision))
 
-            res_to_excel(bord,"bord_win_win.xlsx",dest_path,sheetname=f"w_{i}_{j}")
+            res_to_excel(bord,"[npl]bord_win_win.xlsx",dest_path,sheetname=f"w_{i}_{j}")
 df = DataFrame(list(zip(map_windsmall,map_windbig,map_borda)), columns=["wind_small","winBig","Borda"])
-write(xl_namefile="bord_win_win.xlsx", dest_path=dest_path, sheetname="acc_borda_wins_winb", data=df)
+write(xl_namefile="[npl]bord_win_win.xlsx", dest_path=dest_path, sheetname="acc_borda_wins_winb", data=df)

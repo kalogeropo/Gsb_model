@@ -1,17 +1,22 @@
 from models.SetBased import SetBasedModel
-from utilities.document_utls import res_to_excel
 from Preprocess.Collection import Collection
 from models.WindowedGSB import WindowedGSBModel
 from models.borda_count import BordaCount
+from utilities.Result_handling import expir_start
 
-"""Borda count :window and set based model"""
-path = 'collections/CF/docs'
-path_to_write = 'data/test_docs/tests'
-col_path = 'data'
-testcol = Collection(path, name="test")
-testcol.create_collection()
-testcol.save_inverted_index(path_to_write)
-q, r = testcol.load_collection(col_path)
+#CF
+path = 'experiments/collections/CF/docs'
+path_to_write = 'experiments/temp'
+col_path = 'experiments/collections/CF'
+dest_path = "experiments/paper_results"
+
+#NPL
+# path = 'experiments/collections/NPL/docs'
+# path_to_write = 'experiments/temp'
+# col_path = 'experiments/collections/NPL'
+# dest_path = "experiments/paper_results/NPL_results"
+testcol, q, r = expir_start(path, path_to_write, col_path)
+
 
 # M = SetBasedModel(testcol)
 # M.fit(min_freq=10)
