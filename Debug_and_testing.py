@@ -22,8 +22,9 @@ dest_path = "experiments/paper_results"
 # print(len(testcol.inverted_index))
 
 testcol, q, r = expir_start(path, path_to_write, col_path)
-
-
+df = testcol.Q_R_stats()
+write(xl_namefile='example.xlsx', dest_path="experiments/paper_results", sheetname="cf_queries", data=df)
+exit(123)
 N = WindowedGSBModel(testcol,7)
 print(N.get_model())
 # print(info(N.graph))

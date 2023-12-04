@@ -2,8 +2,11 @@ from json import dumps
 from os.path import join, exists
 from os import listdir, getcwd, path
 
+import nltk
+
 from Preprocess.Document import Document
 from utilities.document_utls import create_dir, remove_punctuation
+from pandas import DataFrame
 
 
 class Collection:
@@ -33,7 +36,7 @@ class Collection:
             self.num_docs = len(listdir(self.path))
         else:
             print(self.path)
-            #create_dir(self.path)
+            # create_dir(self.path)
         # can be used to hold different user given information
         self.params = {}
 
@@ -58,7 +61,7 @@ class Collection:
         if list_of_rel is None:
             list_of_rel = []
         else:
-            #print(list_of_rel)
+            # print(list_of_rel)
             with open("".join([coll_path, "/Relevant.txt"]), 'w', encoding='UTF-8') as fd:
                 for item in list_of_rel:
                     fd.write(' '.join(str(i) for i in item))
@@ -74,9 +77,9 @@ class Collection:
         self.num_docs = 0
         if not self.docs:
             # generate file names
-            #print(listdir(self.path))
+            # print(listdir(self.path))
             filenames = [join(self.path, id) for id in listdir(self.path)]
-            #print(filenames)
+            # print(filenames)
             max_id = max([int(id) for id in listdir(self.path)])
             self.num_docs = int(max_id)
             print(self.num_docs)
@@ -137,3 +140,21 @@ class Collection:
         else:
             print("path issue")
         return self.relevant, self.queries
+
+    def Q_R_stats(self):
+        from nltk.corpus import stopwords
+        try:
+            stop_words = set(stopwords.words('english'))
+        except LookupError:
+            import nltk
+            nltk.download('stopwords')
+            stop_words = set(stopwords.words('english'))
+
+        df = DataFrame(columns=["Q", "R", "Q_size", "rel_list_size", "No_of_stop", "Core Q len"])
+        for i, (q, r) in enumerate(zip(self.queries, self.relevant)):
+            filtered_sentence = [w for w in q if not w.lower() in stop_words]
+            df.loc[i] = (
+                {"Q": ' '.join(q), "R": " ".join(map(str, r)), "Q_size": len(q), "rel_list_size": len(r),
+                 "No_of_stop": len(q) - len(filtered_sentence),
+                 "Core Q len": len(filtered_sentence)})
+        return df
