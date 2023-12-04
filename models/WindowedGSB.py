@@ -9,8 +9,9 @@ class WindowedGSBModel(GSBModel):
     the init function. The rest of the model is the same as the simple graph based
      extension which is the super class of the model."""
 
-    def __init__(self, collection, window=8, h_val=1, k_core_bool=False):
+    def __init__(self, collection, window=8, h_val=1, k_core_bool=False,window_cut_off=True):
         self.window = window
+        self.window_cut_off=window_cut_off
         super().__init__(collection, k_core_bool=k_core_bool,h_val=h_val)
 
     def get_model(self):
@@ -23,7 +24,7 @@ class WindowedGSBModel(GSBModel):
         elif isinstance(self.window, float):
             window_size = int(self.window * len(document.terms))
         # create windowed document
-        windowed_document = document.split_document(window_size)
+        windowed_document = document.split_document(window_size,self.window_cut_off)
         adj_matrix = zeros(shape=(len(document.tf), len(document.tf)), dtype=int)
         for segment in windowed_document:
             w_tf = calculate_tf(segment)

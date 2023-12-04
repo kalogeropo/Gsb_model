@@ -15,17 +15,14 @@ class Gow(Model):
 
     def _vectorizer(self, **kwargs):
         text = kwargs['Text']
-        for i in range(1235, 1245):
-            print(i)
-            print(text[i])
         vec = self.vectorizer.fit_transform(text)
         vec = vec.todense()
         # print(len(vec))
         # print(vec)
         # print(self.collection.num_docs)
-        qv = vec[self.collection.num_docs - 1:len(vec)]
+        qv = vec[self.collection.num_docs:len(vec)]
         # print(qv[0])
-        dv = vec[0:self.collection.num_docs - 1]
+        dv = vec[0:self.collection.num_docs]
         # print(dv[-1])
         print(len(qv))
         print(len(dv))

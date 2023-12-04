@@ -32,7 +32,7 @@ class BM25Model(Model):
 
     def _vectorizer(self, **kwargs):
         text = kwargs['Text']
-        # print(text)
+        #print(text)
         bm25 = BM25Okapi(text)
         return bm25
 
