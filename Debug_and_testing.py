@@ -22,18 +22,24 @@ dest_path = "experiments/paper_results"
 # print(len(testcol.inverted_index))
 
 testcol, q, r = expir_start(path, path_to_write, col_path)
-df = testcol.q_r_stats()
-write(xl_namefile='example.xlsx', dest_path="experiments/paper_results", sheetname="cf_queries", data=df)
+testcol.collection_to_tsv()
 
-N = WindowedGSBModel(testcol,7)
-print(N.get_model())
-# print(info(N.graph))
-N.fit()
-N.evaluate()
+#df = testcol.q_r_stats()
+#write(xl_namefile='example.xlsx', dest_path="experiments/paper_results", sheetname="cf_queries", data=df)
+
+# N = WindowedGSBModel(testcol,7)
+# print(N.get_model())
+# N.fit()
+# N.evaluate()
 # df = M.results_to_df()
 #print(len(N.ranking))
 #df = N.results_to_df()
 #write(xl_namefile='example.xlsx', dest_path="experiments/paper_results", sheetname="cf_supp_1", data=df)
+
+# testbm25 = BM25Model(testcol)
+# testbm25.fit()
+# testbm25.evaluate()
+# print(testbm25.precision)
 
 # testing = Gow(testcol)
 # testing.fit()
@@ -42,9 +48,10 @@ N.evaluate()
 # df = testing.results_to_df()
 # write(xl_namefile='example.xlsx', dest_path="experiments/collections/test", sheetname="test2", data=df)
 
-# bord = BordaCount(M.ranking, N.ranking, testcol)
+# bord = BordaCount(testbm25.ranking, N.ranking, testcol)
 # bord.fit()
 # bord.evaluate()
+# res_to_excel(bord,"[cf]Bm25_windows7.xlsx",dest_path,sheetname="bm25_win7")
 
 #M
 #res_to_excel(M,"testM.xlsx",dest_path,sheetname="test13")
@@ -53,12 +60,4 @@ N.evaluate()
 # #bord
 # res_to_excel(bord,"testBord.xlsx",dest_path,sheetname="test13_16")
 
-# testbm25 = BM25Model(testcol)
-# testbm25.fit()
-# testbm25.evaluate()
-# res_to_excel(testbm25,"[NPL]bm25.xlsx",dest_path,sheetname="bm25")
-# print(testbm25.precision)
 
-# testgsb = GSBModel(testcol)
-# testgsb.fit()
-# testgsb.evaluate()

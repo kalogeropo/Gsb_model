@@ -23,7 +23,6 @@ test_name = []
 
 # for reproducibility
 for i in range(0, 5):
-    perc = i / 100
     N = GSBModel(testcol)
     N.fit(min_freq=10)
     N.evaluate()

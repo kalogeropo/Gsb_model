@@ -16,6 +16,7 @@ class Document:
             self.doc_id = 696969
             # print(self.doc_id)
         self.terms = self.read_document()
+        self.docs_text = " ".join(self.terms)
         self.tf = calculate_tf(self.terms)
 
     def __str__(self):

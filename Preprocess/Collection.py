@@ -1,3 +1,4 @@
+from _csv import writer
 from json import dumps
 from os.path import join, exists
 from os import listdir, getcwd, path
@@ -5,7 +6,7 @@ from os import listdir, getcwd, path
 import nltk
 
 from Preprocess.Document import Document
-from utilities.document_utls import create_dir, remove_punctuation
+from utilities.document_utls import create_dir, remove_punctuation, write_to_tsv
 from pandas import DataFrame
 
 
@@ -158,3 +159,23 @@ class Collection:
                  "No_of_stop": len(q) - len(filtered_sentence),
                  "Core Q len": len(filtered_sentence)})
         return df
+
+    def collection_to_tsv(self):
+        self.docs_to_tsv()
+        self.queries_to_tsv()
+        return 1
+
+    def docs_to_tsv(self,filename = "docs.tsv"):
+        open(filename, 'w').close()
+        for doc in self.docs:
+            data = [doc.doc_id,doc.docs_text]
+            write_to_tsv(data,filename)
+        return 1
+    def queries_to_tsv(self,filename = "Queries.tsv"):
+        open(filename, 'w').close()
+        for i, q in enumerate(self.queries):
+            data = [i," ".join(q)]
+            write_to_tsv(data, filename)
+        return 1
+
+

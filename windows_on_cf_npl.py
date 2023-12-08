@@ -1,7 +1,6 @@
 from numpy import mean
 from pandas import DataFrame
 
-from Preprocess.Collection import Collection
 from models.WindowedGSB import WindowedGSBModel
 from utilities.Result_handling import res_to_excel, expir_start, write
 
@@ -12,11 +11,6 @@ path_to_write = 'experiments/temp'
 col_path = 'experiments/collections/CF'
 dest_path = "experiments/paper_results/CF_results"
 
-#NPL
-# path = 'experiments/collections/NPL/docs'
-# path_to_write = 'experiments/temp'
-# col_path = 'experiments/collections/NPL'
-# dest_path = "experiments/paper_results/NPL_results"
 testcol, q, r = expir_start(path, path_to_write, col_path)
 
 c=1

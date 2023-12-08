@@ -1,3 +1,4 @@
+from _csv import writer
 from os import makedirs
 from os.path import exists
 
@@ -168,3 +169,8 @@ def json_to_dat(collection, filename=None):
             print("NWK has not been calculated!!!!!!! is it intended?")
             nwk = 0
         graphToIndex(id, nwk, terms, plist, filename=filename)
+
+def write_to_tsv(data,filename=None):
+    with open(filename, 'a', newline='') as f_output:
+        tsv_output = writer(f_output, delimiter='\t')
+        tsv_output.writerow(data)
