@@ -57,7 +57,7 @@ class BM25Model(Model):
             prev_doc = doc
 
         self._queryVectors = queries
-        dubg(self.collection.docs, text)
+        #dubg(self.collection.docs, text)
         # print(self._queryVectors)
         self._docVectors = self._vectorizer(Text=text)
 
@@ -68,7 +68,7 @@ class BM25Model(Model):
         # print(self._queryVectors)
         for j, q in enumerate(self._queryVectors):
             document_similarities = evaluate_bm25_score(q, self._docVectors)
-            # print(document_similarities)
+            #print(len(document_similarities.keys()))
             self.ranking.append(list(document_similarities.keys()))
             if k is None: k = len(list(document_similarities.keys()))
             # print(f"j:{j}, {len(self.collection.relevant[j])}")
