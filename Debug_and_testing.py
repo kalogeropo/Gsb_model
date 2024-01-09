@@ -22,7 +22,7 @@ dest_path = "experiments/paper_results"
 # print(len(testcol.inverted_index))
 
 testcol, q, r = expir_start(path, path_to_write, col_path)
-testcol.collection_to_tsv()
+testcol.collection_to_tsv(True)
 
 #df = testcol.q_r_stats()
 #write(xl_namefile='example.xlsx', dest_path="experiments/paper_results", sheetname="cf_queries", data=df)
@@ -36,9 +36,9 @@ testcol.collection_to_tsv()
 #df = N.results_to_df()
 #write(xl_namefile='example.xlsx', dest_path="experiments/paper_results", sheetname="cf_supp_1", data=df)
 
-testbm25 = BM25Model(testcol)
-testbm25.fit()
-testbm25.evaluate()
+# testbm25 = BM25Model(testcol)
+# testbm25.fit()
+# testbm25.evaluate()
 #print(testbm25.precision)
 
 # testing = Gow(testcol)

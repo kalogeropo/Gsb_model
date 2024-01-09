@@ -1,3 +1,4 @@
+import random
 from _csv import writer
 from json import dumps
 from os.path import join, exists
@@ -160,22 +161,45 @@ class Collection:
                  "Core Q len": len(filtered_sentence)})
         return df
 
-    def collection_to_tsv(self):
-        self.docs_to_tsv()
-        self.queries_to_tsv()
+    def collection_to_tsv(self, create_triplets=False, docs_filename="docs.tsv", query_filename="Queries.tsv",
+                          triplet_filename="triplets.tsv"):
+        # self.docs_to_tsv(docs_filename)
+        # self.queries_to_tsv(query_filename)
+        if create_triplets:
+            self.triplets_generate(triplet_filename)
         return 1
 
-    def docs_to_tsv(self,filename = "docs.tsv"):
+    def docs_to_tsv(self, filename):
         open(filename, 'w').close()
         for doc in self.docs:
-            data = [doc.doc_id,doc.docs_text]
-            write_to_tsv(data,filename)
-        return 1
-    def queries_to_tsv(self,filename = "Queries.tsv"):
-        open(filename, 'w').close()
-        for i, q in enumerate(self.queries):
-            data = [i," ".join(q)]
+            data = [doc.doc_id, doc.docs_text]
             write_to_tsv(data, filename)
         return 1
 
+    def queries_to_tsv(self, filename):
+        open(filename, 'w').close()
+        for i, q in enumerate(self.queries):
+            data = [i, " ".join(q)]
+            write_to_tsv(data, filename)
+        return 1
 
+    def triplets_generate(self, filename):
+
+        for q_text in self.queries:
+            qid = self.queries.index(q_text)
+            relevants = self.relevant[qid]
+            stop_counter = int(len(relevants) / 2)
+            rel_text = []
+            negative_sample = []
+            for r in relevants:
+                random_negative_id = random.randrange(1, self.num_docs)
+                while random_negative_id in relevants:
+                    random_negative_id = random.randrange(1, self.num_docs)
+                rel_text.append(self.docs[r].docs_text)
+                negative_sample.append(self.docs[random_negative_id].docs_text)
+                stop_counter -= 1
+                if stop_counter <= 0: break
+            print(f"{qid} \t {len(relevants)}\t {len(rel_text)}\t{len(negative_sample)}\n")
+            for i in range(len(negative_sample)):
+                data = [" ".join(q_text), rel_text[i], negative_sample[i]]
+                write_to_tsv(data, filename)

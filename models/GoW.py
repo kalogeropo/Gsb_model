@@ -15,6 +15,7 @@ class Gow(Model):
 
     def _vectorizer(self, **kwargs):
         text = kwargs['Text']
+        print(text[self.collection.num_docs])
         vec = self.vectorizer.fit_transform(text)
         vec = vec.todense()
         # print(len(vec))
@@ -26,6 +27,7 @@ class Gow(Model):
         # print(dv[-1])
         print(len(qv))
         print(len(dv))
+        print(qv[0])
         return qv, dv
 
     def __init__(self, collection, window=4,
