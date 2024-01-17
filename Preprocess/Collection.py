@@ -12,6 +12,7 @@ from pandas import DataFrame
 
 
 class Collection:
+
     """ A collection of documents consisted of:
 
             - path - collection path in disk/project
@@ -161,12 +162,15 @@ class Collection:
                  "Core Q len": len(filtered_sentence)})
         return df
 
-    def collection_to_tsv(self, create_triplets=False, docs_filename="docs.tsv", query_filename="Queries.tsv",
-                          triplet_filename="triplets.tsv"):
+    def collection_to_tsv(self, create_triplets=False, qrel=False, docs_filename="docs.tsv",
+                          query_filename="Queries.tsv",
+                          triplet_filename="triplets.tsv", qrel_filename="Qrels.tsv"):
         # self.docs_to_tsv(docs_filename)
         # self.queries_to_tsv(query_filename)
         if create_triplets:
             self.triplets_generate(triplet_filename)
+        if qrel:
+            self.qrels_to_tsv(qrel_filename)
         return 1
 
     def docs_to_tsv(self, filename):
@@ -175,6 +179,15 @@ class Collection:
             data = [doc.doc_id, doc.docs_text]
             write_to_tsv(data, filename)
         return 1
+
+    def qrels_to_tsv(self, qrel_filename):
+        for q_text in self.queries:
+            qid = self.queries.index(q_text)
+            rels = self.relevant[qid]
+            for r in rels:
+                data = [f"<query ID,{qid},passage ID,{r}>"]
+                print(f" <query ID,{qid},passage ID,{r}>\n")
+                write_to_tsv(data, qrel_filename)
 
     def queries_to_tsv(self, filename):
         open(filename, 'w').close()
@@ -188,7 +201,7 @@ class Collection:
         for q_text in self.queries:
             qid = self.queries.index(q_text)
             relevants = self.relevant[qid]
-            stop_counter = int(len(relevants) / 2)
+            stop_counter = 1  # int(len(relevants) / 2)
             rel_text = []
             negative_sample = []
             for r in relevants:
@@ -201,5 +214,5 @@ class Collection:
                 if stop_counter <= 0: break
             print(f"{qid} \t {len(relevants)}\t {len(rel_text)}\t{len(negative_sample)}\n")
             for i in range(len(negative_sample)):
-                data = [" ".join(q_text), rel_text[i], negative_sample[i]]
+                data = [" ".join(q_text).lower(), rel_text[i].lower(), negative_sample[i].lower()]
                 write_to_tsv(data, filename)

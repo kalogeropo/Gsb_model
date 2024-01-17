@@ -22,7 +22,7 @@ dest_path = "experiments/paper_results"
 # print(len(testcol.inverted_index))
 
 testcol, q, r = expir_start(path, path_to_write, col_path)
-testcol.collection_to_tsv(True)
+testcol.collection_to_tsv(qrel=True)
 
 #df = testcol.q_r_stats()
 #write(xl_namefile='example.xlsx', dest_path="experiments/paper_results", sheetname="cf_queries", data=df)
