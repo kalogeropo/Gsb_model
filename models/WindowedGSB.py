@@ -3,16 +3,17 @@ from numpy import zeros
 from models.GSB import GSBModel
 from utilities.document_utls import calculate_tf
 
+
 class WindowedGSBModel(GSBModel):
     """The windowed version of the graph based extension of the set based model
     Here will be implemented both the constant or percentage version by overriding
     the init function. The rest of the model is the same as the simple graph based
      extension which is the super class of the model."""
 
-    def __init__(self, collection, window=8, h_val=1, k_core_bool=False,window_cut_off=True):
+    def __init__(self, collection, window=8, h_val=1, k_core_bool=False, window_cut_off=True):
         self.window = window
-        self.window_cut_off=window_cut_off
-        super().__init__(collection, k_core_bool=k_core_bool,h_val=h_val)
+        self.window_cut_off = window_cut_off
+        super().__init__(collection, k_core_bool=k_core_bool, h_val=h_val)
 
     def get_model(self):
         return __class__.__name__
@@ -24,7 +25,7 @@ class WindowedGSBModel(GSBModel):
         elif isinstance(self.window, float):
             window_size = int(self.window * len(document.terms))
         # create windowed document
-        windowed_document = document.split_document(window_size,self.window_cut_off)
+        windowed_document = document.split_document(window_size, self.window_cut_off)
         adj_matrix = zeros(shape=(len(document.tf), len(document.tf)), dtype=int)
         for segment in windowed_document:
             w_tf = calculate_tf(segment)

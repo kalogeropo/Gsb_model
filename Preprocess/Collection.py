@@ -11,8 +11,24 @@ from utilities.document_utls import create_dir, remove_punctuation, write_to_tsv
 from pandas import DataFrame
 
 
-class Collection:
+def update_index(document, inv_index):
+    id = len(inv_index)
+    for term, tf in document.tf.items():
+        if term not in inv_index:
+            inv_index[term] = {
+                "id": id,
+                "total_tf": tf,
+                "posting_list": [[document.doc_id, tf]],
+                "term": term
+            }
+            id += 1
+        elif term in inv_index:
+            inv_index[term]['total_tf'] += tf
+            inv_index[term]['posting_list'] += [[document.doc_id, tf]]
+    return inv_index
 
+
+class Collection:
     """ A collection of documents consisted of:
 
             - path - collection path in disk/project
@@ -82,14 +98,12 @@ class Collection:
             # generate file names
             # print(listdir(self.path))
             filenames = [join(self.path, id) for id in listdir(self.path)]
-            # print(filenames)
+            #print(filenames)
             max_id = max([int(id) for id in listdir(self.path)])
             self.num_docs = int(max_id)
             print(self.num_docs)
             # print(filenames)
-            for fn in filenames:
-                if not path.isdir(fn):
-                    self.docs.append(Document(fn))
+            self.add_batch_docs(filenames)
 
             # Create inverted index
             # --->Debug
@@ -97,24 +111,17 @@ class Collection:
             #    print(doc.tf)
             self.inverted_index = self.create_inverted_index()
 
+    def add_batch_docs(self, filenames):
+        for fn in filenames:
+            update_index(Document(fn),self.inverted_index)
+            self.docs.append(Document(fn))
+
     def create_inverted_index(self):
         inv_index = {}
-        id = 0
         error_counter = 0
         try:
             for doc in self.docs:
-                for term, tf in doc.tf.items():
-                    if term not in inv_index:
-                        inv_index[term] = {
-                            "id": id,
-                            "total_tf": tf,
-                            "posting_list": [[doc.doc_id, tf]],
-                            "term": term
-                        }
-                        id += 1
-                    elif term in inv_index:
-                        inv_index[term]['total_tf'] += tf
-                        inv_index[term]['posting_list'] += [[doc.doc_id, tf]]
+                update_index(doc, inv_index)
         except KeyError:
             error_counter += 1
             print(f"Keys not found {error_counter}")
@@ -168,7 +175,7 @@ class Collection:
         # self.docs_to_tsv(docs_filename)
         # self.queries_to_tsv(query_filename)
         if create_triplets:
-            self.triplets_generate(triplet_filename)
+            self.debug_triplets_generate(triplet_filename)
         if qrel:
             self.qrels_to_tsv(qrel_filename)
         return 1
@@ -215,4 +222,24 @@ class Collection:
             print(f"{qid} \t {len(relevants)}\t {len(rel_text)}\t{len(negative_sample)}\n")
             for i in range(len(negative_sample)):
                 data = [" ".join(q_text).lower(), rel_text[i].lower(), negative_sample[i].lower()]
+                write_to_tsv(data, filename)
+
+    def debug_triplets_generate(self, filename):
+        for q_text in self.queries:
+            qid = self.queries.index(q_text)
+            relevants = self.relevant[qid]
+            stop_counter = 1  # int(len(relevants) / 2)
+            rel_text = []
+            negative_sample = []
+            for r in relevants:
+                random_negative_id = random.randrange(1, self.num_docs)
+                while random_negative_id in relevants:
+                    random_negative_id = random.randrange(1, self.num_docs)
+                rel_text.append(q_text)
+                negative_sample.append(self.docs[random_negative_id].docs_text)
+                stop_counter -= 1
+                if stop_counter <= 0: break
+            print(f"{qid} \t {len(relevants)}\t {len(rel_text)}\t{len(negative_sample)}\n")
+            for i in range(len(negative_sample)):
+                data = [" ".join(q_text).lower(), " ".join(q_text).lower(), negative_sample[i].lower()]
                 write_to_tsv(data, filename)

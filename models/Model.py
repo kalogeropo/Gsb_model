@@ -12,7 +12,7 @@ from utilities.apriori import apriori
 
 class Model(ABC):
     """The model class is an abstract class contains variables, lists and methods that an ir model commonly uses.
-        Abstract methods will be overriden on different models on a subclass level.
+        Abstract methods will be overridden on different models on a subclass level.
         The model will contain:
             a. name -> model name
             b. query_vector -> query_vector
@@ -87,7 +87,7 @@ class Model(ABC):
 
             self._docVectors.append(self.calculate_tsf(freq_termsets))
             self._weights.append(self._model_func(freq_termsets))
-            #if i >= 2: break
+            # if i >= 2: break
         return self
 
     def calculate_ts_idf(self, termsets):
@@ -130,7 +130,7 @@ class Model(ABC):
 
         return array(tf_ij)
 
-    def evaluate(self,k = None):
+    def evaluate(self, k=None):
         number_of_queries = len(self._queryVectors)
         # for each query and (dtm, relevant) pair
         for i, (qv, dv, rel) in enumerate(zip(self._queryVectors, self._docVectors, self._relevant)):
@@ -142,12 +142,12 @@ class Model(ABC):
             # print(len(self._docVectors[i][0]))
             # cosine similarity between query and every document
             document_similarities = evaluate_sim(qv, dtsm)
-            #print(document_similarities)
+            # print(document_similarities)
             self.ranking.append(list(document_similarities.keys()))
             if k is None:
                 k = len(document_similarities.keys())
-                #print(F"k for MODEL is {k}")
-            pre, rec , mrr = calc_precision_recall(document_similarities.keys(), rel, k )
+                # print(F"k for MODEL is {k}")
+            pre, rec, mrr = calc_precision_recall(document_similarities.keys(), rel, k)
             # print(pre, rec)
             # print(f"=> Query {i + 1}/{number_of_queries}, precision = {pre:.3f}, recall = {rec:.3f}")
             self.precision.append(round(pre, 8))
