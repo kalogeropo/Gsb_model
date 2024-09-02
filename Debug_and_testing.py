@@ -10,47 +10,57 @@ from models.WindowedGSB import WindowedGSBModel
 from models.borda_count import BordaCount
 from models.ΒΜ25 import BM25Model
 from utilities.Result_handling import res_to_excel, expir_start, write
-from models.onlineGSB import onlineGSB
-import  matplotlib.pyplot as plt
+from models.onlineGSB import onlineGSB, profile_create_or_update_graph_index
+import matplotlib.pyplot as plt
+
+from utilities.document_utls import json_to_dat
+
 #CF
 path = 'experiments/collections/CF/docs'
 path_to_write = 'Gsb_model/data/test_docs/tests'
 col_path = 'experiments/collections/CF'
 dest_path = "experiments/paper_results"
 
-path = "C:/Users/nrk_pavilion/PycharmProjects/Gsb_model/experiments/collections/baeza/docs"
+# path = "C:/Users/nrk_pavilion/PycharmProjects/Gsb_model/experiments/collections/baeza/docs"
 test = onlineGSB(path,name="sad")
 test.create_or_update_graph_index()
-print(test.union_graph)
-lab ={}
-for node,data in test.union_graph.nodes(data=True):
-    lab.update({node:data})
+# Assuming 'instance' is an instance of the class containing the create_or_update_graph_index method
+# # And you want to profile it with a specific set of filenames
+# profile_result = profile_create_or_update_graph_index(test)
+#
+# # Print the result
+# print(profile_result)
 
-pos = spring_layout(test.union_graph)  # Positions for all nodes
+print(test.num_docs)
+# lab ={}
+# for node,data in test.union_graph.nodes(data=True):
+#     lab.update({node:data})
+#
+# pos = spring_layout(test.union_graph)  # Positions for all nodes
+#
+# plt.figure(figsize=(10,10))
+# draw(test.union_graph,with_labels=True,pos=pos, node_size=2000, node_color="skyblue", font_size=15, font_weight="bold")
+# offset_pos = {node: (coords[0], coords[1] + 0.05) for node, coords in pos.items()}
+# draw_networkx_labels(test.union_graph,labels=lab,font_size=13,pos=offset_pos)
+# # Set title
+# plt.title("Union Graph with Node Labels")
+#
+# # Save the figure
+# plt.savefig("graph_with_labels.png", format="png")
+# plt.show()
 
-plt.figure(figsize=(10,10))
-draw(test.union_graph,with_labels=True,pos=pos, node_size=2000, node_color="skyblue", font_size=15, font_weight="bold")
-offset_pos = {node: (coords[0], coords[1] + 0.05) for node, coords in pos.items()}
-draw_networkx_labels(test.union_graph,labels=lab,font_size=13,pos=offset_pos)
-# Set title
-plt.title("Union Graph with Node Labels")
-
-# Save the figure
-plt.savefig("graph_with_labels.png", format="png")
-plt.show()
-
-# testing = []
-# path = "C:/Users/nrk_pavilion/PycharmProjects/Gsb_model/experiments/collections/CF/docs"
-# filenames = [join(path, id) for id in listdir(path)]
-# test = onlineGSB(path,name="sad")
-# for i in range(0, len(filenames),200):
-#     starting_time = time.time()
-#     test.create_or_update_graph_index(filenames[i:i+200])
-#     end_time = time.time()
-#     elapsed_time = end_time - starting_time
-#     testing.append(elapsed_time)
-#     print(test.union_graph)
-# print(testing)
+testing = []
+path = "C:/Users/nrk_pavilion/PycharmProjects/Gsb_model/experiments/collections/CF/docs"
+filenames = [join(path, id) for id in listdir(path)]
+test = onlineGSB(path,name="sad")
+for i in range(0, len(filenames),200):
+    starting_time = time.time()
+    test.create_or_update_graph_index(filenames[i:i+200])
+    end_time = time.time()
+    elapsed_time = end_time - starting_time
+    testing.append(elapsed_time)
+    print(test.union_graph)
+print(testing)
 
 
 #NPL
@@ -108,14 +118,17 @@ plt.show()
 #df = testcol.q_r_stats()
 #write(xl_namefile='example.xlsx', dest_path="experiments/paper_results", sheetname="cf_queries", data=df)
 
-# N = WindowedGSBModel(testcol,7)
+# testcol, q, r = expir_start(path, path_to_write, col_path)
+# N = GSBModel(testcol)
+# json_to_dat(testcol, "complete_index.dat")
 # print(N.get_model())
 # N.fit()
 # N.evaluate()
+
 # df = M.results_to_df()
-#print(len(N.ranking))
-#df = N.results_to_df()
-#write(xl_namefile='example.xlsx', dest_path="experiments/paper_results", sheetname="cf_supp_1", data=df)
+# print(len(N.ranking))
+# df = N.results_to_df()
+# write(xl_namefile='example.xlsx', dest_path="experiments/paper_results", sheetname="cf_supp_1", data=df)
 
 # testbm25 = BM25Model(testcol)
 # testbm25.fit()
