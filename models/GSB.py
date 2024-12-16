@@ -136,3 +136,6 @@ class GSBModel(Model):
                     print("**************")
                 self.collection.inverted_index[k]['nwk'] = 0
         return nwk
+    
+
+

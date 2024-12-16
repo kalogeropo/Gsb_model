@@ -4,6 +4,7 @@ from os.path import join
 
 from networkx import info, draw, draw_networkx_labels, spring_layout
 
+from models.DocGraph import DocGraph
 from models.GSB import GSBModel
 from models.GoW import Gow
 from models.WindowedGSB import WindowedGSBModel
@@ -21,9 +22,18 @@ path_to_write = 'Gsb_model/data/test_docs/tests'
 col_path = 'experiments/collections/CF'
 dest_path = "experiments/paper_results"
 
-# path = "C:/Users/nrk_pavilion/PycharmProjects/Gsb_model/experiments/collections/baeza/docs"
-test = onlineGSB(path,name="sad")
-test.create_or_update_graph_index()
+#path = "C:/Users/nrk_pavilion/PycharmProjects/Gsb_model/experiments/collections/baeza/docs"
+testcol, q, r = expir_start(path, path_to_write, col_path)
+print(type(testcol))
+N = DocGraph(testcol)
+print(testcol.inverted_index)
+
+print(N.get_model())
+# N.fit()
+# N.evaluate()
+
+# test = onlineGSB(path,name="sad")
+# test.create_or_update_graph_index()
 # Assuming 'instance' is an instance of the class containing the create_or_update_graph_index method
 # # And you want to profile it with a specific set of filenames
 # profile_result = profile_create_or_update_graph_index(test)
@@ -31,7 +41,7 @@ test.create_or_update_graph_index()
 # # Print the result
 # print(profile_result)
 
-print(test.num_docs)
+# print(test.num_docs)
 # lab ={}
 # for node,data in test.union_graph.nodes(data=True):
 #     lab.update({node:data})
@@ -49,18 +59,18 @@ print(test.num_docs)
 # plt.savefig("graph_with_labels.png", format="png")
 # plt.show()
 
-testing = []
-path = "C:/Users/nrk_pavilion/PycharmProjects/Gsb_model/experiments/collections/CF/docs"
-filenames = [join(path, id) for id in listdir(path)]
-test = onlineGSB(path,name="sad")
-for i in range(0, len(filenames),200):
-    starting_time = time.time()
-    test.create_or_update_graph_index(filenames[i:i+200])
-    end_time = time.time()
-    elapsed_time = end_time - starting_time
-    testing.append(elapsed_time)
-    print(test.union_graph)
-print(testing)
+# testing = []
+# path = "C:/Users/nrk_pavilion/PycharmProjects/Gsb_model/experiments/collections/CF/docs"
+# filenames = [join(path, id) for id in listdir(path)]
+# test = onlineGSB(path,name="sad")
+# for i in range(0, len(filenames),200):
+#     starting_time = time.time()
+#     test.create_or_update_graph_index(filenames[i:i+200])
+#     end_time = time.time()
+#     elapsed_time = end_time - starting_time
+#     testing.append(elapsed_time)
+#     print(test.union_graph)
+# print(testing)
 
 
 #NPL

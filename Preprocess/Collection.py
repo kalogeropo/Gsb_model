@@ -1,8 +1,10 @@
+import json
 import random
 from _csv import writer
 from json import dumps
 from os.path import join, exists
 from os import listdir, getcwd, path
+from typing import Dict, Tuple, Set,List
 
 import nltk
 
@@ -243,3 +245,5 @@ class Collection:
             for i in range(len(negative_sample)):
                 data = [" ".join(q_text).lower(), " ".join(q_text).lower(), negative_sample[i].lower()]
                 write_to_tsv(data, filename)
+
+
