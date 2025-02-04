@@ -1,8 +1,10 @@
 # NPL collection
+import re
 
 
 def write_file(filename, list_to_write):
     print(filename)
+    
     with open(filename, "w") as fd:
         for word in list_to_write:
             fd.write("%s\n" % word.upper())
@@ -91,3 +93,101 @@ def npl_doc_parser(npl_docs_path, npl_docs_dest_path):
         wrt = write_file(filename, text)
     fd.close()
     return 0
+
+# CRAN parser
+
+def parse_cran_file(file_path, write=False):
+    documents = []
+    current_doc = None
+    section = None
+
+    with open(file_path, "r", encoding="utf-8") as file:
+        for line in file:
+            line = line.strip()
+
+            # Detect new document
+            if line.startswith('.I'):
+                if current_doc:  # Save the previous document before starting a new one
+                    documents.append(current_doc)
+                
+                doc_id = int(line.split()[1])
+                current_doc = {"id": doc_id, "title": "", "authors": "", "bibliography": "", "abstract": ""}
+                section = None  # Reset section
+
+            elif line.startswith('.T'):
+                section = 'title'
+            elif line.startswith('.A'):
+                section = 'authors'
+            elif line.startswith('.B'):
+                section = 'bibliography'
+            elif line.startswith('.W'):
+                section = 'abstract'
+            elif section and current_doc:
+                # Append text to the current section
+                current_doc[section] += (" " if current_doc[section] else "") + line
+
+    # Ensure the last document is added
+    if current_doc:
+        documents.append(current_doc)
+    if write:
+        write_cran_files(documents)
+    return documents
+
+def parse_cranqry(file_path,write=False):
+    queries = []
+    current_query = None
+    
+    with open(file_path, "r", encoding="utf-8") as file:
+        for line in file:
+            line = line.strip()
+            if line.startswith('.I'):
+                if current_query:
+                    queries.append(current_query)
+                query_id = int(line.split()[1])
+                current_query = {"id": query_id, "text": ""}
+            elif line.startswith('.W'):
+                continue  # Skip section header
+            elif current_query:
+                current_query["text"] += (" " if current_query["text"] else "") + line
+    
+    if current_query:
+        queries.append(current_query)
+    
+    return queries
+
+def parse_cranqrel(file_path):
+    relevance_judgments = []
+    
+    with open(file_path, "r", encoding="utf-8") as file:
+        for line in file:
+            parts = line.strip().split()
+            if len(parts) == 3:
+                query_id, doc_id, relevance = map(int, parts)
+                relevance_judgments.append({
+                    "query_id": query_id,
+                    "doc_id": doc_id,
+                    "relevance": relevance
+                })
+    
+    return relevance_judgments
+
+def group_queries_and_relevance(queries, relevance_judgments):
+    grouped_data = []
+    q_id = -1
+    for query in queries:
+        if q_id != query["id"]:
+            q_id = query["id"]
+            relevant_docs = [doc["doc_id"] for doc in relevance_judgments if doc["query_id"] == q_id]
+            #print(q_id,relevant_docs)
+            grouped_data.append(relevant_docs)
+        # query_id = query["id"]
+        # print(relevance_judgments[query_id])
+        #relevant_docs = relevance_judgments.get(query_id, [])
+        #grouped_data.append(relevant_docs)
+    return grouped_data
+
+def write_cran_files(docs, filepath=r"experiments\collections\CRAN\docs"):
+    for doc in docs:
+        filename = f"{filepath}/{str(doc['id']).zfill(5)}"
+        write_file(filename, [doc["abstract"]]) 
+        break   
