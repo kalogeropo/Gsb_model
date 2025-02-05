@@ -52,7 +52,14 @@ class Collection:
         self.queries = None
         self.name = name
         self.path = join(getcwd(), path)
-
+        self.stopwords= [
+    "a", "an", "are", "as", "be", "based", "been", "can", "does", "for", "from",
+    "has", "have", "how", "in", "is", "it", "must", "of", "on", "one", "or",
+    "that", "the", "these", "this", "those", "to", "was", "what", "when", "which", "with",
+    "A", "AN", "ARE", "AS", "BE", "BASED", "BEEN", "CAN", "DOES", "FOR", "FROM",
+    "HAS", "HAVE", "HOW", "IN", "IS", "IT", "MUST", "OF", "ON", "ONE", "OR",
+    "THAT", "THE", "THESE", "THIS", "THOSE", "TO", "WAS", "WHAT", "WHEN", "WHICH", "WITH"
+]
         if exists(self.path):
             self.num_docs = len(listdir(self.path))
         else:

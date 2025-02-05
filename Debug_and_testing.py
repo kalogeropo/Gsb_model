@@ -3,6 +3,8 @@ from os import listdir
 from os.path import join
 
 from networkx import info, draw, draw_networkx_labels, spring_layout
+from numpy import mean
+from pandas import DataFrame
 
 from models.DocGraph import DocGraph
 from models.GSB import GSBModel
@@ -16,19 +18,41 @@ import matplotlib.pyplot as plt
 
 from utilities.document_utls import json_to_dat
 
-#CF
-path = 'experiments/collections/CF/docs'
+#CRAN
+path = 'experiments/collections/CRAN/docs'
 path_to_write = 'Gsb_model/data/test_docs/tests'
-col_path = 'experiments/collections/CF'
+col_path = 'experiments/collections/CRAN'
 dest_path = "experiments/paper_results"
 
-#path = "C:/Users/nrk_pavilion/PycharmProjects/Gsb_model/experiments/collections/baeza/docs"
 testcol, q, r = expir_start(path, path_to_write, col_path)
-print(type(testcol))
-N = DocGraph(testcol)
-print(testcol.inverted_index)
+list_to_total = []
+test_name = []
 
-print(N.get_model())
+# for reproducibility
+for i in range(0, 5):
+    N = GSBModel(testcol)
+    N.fit(min_freq=3,stopwords=False)
+    N.evaluate()
+    list_to_total.append(mean(N.precision))
+    name = f"test_{i}"
+    test_name.append(name)
+    res_to_excel(N, "[CRAN]GSBTesting.xlsx", dest_path, sheetname=name)
+    print(mean(N.precision))
+df = DataFrame(list(zip(list_to_total, test_name)), columns=["map", "Names"])
+write(xl_namefile="[CRAN]GSBTesting.xlsx", dest_path=dest_path, sheetname="windowsize_aggregate", data=df)
+#CF
+# path = 'experiments/collections/CF/docs'
+# path_to_write = 'Gsb_model/data/test_docs/tests'
+# col_path = 'experiments/collections/CF'
+# dest_path = "experiments/paper_results"
+
+#path = "C:/Users/nrk_pavilion/PycharmProjects/Gsb_model/experiments/collections/baeza/docs"
+# testcol, q, r = expir_start(path, path_to_write, col_path)
+# print(type(testcol))
+# N = DocGraph(testcol)
+# print(testcol.inverted_index)
+
+# print(N.get_model())
 # N.fit()
 # N.evaluate()
 
@@ -163,3 +187,5 @@ print(N.get_model())
 # res_to_excel(N,"testN.xlsx",dest_path,sheetname="test16")
 # #bord
 # res_to_excel(bord,"testBord.xlsx",dest_path,sheetname="test13_16")
+
+#CRAN

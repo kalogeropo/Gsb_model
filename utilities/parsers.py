@@ -176,16 +176,19 @@ def parse_cranqrel(file_path):
 def group_queries_and_relevance(queries, relevance_judgments,write_cran_path,rel=False,query=False):
     grouped_data = []
     q_id = -1
+    index = 0
     for query in queries:
         if q_id != query["id"]:
+            index+=1
             q_id = query["id"]
-            relevant_docs = [doc["doc_id"] for doc in relevance_judgments if doc["query_id"] == q_id]
+            relevant_docs = [doc["doc_id"] for doc in relevance_judgments if doc["query_id"] == index]
             #print(q_id,relevant_docs)
             grouped_data.append(relevant_docs)
             print(q_id,relevant_docs)
             if rel:
                 with open("/".join([write_cran_path,"Relevant.txt"]),"a") as fd:
-                        print(relevant_docs)                    
+                        print(q_id,relevant_docs)  
+                        print(" ".join(str(rel) for rel in relevant_docs)) 
                         fd.write(" ".join(str(rel) for rel in relevant_docs))
                         fd.write("\n")
     if query:

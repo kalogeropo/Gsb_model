@@ -55,27 +55,29 @@ class Model(ABC):
     @abstractmethod
     def _model_func(self, freq_termsets):
         pass
-
+    # the base model fit function will implement the set based document Queries representation. can be overriden
+    # in any subclass at will.
     @abstractmethod
     def _vectorizer(self, tsf_ij, idf, *args):
         pass
-        ########## each column corresponds to a document #########
-        # return tsf_ij * idf.reshape(-1, 1)
 
-    # the base model fit function will implement the set based document Queries representation. can be overriden
-    # in any subclass at will.
-    def fit(self, queries=None, min_freq=1):
+
+
+    def fit(self, queries=None, min_freq=1,stopwords = False):
         if queries is None:
             queries = self._queries
         inverted_index = self.collection.inverted_index
         for i, query in enumerate(queries, start=1):
-            # print(f"\nQuery {i} of {len(queries)}")
-            # print(f"Query length: {len(query)}")
+            if stopwords:
+                query = [word for word in query if word not in self.collection.stopwords]
+            print(query)
+            print(f"\nQuery {i} of {len(queries)}")
+            print(f"Query length: {len(query)}")
             apriori_start = time()
             freq_termsets = apriori(query, inverted_index, min_freq)
             apriori_end = time()
-            # print(f"Frequent Termsets: {len(freq_termsets)}")
-            # print(f"Apriori iter {i} took {apriori_end - apriori_start} secs.")
+            print(f"Frequent Termsets: {len(freq_termsets)}")
+            print(f"Apriori iter {i} took {apriori_end - apriori_start} secs.")
 
             # write_list(freq_termsets,"freq_term_7.csv")
 
@@ -134,9 +136,8 @@ class Model(ABC):
         number_of_queries = len(self._queryVectors)
         # for each query and (dtm, relevant) pair
         for i, (qv, dv, rel) in enumerate(zip(self._queryVectors, self._docVectors, self._relevant)):
-            # all the money function
-            # print(f"{i}({qv,dv,rel})")
-            # document - termset matrix - model balance weight
+            
+
             dtsm = self._vectorizer(dv, qv, self._weights[i])
             # print(dtsm)
             # print(len(self._docVectors[i][0]))
@@ -148,8 +149,7 @@ class Model(ABC):
                 k = len(document_similarities.keys())
                 # print(F"k for MODEL is {k}")
             pre, rec, mrr = calc_precision_recall(document_similarities.keys(), rel, k)
-            # print(pre, rec)
-            # print(f"=> Query {i + 1}/{number_of_queries}, precision = {pre:.3f}, recall = {rec:.3f}")
+            print(f"=> Query {i + 1}/{number_of_queries}, precision = {pre:.3f}, recall = {rec:.3f}")
             self.precision.append(round(pre, 8))
             self.recall.append(round(rec, 8))
             # if i > 1: break

@@ -1,4 +1,3 @@
-# bulk collection path
 from utilities.parsers import group_queries_and_relevance, npl_doc_parser, npl_q_r_parser,parse_cran_file, parse_cranqrel, parse_cranqry
 
 import pandas as pd
@@ -40,7 +39,6 @@ write_cran_path = r"experiments\collections\CRAN"
 
 
 queries = parse_cranqry(qry_file_path)
-relevance_judgments = group_queries_and_relevance(queries,parse_cranqrel(qrel_file_path),write_cran_path,False,True)
-# print(queries,relevance_judgments)
-# print(len(queries),len(relevance_judgments))
-
+relevance_judgments = group_queries_and_relevance(queries,parse_cranqrel(qrel_file_path),write_cran_path,rel=True,query=False)
+#print(queries,relevance_judgments)
+print(len(queries),len(relevance_judgments))
