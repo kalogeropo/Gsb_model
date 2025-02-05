@@ -1,5 +1,6 @@
 # NPL collection
 import re
+import string
 
 
 def write_file(filename, list_to_write):
@@ -7,7 +8,8 @@ def write_file(filename, list_to_write):
     
     with open(filename, "w") as fd:
         for word in list_to_write:
-            fd.write("%s\n" % word.upper())
+            if word != "":
+                fd.write("%s\n" % word.upper())
     return 0
 
 
@@ -171,7 +173,7 @@ def parse_cranqrel(file_path):
     
     return relevance_judgments
 
-def group_queries_and_relevance(queries, relevance_judgments):
+def group_queries_and_relevance(queries, relevance_judgments,write_cran_path,rel=False,query=False):
     grouped_data = []
     q_id = -1
     for query in queries:
@@ -180,6 +182,15 @@ def group_queries_and_relevance(queries, relevance_judgments):
             relevant_docs = [doc["doc_id"] for doc in relevance_judgments if doc["query_id"] == q_id]
             #print(q_id,relevant_docs)
             grouped_data.append(relevant_docs)
+            print(q_id,relevant_docs)
+            if rel:
+                with open("/".join([write_cran_path,"Relevant.txt"]),"a") as fd:
+                        print(relevant_docs)                    
+                        fd.write(" ".join(str(rel) for rel in relevant_docs))
+                        fd.write("\n")
+    if query:
+        queries = [query["text"].translate(str.maketrans('', '',string.punctuation)) for query in queries]
+        write_file("/".join([write_cran_path,"Queries.txt"]),queries)
         # query_id = query["id"]
         # print(relevance_judgments[query_id])
         #relevant_docs = relevance_judgments.get(query_id, [])
@@ -189,5 +200,5 @@ def group_queries_and_relevance(queries, relevance_judgments):
 def write_cran_files(docs, filepath=r"experiments\collections\CRAN\docs"):
     for doc in docs:
         filename = f"{filepath}/{str(doc['id']).zfill(5)}"
-        write_file(filename, [doc["abstract"]]) 
-        break   
+        write_file(filename, doc["abstract"].translate(str.maketrans('', '',string.punctuation)).strip("\n").split(" ")) 
+    return 0       

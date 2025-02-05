@@ -25,19 +25,22 @@ import pandas as pd
 cran_file_path = r"experiments\raw_collections\cran\cran.all.1400"
 qry_file_path = r"experiments\raw_collections\cran\cranqry"
 qrel_file_path = r"experiments\raw_collections\cran\cranqrel"
+write_cran_path = r"experiments\collections\CRAN"
 
 # Call the parser function
-document_list = parse_cran_file(cran_file_path,True)
+# document_list = parse_cran_file(cran_file_path,True)
 
 # for doc in document_list:
 #     print(doc["id"],"\n",doc["abstract"])
 
 # Display a sample of parsed documents
-sample_df = pd.DataFrame(document_list[:5])
+#sample_df = pd.DataFrame(document_list[:5])
 #print(sample_df)
 
 
 
 queries = parse_cranqry(qry_file_path)
-relevance_judgments = group_queries_and_relevance(queries,parse_cranqrel(qrel_file_path))
-#print(queries,relevance_judgments)
+relevance_judgments = group_queries_and_relevance(queries,parse_cranqrel(qrel_file_path),write_cran_path,False,True)
+# print(queries,relevance_judgments)
+# print(len(queries),len(relevance_judgments))
+
