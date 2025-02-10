@@ -168,4 +168,4 @@ cython_debug/
 #.idea/
 Gsb_model/data/test_docs/tests/inverted_index_test.json
 complete_index.dat
-Gsb_model/experiments/paper_results/
+experiments/paper_results/

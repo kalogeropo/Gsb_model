@@ -4,10 +4,21 @@ from pandas import DataFrame
 from models.WindowedGSB import WindowedGSBModel
 from utilities.Result_handling import write, expir_start, res_to_excel
 
-path = 'experiments/collections/CF/docs'
-path_to_write = 'experiments/temp'
-col_path = 'experiments/collections/CF'
+# CF
+# path = 'experiments/collections/CF/docs'
+# path_to_write = 'experiments/temp'
+# col_path = 'experiments/collections/CF'
+# dest_path = "experiments/paper_results"
+
+# NPL
+# TODO: ADD NPL paths
+# CRAN
+path = 'experiments/collections/CRAN/docs'
+path_to_write = 'Gsb_model/data/test_docs/tests'
+col_path = 'experiments/collections/CRAN'
 dest_path = "experiments/paper_results"
+
+
 testcol, q, r = expir_start(path, path_to_write, col_path)
 
 importance_vals = [h for h in range(30, 500, 20)]
@@ -27,10 +38,10 @@ for h in importance_vals:
     test = WindowedGSBModel(testcol, 8, h, True)
     test.fit(min_freq=10)
     test.evaluate()
-    res_to_excel(test, "windwed_h.xlsx", dest_path, sheetname=f"GSB_{h}")
+    res_to_excel(test, "[CRAN]windwed_h.xlsx", dest_path, sheetname=f"GSB_{h}")
     MAP.append(mean(test.precision))
     testname = f"wind_8_h={h}"
     name.append(testname)
     model_time.append(test.elapsed_time)
 df = DataFrame(list(zip(MAP, name,model_time)), columns=["map", "Names","time"])
-write(xl_namefile="windwed_h.xlsx", dest_path=dest_path, sheetname="windowed_h_aggregate", data=df)
+write(xl_namefile="[CRAN]windwed_h.xlsx", dest_path=dest_path, sheetname="windowed_h_aggregate", data=df)

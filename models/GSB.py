@@ -108,7 +108,12 @@ class GSBModel(Model):
 
     def kcore_nodes(self, nxgraph, k=None):
         nxgraph.remove_edges_from(selfloop_edges(nxgraph))
-        maincore = k_core(nxgraph, k)
+        try:
+            maincore = k_core(nxgraph, k)
+        except ValueError:
+            maincore = Graph()
+            print("k-core decomposition failed")
+            print(f"nxgraph: {nxgraph}\n nxgraph.nodes: {nxgraph.nodes}\n nxgraph.edges: {nxgraph.edges}")    
         # print(maincore.nodes)
         return maincore.nodes
 
