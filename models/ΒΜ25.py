@@ -71,6 +71,7 @@ class BM25Model(Model):
             #print(len(document_similarities.keys()))
             self.ranking.append(list(document_similarities.keys()))
             if k is None: k = len(list(document_similarities.keys()))
+            print(k)
             # print(f"j:{j}, {len(self.collection.relevant[j])}")
             pre, rec, mrr = calc_precision_recall(document_similarities.keys(), self.collection.relevant[j], k)
             self.precision.append(pre)

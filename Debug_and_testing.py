@@ -25,21 +25,25 @@ col_path = 'experiments/collections/CRAN'
 dest_path = "experiments/paper_results"
 
 testcol, q, r = expir_start(path, path_to_write, col_path)
-list_to_total = []
-test_name = []
+testbm25 = BM25Model(testcol)
+testbm25.fit()
+testbm25.evaluate()
+print(mean(testbm25.precision))
+# list_to_total = []
+# test_name = []
 
-# for reproducibility
-for i in range(0, 5):
-    N = GSBModel(testcol)
-    N.fit(min_freq=3,stopwords=False)
-    N.evaluate()
-    list_to_total.append(mean(N.precision))
-    name = f"test_{i}"
-    test_name.append(name)
-    res_to_excel(N, "[CRAN]GSBTesting.xlsx", dest_path, sheetname=name)
-    print(mean(N.precision))
-df = DataFrame(list(zip(list_to_total, test_name)), columns=["map", "Names"])
-write(xl_namefile="[CRAN]GSBTesting.xlsx", dest_path=dest_path, sheetname="windowsize_aggregate", data=df)
+# # for reproducibility
+# for i in range(0, 5):
+#     N = GSBModel(testcol)
+#     N.fit(min_freq=3,stopwords=False)
+#     N.evaluate()
+#     list_to_total.append(mean(N.precision))
+#     name = f"test_{i}"
+#     test_name.append(name)
+#     res_to_excel(N, "[CRAN]GSBTesting.xlsx", dest_path, sheetname=name)
+#     print(mean(N.precision))
+# df = DataFrame(list(zip(list_to_total, test_name)), columns=["map", "Names"])
+# write(xl_namefile="[CRAN]GSBTesting.xlsx", dest_path=dest_path, sheetname="windowsize_aggregate", data=df)
 #CF
 # path = 'experiments/collections/CF/docs'
 # path_to_write = 'Gsb_model/data/test_docs/tests'
