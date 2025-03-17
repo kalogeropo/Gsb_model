@@ -3,63 +3,95 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 20px;
-    background-color: #f4f4f4;
+    background-color: #f8f9fa;
+    color: #333;
 }
 
-/* Page Container */
+/* Container */
 .container {
-    max-width: 800px;
+    max-width: 900px;
     margin: auto;
     background: white;
     padding: 20px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
 }
 
 /* Headings */
-h1, h2 {
-    color: #333;
+h1 {
+    text-align: center;
+    color: #0056b3;
 }
 
-/* Section Styles */
-.news, .todo, .acknowledgment, .citations {
-    margin-bottom: 20px;
+h2 {
+    color: #0056b3;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+}
+
+h3 {
+    color: #333;
+    margin-top: 20px;
+}
+
+/* Sections */
+.news, .description, .todo, .acknowledgment, .citations {
+    margin-bottom: 30px;
     padding: 15px;
-    background: #f9f9f9;
+    background: #fdfdfd;
     border-left: 5px solid #007bff;
     border-radius: 5px;
 }
 
-/* To-Do List */
+/* Lists */
 ul {
-    list-style-type: none;
     padding: 0;
 }
 
 ul li {
-    background: #e0e0e0;
-    margin: 5px 0;
+    list-style: none;
+    background: #e9ecef;
+    margin: 8px 0;
     padding: 10px;
     border-radius: 5px;
 }
 
-/* Buttons */
-.buttons {
-    margin-top: 20px;
-    text-align: center;
+/* Links */
+a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
 }
 
+a:hover {
+    text-decoration: underline;
+}
+
+/* Buttons */
 .btn {
     display: inline-block;
-    padding: 10px 20px;
-    margin: 5px;
-    font-size: 16px;
+    padding: 10px 15px;
+    margin-top: 10px;
+    background: #007bff;
     color: white;
-    background-color: #007bff;
-    text-decoration: none;
     border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
 }
 
 .btn:hover {
-    background-color: #0056b3;
+    background: #0056b3;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .container {
+        width: 90%;
+        padding: 15px;
+    }
+    
+    ul li {
+        padding: 8px;
+    }
 }
