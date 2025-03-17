@@ -85,7 +85,7 @@ The repository contains the following primary components:
 - **`requirements.txt`** - Lists Python dependencies for the project.
 - **`Collections`** - The necessary collections for benchmarking are located in the experiments folder.
 ---
-### 📌 Citations
+## 📌 Citations
 
   - Kalogeropoulos, N.-R., Skamnelos, N., & Makris, C. (2025). On the Graph-Based Extension of the Set-Based Model: A New Approach on Graph Representation and Model Ensemble. DOI: 10.21203/rs.3.rs-3801152/v1
 
