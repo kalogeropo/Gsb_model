@@ -15,7 +15,7 @@ The **GSB Model GitHub** repository, created by [Nikitas Rigas Kalogeropoulos](h
   - [📂 Project Structure](#-project-structure)
     - [📁 Directories:](#-directories)
     - [📜 Key Python Scripts:](#-key-python-scripts)
-    - [📌 Citations](#-citations)
+  - [📌 Citations](#-citations)
 
 ---
 
