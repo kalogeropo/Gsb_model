@@ -169,3 +169,11 @@ cython_debug/
 Gsb_model/data/test_docs/tests/inverted_index_test.json
 complete_index.dat
 experiments/paper_results/
+beir_model_results_k1209.csv
+CRAN_beir_model_results_k1209.csv
+CRAN/corpus.jsonl
+CRAN/queries.jsonl
+test/corpus.jsonl
+test/queries.jsonl
+test/qrels/qrels_test.tsv
+CRAN/qrels/qrels_test.tsv
