@@ -9,7 +9,7 @@ from utilities.Result_handling import res_to_excel, expir_start, write
 path = 'experiments/collections/CF/docs'
 path_to_write = 'experiments/temp'
 col_path = 'experiments/collections/CF'
-dest_path = "experiments/paper_results/CF_results"
+dest_path = "experiments/paper_results/"
 
 testcol, q, r = expir_start(path, path_to_write, col_path)
 
@@ -17,7 +17,7 @@ testcol, q, r = expir_start(path, path_to_write, col_path)
 list_to_total = []
 test_name = []
 #for i in range(3,7):
-for i in range(3,25):
+for i in range(3,10):
     N = WindowedGSBModel(testcol,i,window_cut_off=True)
     N.fit(min_freq=1,stopwords=True )
     N.evaluate()
