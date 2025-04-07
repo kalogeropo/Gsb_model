@@ -177,3 +177,4 @@ test/corpus.jsonl
 test/queries.jsonl
 test/qrels/qrels_test.tsv
 CRAN/qrels/qrels_test.tsv
+experiments/temp/inverted_index_test.json

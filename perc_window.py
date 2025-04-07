@@ -28,15 +28,15 @@ test_name = []
 for i in range(0,100,5):
     perc = i/100
     N = WindowedGSBModel(testcol,perc)
-    N.fit(min_freq=10,stopwords=True)
+    N.fit(min_freq=1,stopwords=True)
     N.evaluate()
     list_to_total.append(mean(N.precision))
     name = f"test_{i}"
     test_name.append(name)
-    res_to_excel(N,"[CRAN]perc_windowTesting.xlsx",dest_path,sheetname=name)
+    res_to_excel(N,"[CRAN_new]perc_windowTesting.xlsx",dest_path,sheetname=name)
 
 df = DataFrame(list(zip(list_to_total, test_name)), columns=["map", "Names"])
-write(xl_namefile="[CRAN]perc_windowTesting.xlsx", dest_path=dest_path, sheetname="perc_windowsize_aggregate", data=df)
+write(xl_namefile="[CRAN_new]perc_windowTesting.xlsx", dest_path=dest_path, sheetname="perc_windowsize_aggregate", data=df)
 # for i in range(0, 5,1):
 #     perc = i / 100
 #     N = WindowedGSBModel(testcol, perc)

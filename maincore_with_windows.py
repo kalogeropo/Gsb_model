@@ -13,6 +13,7 @@ from utilities.Result_handling import write, expir_start, res_to_excel
 # NPL
 # TODO: ADD NPL paths
 # CRAN
+
 path = 'experiments/collections/CRAN/docs'
 path_to_write = 'Gsb_model/data/test_docs/tests'
 col_path = 'experiments/collections/CRAN'
@@ -35,13 +36,13 @@ model_time = []
 for h in importance_vals:
     print(countdown)
     countdown -= 1
-    test = WindowedGSBModel(testcol, 8, h, True)
-    test.fit(min_freq=10)
+    test = WindowedGSBModel(testcol, 3, h, True,window_cut_off=False)
+    test.fit(min_freq=1, stopwords=True)
     test.evaluate()
-    res_to_excel(test, "[CRAN]windwed_h.xlsx", dest_path, sheetname=f"GSB_{h}")
+    res_to_excel(test, "[CRAN_new]windwed_h.xlsx", dest_path, sheetname=f"GSB_win_3_{h}")
     MAP.append(mean(test.precision))
     testname = f"wind_8_h={h}"
     name.append(testname)
     model_time.append(test.elapsed_time)
 df = DataFrame(list(zip(MAP, name,model_time)), columns=["map", "Names","time"])
-write(xl_namefile="[CRAN]windwed_h.xlsx", dest_path=dest_path, sheetname="windowed_h_aggregate", data=df)
+write(xl_namefile="[CRAN_new]windwed_h.xlsx", dest_path=dest_path, sheetname="windowed_3_h_aggregate", data=df)

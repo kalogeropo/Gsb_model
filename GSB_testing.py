@@ -30,12 +30,12 @@ test_name = []
 # for reproducibility
 for i in range(0, 5):
     N = GSBModel(testcol)
-    N.fit(min_freq=10, stopwords=True)
+    N.fit(min_freq=1, stopwords=True)
     N.evaluate()
     list_to_total.append(mean(N.precision))
     name = f"test_{i}"
     test_name.append(name)
-    res_to_excel(N, "[CRAN]GSBTesting.xlsx", dest_path, sheetname=name)
+    res_to_excel(N, "[CRAN_new]GSBTesting.xlsx", dest_path, sheetname=name)
     print(mean(N.precision))
 df = DataFrame(list(zip(list_to_total, test_name)), columns=["map", "Names"])
-write(xl_namefile="[CRAN]GSBTesting.xlsx", dest_path=dest_path, sheetname="aggregate", data=df)
+write(xl_namefile="[CRAN_new]GSBTesting.xlsx", dest_path=dest_path, sheetname="aggregate", data=df)

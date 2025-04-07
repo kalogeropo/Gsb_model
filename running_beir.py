@@ -95,82 +95,82 @@ if __name__ == "__main__":
     print(f"Loaded {len(corpus)} documents, {len(queries)} queries, and {len(qrels)} relevance labels.")
     
     #### Load model (you can change this to other SBERT models)
-    dense_models = {
-    # Reliable classics
-    "multi-qa-MiniLM": "sentence-transformers/multi-qa-MiniLM-L6-cos-v1",
-    "multi-qa-mpnet-base": "sentence-transformers/multi-qa-mpnet-base-dot-v1",
-    "msmarco-distilbert-base-v3": "sentence-transformers/msmarco-distilbert-base-v3",
+    # dense_models = {
+    # # Reliable classics
+    # "multi-qa-MiniLM": "sentence-transformers/multi-qa-MiniLM-L6-cos-v1",
+    # "multi-qa-mpnet-base": "sentence-transformers/multi-qa-mpnet-base-dot-v1",
+    # "msmarco-distilbert-base-v3": "sentence-transformers/msmarco-distilbert-base-v3",
 
 
-    # Modern lightweight or mid-range (RAM friendly)
-    "bge-base-en-v1.5": "BAAI/bge-base-en-v1.5",
-    "gte-base": "thenlper/gte-base",
-    "e5-base-v2": "intfloat/e5-base-v2",
-    }
-    # Loop through each model and evaluate
-    results_csv = "CRAN_beir_model_results_k1209.csv"
+    # # Modern lightweight or mid-range (RAM friendly)
+    # "bge-base-en-v1.5": "BAAI/bge-base-en-v1.5",
+    # "gte-base": "thenlper/gte-base",
+    # "e5-base-v2": "intfloat/e5-base-v2",
+    # }
+    # # Loop through each model and evaluate
+    # results_csv = "CRAN_beir_model_results_k1209.csv"
 
-    # Initialize CSV with headers
-    with open(results_csv, mode="w", newline="", encoding="utf-8") as f:
-        writer = csv.writer(f)
-        writer.writerow([
-            "model_name",
-            "map@1209", "precision@1209", "recall@1209",
-            "retrieval_time_s", "evaluation_time_s", "total_time_s"
-        ])
+    # # Initialize CSV with headers
+    # with open(results_csv, mode="w", newline="", encoding="utf-8") as f:
+    #     writer = csv.writer(f)
+    #     writer.writerow([
+    #         "model_name",
+    #         "map@1209", "precision@1209", "recall@1209",
+    #         "retrieval_time_s", "evaluation_time_s", "total_time_s"
+    #     ])
 
-    # Loop through each model and evaluate
-    for model_name, model_path in dense_models.items():
-        print(f"\n--- Running model: {model_name} ---")
+    # # Loop through each model and evaluate
+    # for model_name, model_path in dense_models.items():
+    #     print(f"\n--- Running model: {model_name} ---")
 
-        start_model = time.time()
-        beir_model = DRES(models.SentenceBERT(model_path), batch_size=32)
-        retriever = EvaluateRetrieval(beir_model, score_function="dot")
+    #     start_model = time.time()
+    #     beir_model = DRES(models.SentenceBERT(model_path), batch_size=32)
+    #     retriever = EvaluateRetrieval(beir_model, score_function="dot")
 
-        # Retrieval
-        start_retrieve = time.time()
-        results = retriever.retrieve(corpus, queries)
-        end_retrieve = time.time()
+    #     # Retrieval
+    #     start_retrieve = time.time()
+    #     results = retriever.retrieve(corpus, queries)
+    #     end_retrieve = time.time()
 
-        # Evaluation
-        start_eval = time.time()
-        scores = retriever.evaluate(qrels, results, k_values=[1209])
-        print(type(scores))  # Should show <class 'dict'>
-        print(scores)
-        end_eval = time.time()
+    #     # Evaluation
+    #     start_eval = time.time()
+    #     scores = retriever.evaluate(qrels, results, k_values=[1209,1400])
+    #     print(type(scores))  # Should show <class 'dict'>
+    #     print(scores)
+    #     end_eval = time.time()
 
-        total_time = time.time() - start_model
-        retrieval_time = end_retrieve - start_retrieve
-        evaluation_time = end_eval - start_eval
+    #     total_time = time.time() - start_model
+    #     retrieval_time = end_retrieve - start_retrieve
+    #     evaluation_time = end_eval - start_eval
 
-        # Log results
-        print(f"Results for {model_name}:\n{scores}")
-        print(f"⏱ Retrieval time: {retrieval_time:.2f}s")
-        print(f"⏱ Evaluation time: {evaluation_time:.2f}s")
-        print(f"⏱ Total time: {total_time:.2f}s")
+    #     # Log results
+    #     print(f"Results for {model_name}:\n{scores}")
+    #     print(f"⏱ Retrieval time: {retrieval_time:.2f}s")
+    #     print(f"⏱ Evaluation time: {evaluation_time:.2f}s")
+    #     print(f"⏱ Total time: {total_time:.2f}s")
 
-        # Extract metrics
-        map_ = scores[1].values()
-        precision = scores[-1].values()
-        recall = scores[2].values()
+    #     # Extract metrics
+    #     map_ = scores[1].values()
+    #     precision = scores[-1].values()
+    #     recall = scores[2].values()
 
-        # Write to CSV
-        with open(results_csv, mode="a", newline="", encoding="utf-8") as f:
-            writer = csv.writer(f)
-            writer.writerow([
-                model_name,
-                map_, precision, recall,
-                f"{retrieval_time:.2f}",
-                f"{evaluation_time:.2f}",
-                f"{total_time:.2f}"
-            ])
+    #     # Write to CSV
+    #     with open(results_csv, mode="a", newline="", encoding="utf-8") as f:
+    #         writer = csv.writer(f)
+    #         writer.writerow([
+    #             model_name,
+    #             map_, precision, recall,
+    #             f"{retrieval_time:.2f}",
+    #             f"{evaluation_time:.2f}",
+    #             f"{total_time:.2f}"
+    #         ])
     
 
     splade_encoder = SPLADE("naver/splade-cocondenser-ensembledistil")
     splade_model = DRES(splade_encoder)  # <- this is critical
-    retriever = EvaluateRetrieval(splade_model, score_function="dot")  # "cos_sim" also valid
+    retriever = EvaluateRetrieval(splade_model, score_function="cos_sim")  # "cos_sim" also valid
     results = retriever.retrieve(corpus, queries)
-    scores = retriever.evaluate(qrels, results, k_values=[10, 100, 1209])
+    scores = retriever.evaluate(qrels, results, k_values=[1400])
     print("splade")
     print(scores)
 
