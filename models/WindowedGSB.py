@@ -3,20 +3,34 @@ from numpy import zeros
 from models.GSB import GSBModel
 from utilities.document_utls import calculate_tf
 
+from typing import Union
 
 class WindowedGSBModel(GSBModel):
-    """The windowed version of the graph based extension of the set based model
-    Here will be implemented both the constant or percentage version by overriding
-    the init function. The rest of the model is the same as the simple graph based
-     extension which is the super class of the model."""
+    """
+    The windowed version of the Graph-Based Set-Based model.
+    Applies a windowed co-occurrence logic (fixed or percentage-based)
+    instead of full-document adjacency.
 
-    def __init__(self, collection, window=8, h_val=1, k_core_bool=False, window_cut_off=True):
+    Args:
+        collection: The document collection.
+        window: Window size (int for fixed, float ∈ (0, 1) for percentage).
+        h_val: Weighting factor for enhanced edges.
+        k_core_bool: Enable or disable k-core pruning.
+        window_cut_off: Whether to truncate incomplete windows.
+    """
+
+    def __init__(self,
+                 collection,
+                 window: int | float = 8,
+                 h_val: int | float = 1,
+                 k_core_bool: bool = False,
+                 window_cut_off: bool = True):
         self.window = window
         self.window_cut_off = window_cut_off
         super().__init__(collection, k_core_bool=k_core_bool, h_val=h_val)
 
     def get_model(self):
-        return __class__.__name__
+        return self.__class__.__name__
 
     def doc_to_matrix(self, document):
         window_size = - 1

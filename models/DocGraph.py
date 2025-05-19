@@ -79,7 +79,7 @@ class DocGraph(GSBModel):
         return doc_ids,word_docs, word_importance,doc_words
         
     def fit(self):
-        
         pass
+    
     def evaluate(self):
         pass

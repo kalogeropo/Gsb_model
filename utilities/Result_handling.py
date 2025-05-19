@@ -1,6 +1,11 @@
 import openpyxl
 from openpyxl import load_workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
+import os
+from openpyxl import Workbook
+from typing import Optional
+from pandas import DataFrame
+
 
 
 def res_to_excel(result_model, namefile='example.xlsx', dest_path="collections/test/Results", sheetname="test"):
@@ -25,34 +30,65 @@ def write(xl_namefile='example.xlsx', dest_path="collections/test/Results", shee
 
 
 class ExcelWriter:
-    def __init__(self, filename, dest_path):
+    """
+    A utility class for reading, writing, and managing Excel files using openpyxl.
+    """
+    def __init__(self, filename: str, dest_path: str ):
         self.filename = filename
         self.dest_path = dest_path
-        try:
-            self.wb = load_workbook(f"{self.dest_path}/{self.filename}")
-        except:
-            self.wb = openpyxl.Workbook()
+        file_path = os.path.join(self.dest_path, self.filename)
+
+        if os.path.exists(file_path):
+            try:
+                self.wb = load_workbook(file_path)
+            except Exception as e:
+                print(f"Error loading workbook, creating new one: {e}")
+                self.wb = Workbook()
+        else:
+            self.wb = Workbook()
+
         self.ws = self.wb.active
 
     def add_sheet(self, name):
         self.ws = self.wb.create_sheet(title=name)
 
-    def write_data(self, data):
+    def write_data(self, data: Optional[DataFrame]) -> bool:  
+        """
+        Writes a Pandas DataFrame to an Excel worksheet.
+        Args:
+            data (pd.DataFrame): The data to write to Excel. Must not be None.
+
+        Returns:
+            bool: True if writing succeeded, False otherwise.
+        """
+        if data is None:
+            print("No data provided to write.")
+            return False
+
+        if self.ws is None:
+            print("Invalid or uninitialized worksheet.")
+            return False
         try:
-            for r in dataframe_to_rows(data, index=False, header=True):
-                self.ws.append(r)
+            for row in dataframe_to_rows(data, index=False, header=True):
+                self.ws.append(row)
+            return True
         except Exception as e:
             print(f"Error writing data to Excel file: {e}")
-            return False
-        return True
+        return False
 
-    def save(self):
+    def save(self) -> bool:
+        """
+        Saves the workbook to the current file path.
+
+        Returns:
+            bool: True if saved successfully, False otherwise.
+        """
         try:
-            self.wb.save(f"{self.dest_path}/{self.filename}")
+            self.wb.save(os.path.join(self.dest_path, self.filename))
+            return True
         except Exception as e:
             print(f"Error saving Excel file: {e}")
             return False
-        return True
 
     def append_all_sheets(self, new_sheet_name):
         try:

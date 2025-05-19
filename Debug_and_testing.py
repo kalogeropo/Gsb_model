@@ -19,16 +19,16 @@ import matplotlib.pyplot as plt
 from utilities.document_utls import json_to_dat
 
 #CRAN
-path = 'experiments/collections/CRAN/docs'
-path_to_write = 'Gsb_model/data/test_docs/tests'
-col_path = 'experiments/collections/CRAN'
-dest_path = "experiments/paper_results"
+# path = 'experiments/collections/CRAN/docs'
+# path_to_write = 'Gsb_model/data/test_docs/tests'
+# col_path = 'experiments/collections/CRAN'
+# dest_path = "experiments/paper_results"
 
-testcol, q, r = expir_start(path, path_to_write, col_path)
-testbm25 = BM25Model(testcol)
-testbm25.fit()
-testbm25.evaluate()
-print(mean(testbm25.precision))
+# testcol, q, r = expir_start(path, path_to_write, col_path)
+# testbm25 = BM25Model(testcol)
+# testbm25.fit()
+# testbm25.evaluate()
+# print(mean(testbm25.precision))
 # list_to_total = []
 # test_name = []
 
@@ -44,14 +44,16 @@ print(mean(testbm25.precision))
 #     print(mean(N.precision))
 # df = DataFrame(list(zip(list_to_total, test_name)), columns=["map", "Names"])
 # write(xl_namefile="[CRAN]GSBTesting.xlsx", dest_path=dest_path, sheetname="windowsize_aggregate", data=df)
-#CF
-# path = 'experiments/collections/CF/docs'
-# path_to_write = 'Gsb_model/data/test_docs/tests'
-# col_path = 'experiments/collections/CF'
-# dest_path = "experiments/paper_results"
 
-#path = "C:/Users/nrk_pavilion/PycharmProjects/Gsb_model/experiments/collections/baeza/docs"
-# testcol, q, r = expir_start(path, path_to_write, col_path)
+
+#CF
+path = 'experiments/collections/CF/docs'
+path_to_write = 'Gsb_model/data/test_docs/tests'
+col_path = 'experiments/collections/CF'
+dest_path = "experiments/paper_results"
+
+testcol, q, r = expir_start(path, path_to_write, col_path)
+
 # print(type(testcol))
 # N = DocGraph(testcol)
 # print(testcol.inverted_index)
@@ -62,10 +64,11 @@ print(mean(testbm25.precision))
 
 # test = onlineGSB(path,name="sad")
 # test.create_or_update_graph_index()
-# Assuming 'instance' is an instance of the class containing the create_or_update_graph_index method
+# # Assuming 'instance' is an instance of the class containing the create_or_update_graph_index method
 # # And you want to profile it with a specific set of filenames
+
 # profile_result = profile_create_or_update_graph_index(test)
-#
+
 # # Print the result
 # print(profile_result)
 
@@ -73,22 +76,22 @@ print(mean(testbm25.precision))
 # lab ={}
 # for node,data in test.union_graph.nodes(data=True):
 #     lab.update({node:data})
-#
+
 # pos = spring_layout(test.union_graph)  # Positions for all nodes
-#
+
 # plt.figure(figsize=(10,10))
 # draw(test.union_graph,with_labels=True,pos=pos, node_size=2000, node_color="skyblue", font_size=15, font_weight="bold")
 # offset_pos = {node: (coords[0], coords[1] + 0.05) for node, coords in pos.items()}
 # draw_networkx_labels(test.union_graph,labels=lab,font_size=13,pos=offset_pos)
 # # Set title
 # plt.title("Union Graph with Node Labels")
-#
+
 # # Save the figure
 # plt.savefig("graph_with_labels.png", format="png")
 # plt.show()
 
 # testing = []
-# path = "C:/Users/nrk_pavilion/PycharmProjects/Gsb_model/experiments/collections/CF/docs"
+# #path = "C:/Users/nrk_pavilion/PycharmProjects/Gsb_model/experiments/collections/CF/docs"
 # filenames = [join(path, id) for id in listdir(path)]
 # test = onlineGSB(path,name="sad")
 # for i in range(0, len(filenames),200):
@@ -101,7 +104,7 @@ print(mean(testbm25.precision))
 # print(testing)
 
 
-#NPL
+# #NPL
 # path = 'experiments/collections/NPL/docs'
 # path_to_write = 'experiments/temp'
 # col_path = 'experiments/collections/NPL'
@@ -109,43 +112,51 @@ print(mean(testbm25.precision))
 # print(q)
 # print(len(testcol.inverted_index))
 
-# testing = []
-# sorting_by =[]
-# path_col = 'C:/Users/nrk_pavilion\PycharmProjects\Gsb_model\experiments\collections\Cf_splited'
-# folders = listdir(path_col)
-# for folder in listdir(path_col):
-#     starting_time = time.time()
-#     path = join(path_col, folder)
-#     sorting_by.append(folder)
-#     testcol, q, r = expir_start(path, path_to_write, col_path)
-#     N = GSBModel(testcol)
-#     testcol.save_inverted_index('C:/Users/nrk_pavilion\PycharmProjects\Gsb_model\experiments/temp')
-#     end = time.time()
-#     testing.append(end-starting_time)
-# print(sorting_by)
-# print(testing)
+testing = []
+sorting_by =[]
+path_col = r'C:\Users\nrkal\GSB_model\Gsb_model\experiments\collections\CF_splited'
+folders = listdir(path_col)
+for folder in listdir(path_col):
+    starting_time = time.time()
+    path = join(path_col, folder)
+    sorting_by.append(folder)
+    testcol, q, r = expir_start(path, path_to_write, col_path)
+    
+    #N = GSBModel(testcol)
+    
+    N = WindowedGSBModel(testcol,4)
+
+    testcol.save_inverted_index(r'Gsb_model\data\test_docs\tests')
+    end = time.time()
+    testing.append(end-starting_time)
+print(sorting_by)
+print(testing)
 
 
-# path = "C:/Users/nrk_pavilion\PycharmProjects\Gsb_model\experiments\collections/NPL\docs"
+# path = 'experiments/collections/CF/docs'
+# path_to_write = 'Gsb_model/data/test_docs/tests'
+# col_path = 'experiments/collections/CF'
+# dest_path = "experiments/paper_results"
+
 # start = time.time()
 # test = onlineGSB(path,name="sad")
 # starting_time = time.time()
 # test.create_or_update_graph_index()
 # end = time.time()
 # elapsed = end - start
-#
+
 # print("onlineGSB: Elapsed Time: " + str(elapsed))
-#
+
 # testcol, q, r = expir_start(path, path_to_write, col_path)
 # N = GSBModel(testcol)
 # print("GSB: Elapsed Time: " + str(N.elapsed_time))
-#
+
 # testcol, q, r = expir_start(path, path_to_write, col_path)
 # N = WindowedGSBModel(testcol,4)
 # print("Windowed GSB: Elapsed Time: " + str(N.elapsed_time))
 
-#print(testcol.inverted_index)
-#testcol.collection_to_tsv(qrel=True,create_triplets=True,triplet_filename="debug_with_neg.tsv")
+# print(testcol.inverted_index)
+# testcol.collection_to_tsv(qrel=True,create_triplets=True,triplet_filename="debug_with_neg.tsv")
 
 # for i,q in enumerate(testcol.queries):
 #     print(i, " ".join(q)," ".join(q), "1" )
@@ -153,8 +164,8 @@ print(mean(testbm25.precision))
 #         fd.write(f"{' '.join(q)}\t{' '.join(q)}\t{' '.join(q)}\n")
 
 
-#df = testcol.q_r_stats()
-#write(xl_namefile='example.xlsx', dest_path="experiments/paper_results", sheetname="cf_queries", data=df)
+# df = testcol.q_r_stats()
+# write(xl_namefile='example.xlsx', dest_path="experiments/paper_results", sheetname="cf_queries", data=df)
 
 # testcol, q, r = expir_start(path, path_to_write, col_path)
 # N = GSBModel(testcol)

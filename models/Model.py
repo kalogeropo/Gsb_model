@@ -9,6 +9,8 @@ from pandas import DataFrame
 from utilities.document_utls import evaluate_sim, calc_precision_recall, write_list
 from utilities.apriori import apriori
 
+from typing import Any
+import numpy as np
 
 class Model(ABC):
     """The model class is an abstract class contains variables, lists and methods that an ir model commonly uses.
@@ -53,12 +55,24 @@ class Model(ABC):
         return __class__.__name__
 
     @abstractmethod
-    def _model_func(self, freq_termsets):
+    def _model_func(self, freq_termsets: Any) -> np.ndarray:
         pass
+
     # the base model fit function will implement the set based document Queries representation. can be overriden
     # in any subclass at will.
     @abstractmethod
-    def _vectorizer(self, tsf_ij, idf, *args):
+    def _vectorizer(self, tsf_ij: np.ndarray, idf: np.ndarray, *args: Any) -> np.ndarray:
+        """
+        Transform the raw document-term matrix into a model-specific representation.
+
+        Args:
+            tsf_ij (np.ndarray): Termset-document frequency matrix.
+            idf (np.ndarray): Inverse document frequency vector.
+            *args (Any): Additional arguments such as model-specific weights.
+
+        Returns:
+            np.ndarray: Final document-term matrix or score matrix.
+        """
         pass
 
 

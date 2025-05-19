@@ -170,7 +170,16 @@ def json_to_dat(collection, filename=None):
             nwk = 0
         graphToIndex(id, nwk, terms, plist, filename=filename)
 
-def write_to_tsv(data,filename=None):
+def write_to_tsv(data:list[str] ,filename: str|None =None):
+    """
+    Appends a single row of data to a TSV file.
+
+    Args:
+        data: List of strings to write as a row.
+        filename: Path to the file. Must be a valid file path.
+    """
+    if filename is None:
+        raise ValueError("filename must be provided")
     with open(filename, 'a', newline='') as f_output:
         tsv_output = writer(f_output, delimiter='\t')
         tsv_output.writerow(data)
